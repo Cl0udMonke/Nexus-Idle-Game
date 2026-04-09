@@ -126,6 +126,57 @@ font-size:9px;font-weight:700;letter-spacing:2px;cursor:pointer;border-radius:3p
 }
 #prestige-btn:active{background:rgba(255,0,110,0.22);}
 
+/* Top cheat menu — opens downward (unlike bottom drawer) */
+.header-main-row{
+display:flex;flex-direction:row;justify-content:space-between;align-items:flex-start;gap:10px;width:100%;
+}
+.header-credits-col{min-width:0;flex:1;}
+.header-cheat-wrap{
+position:relative;flex-shrink:0;align-self:flex-start;padding-top:4px;
+}
+.header-cheat-wrap[hidden]{display:none!important;}
+.header-cheat-btn{
+width:42px;height:40px;border-radius:5px;
+border:1px solid rgba(255,0,110,0.5);background:rgba(255,0,110,0.12);
+color:var(--c4);font-size:18px;line-height:1;cursor:pointer;
+display:flex;align-items:center;justify-content:center;
+font-family:'Orbitron',monospace;
+box-shadow:0 0 12px rgba(255,0,110,0.15);
+}
+.header-cheat-btn:active{opacity:0.85;}
+.header-cheat-btn.open{border-color:var(--c4);background:rgba(255,0,110,0.2);}
+.header-cheat-dd{
+display:none;flex-direction:column;
+position:absolute;top:100%;right:0;margin-top:6px;
+min-width:210px;max-width:min(calc(100vw - 32px), 290px);
+z-index:500;
+background:var(--bg2);border:1px solid rgba(255,0,110,0.45);
+border-radius:8px;box-shadow:0 14px 40px rgba(0,0,0,0.5);
+padding:6px 0 8px;
+}
+.header-cheat-dd.open{display:flex;}
+.hcd-title{
+font-family:'Orbitron',monospace;font-size:7px;letter-spacing:3px;
+color:var(--c4);opacity:0.85;padding:4px 14px 8px;border-bottom:1px solid var(--border2);
+}
+.hcd-item{
+display:block;width:100%;text-align:left;padding:9px 14px;border:none;background:transparent;
+color:var(--txt2);font-family:'Share Tech Mono',monospace;font-size:10px;
+cursor:pointer;border-top:1px solid transparent;
+}
+.hcd-item:first-of-type{border-top:none;}
+.hcd-item:active{background:rgba(255,0,110,0.1);color:var(--txt);}
+.hcd-item.hcd-danger{color:var(--c4);border-top-color:var(--border2);}
+.hcd-item.hcd-danger:active{background:rgba(255,0,110,0.18);}
+.hcd-row{
+display:flex;align-items:center;justify-content:space-between;gap:10px;
+padding:8px 14px;border-top:1px solid var(--border2);
+font-size:9px;color:var(--txt2);font-family:'Orbitron',monospace;
+}
+.hcd-row .toggle{width:34px;height:18px;}
+.hcd-row .toggle::after{width:12px;height:12px;top:2px;left:2px;}
+.hcd-row .toggle.on::after{left:16px;}
+
 /* ── TAP ZONE — grows when menus closed, shrinks when open ─ */
 #tap-zone{
 flex:1 1 0;           /* grows to fill space */
@@ -265,6 +316,7 @@ display:flex;align-items:center;gap:10px;
 padding:8px 10px;border-radius:3px;cursor:pointer;
 border:1px solid var(--border2);background:rgba(255,255,255,0.02);
 position:relative;overflow:hidden;transition:all 0.14s;
+touch-action:manipulation;-webkit-user-select:none;user-select:none;
 }
 .upg-row::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--c1);opacity:0;transition:opacity 0.14s;}
 .upg-row.can{border-color:var(--border);background:var(--c1dim);}
@@ -300,9 +352,13 @@ display:flex;flex-direction:column;align-items:flex-end;gap:2px;text-align:right
 min-width:0;
 }
 .upg-row.ppc-row .upg-prod{color:var(--c6);}
-.upg-cur{opacity:0.75;font-size:8px;}
-.upg-next{font-size:7px;font-weight:700;letter-spacing:0.3px;color:var(--c3);}
+.upg-next{font-size:8px;font-weight:700;letter-spacing:0.25px;color:var(--c3);}
 .upg-row.ppc-row .upg-next{color:var(--c6);}
+.upg-global-hint{
+font-size:8px;letter-spacing:1px;color:var(--c5);text-align:center;
+padding:10px 8px;margin:2px 0 4px;border:1px dashed rgba(255,214,10,0.35);
+border-radius:4px;background:rgba(255,214,10,0.06);font-family:'Orbitron',monospace;
+}
 
 /* ── OFFLINE UPGRADES tab panel ─── */
 #offline-list{
@@ -316,6 +372,7 @@ display:flex;align-items:center;gap:10px;
 padding:8px 10px;border-radius:3px;cursor:pointer;
 border:1px solid var(--border2);background:rgba(255,255,255,0.02);
 position:relative;overflow:hidden;transition:all 0.14s;
+touch-action:manipulation;-webkit-user-select:none;user-select:none;
 }
 .off-row::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--c5);opacity:0;transition:opacity 0.14s;}
 .off-row.can{border-color:rgba(255,214,10,0.3);background:rgba(255,214,10,0.05);}
@@ -392,9 +449,9 @@ display:block;
 .sv-btn.warn{border-color:var(--c6, #ff6b00);color:var(--c6, #ff6b00);background:rgba(255,107,0,0.07);}
 .sv-btn.danger{border-color:var(--c4, #ff006e);color:var(--c4, #ff006e);background:rgba(255,0,110,0.07);}
 .info-txt{font-size:8px;color:var(--txt3);line-height:1.7;margin-top:3px;}
-/* Debug / cheat panel (toggled via secret gesture) */
-#debug-cheat-section{display:none;border:1px dashed rgba(255,0,110,0.35);border-radius:4px;padding:10px;background:rgba(255,0,110,0.04);}
-#debug-cheat-section.vis{display:block;}
+/* Debug / cheat panel (toggled via secret gesture) — inside #settings-panel, below // GAME, above // SAVE DATA */
+#debug-cheat-section{display:none!important;border:1px dashed rgba(255,0,110,0.35);border-radius:4px;padding:10px;background:rgba(255,0,110,0.04);width:100%;flex-shrink:0;}
+#debug-cheat-section.vis{display:flex!important;flex-direction:column;}
 .debug-cheat-section .s-title{color:var(--c4);opacity:0.9;}
 .ch-row{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px;}
 .ch-btn{
@@ -454,9 +511,31 @@ font-size:10px;letter-spacing:2px;cursor:pointer;border-radius:3px;
   <!-- HEADER -->
 
   <div id="header">
-    <div id="sys-label">NEXUS CREDIT SYSTEM v3.0</div>
-    <div id="credit-count">0</div>
-    <div id="credit-unit">CREDITS</div>
+    <div class="header-main-row">
+      <div class="header-credits-col">
+        <div id="sys-label">NEXUS CREDIT SYSTEM v3.0</div>
+        <div id="credit-count">0</div>
+        <div id="credit-unit">CREDITS</div>
+      </div>
+      <div id="header-cheat-wrap" class="header-cheat-wrap" hidden>
+        <button type="button" id="header-cheat-btn" class="header-cheat-btn" onclick="toggleHeaderCheatMenu(event)" aria-expanded="false" aria-haspopup="true" aria-label="Cheat menu" title="Cheats">⚙</button>
+        <div id="header-cheat-dropdown" class="header-cheat-dd" role="menu">
+          <div class="hcd-title">// CHEATS</div>
+          <button type="button" class="hcd-item" onclick="cheatAddCredits(1e6);closeHeaderCheatMenu()">+ 1M credits</button>
+          <button type="button" class="hcd-item" onclick="cheatAddCredits(1e9);closeHeaderCheatMenu()">+ 1B credits</button>
+          <div class="hcd-row">
+            <span>∞ COINS</span>
+            <div class="toggle" id="hcd-tog-inf" onclick="event.stopPropagation();cheatToggleInfinite();syncHeaderCheatMenuToggles();"></div>
+          </div>
+          <div class="hcd-row">
+            <span>FREE BUYS</span>
+            <div class="toggle" id="hcd-tog-free" onclick="event.stopPropagation();cheatToggleFreeBuy();syncHeaderCheatMenuToggles();"></div>
+          </div>
+          <button type="button" class="hcd-item" onclick="openFullDebugPanel()">Full debug panel…</button>
+          <button type="button" class="hcd-item hcd-danger" onclick="disableAllCheats()">Disable all cheats</button>
+        </div>
+      </div>
+    </div>
     <div class="stats-row">
       <div class="stat-box s-green"><span class="val" id="cps-val">0.00</span>/SEC</div>
       <div class="stat-box s-orange"><span class="val" id="cpt-val">1</span>/TAP</div>
@@ -566,6 +645,7 @@ font-size:10px;letter-spacing:2px;cursor:pointer;border-radius:3px;
       <div class="ch-row" style="margin-top:5px">
         <button type="button" class="ch-btn" onclick="cheatUnlockAllOffline()">ALL OFFLINE</button>
       </div>
+      <button type="button" class="ch-btn" style="margin-top:12px;width:100%;border-color:rgba(255,0,110,0.55);color:var(--c4)" onclick="disableAllCheats()">DISABLE ALL CHEATS</button>
     </div>
     <div class="s-section">
       <div class="s-title">// SAVE DATA</div>
@@ -679,6 +759,7 @@ let lastSaved=null;
 let drawerOpen=true;
 let cheatInfiniteCoins=false;
 let cheatFreeBuy=false;
+let cheatHudUnlocked=false;
 
 // ═══════════════════════════════════════════
 //  COMPUTED HELPERS
@@ -906,7 +987,86 @@ function toggleDebugCheat(fromSecret){
   if(!el)return;
   if(fromSecret) el.classList.toggle('vis');
   else el.classList.remove('vis');
-  if(el.classList.contains('vis')) syncCheatToggles();
+  if(el.classList.contains('vis')){
+    cheatHudUnlocked=true;
+    syncCheatToggles();
+    requestAnimationFrame(()=>{
+      el.scrollIntoView({behavior:'smooth',block:'nearest'});
+    });
+  }
+  syncHeaderCheatVisibility();
+}
+
+function cheatsAreActive(){
+  return cheatHudUnlocked;
+}
+
+function disableAllCheats(){
+  cheatInfiniteCoins=false;
+  cheatFreeBuy=false;
+  cheatHudUnlocked=false;
+  const el=document.getElementById('debug-cheat-section');
+  if(el) el.classList.remove('vis');
+  syncCheatToggles();
+  syncHeaderCheatMenuToggles();
+  closeHeaderCheatMenu();
+  saveGame();
+  updateUI();
+}
+
+function syncHeaderCheatVisibility(){
+  const wrap=document.getElementById('header-cheat-wrap');
+  if(!wrap)return;
+  wrap.hidden=!cheatsAreActive();
+  if(wrap.hidden) closeHeaderCheatMenu();
+}
+
+function syncHeaderCheatMenuToggles(){
+  const a=document.getElementById('hcd-tog-inf');
+  const b=document.getElementById('hcd-tog-free');
+  if(a) a.classList.toggle('on',cheatInfiniteCoins);
+  if(b) b.classList.toggle('on',cheatFreeBuy);
+}
+
+function toggleHeaderCheatMenu(e){
+  if(e) e.stopPropagation();
+  const dd=document.getElementById('header-cheat-dropdown');
+  const btn=document.getElementById('header-cheat-btn');
+  if(!dd||!btn)return;
+  const open=!dd.classList.contains('open');
+  dd.classList.toggle('open',open);
+  btn.classList.toggle('open',open);
+  btn.setAttribute('aria-expanded',open?'true':'false');
+  if(open) syncHeaderCheatMenuToggles();
+}
+
+function closeHeaderCheatMenu(){
+  const dd=document.getElementById('header-cheat-dropdown');
+  const btn=document.getElementById('header-cheat-btn');
+  if(dd) dd.classList.remove('open');
+  if(btn){
+    btn.classList.remove('open');
+    btn.setAttribute('aria-expanded','false');
+  }
+}
+
+function openFullDebugPanel(){
+  cheatHudUnlocked=true;
+  closeHeaderCheatMenu();
+  if(activeTab!=='settings') switchTab('settings');
+  else{
+    drawerOpen=true;
+    document.getElementById('drawer').classList.remove('collapsed');
+    syncTapDrawerLayout();
+  }
+  const d=document.getElementById('debug-cheat-section');
+  if(d) d.classList.add('vis');
+  syncCheatToggles();
+  syncHeaderCheatMenuToggles();
+  requestAnimationFrame(()=>{
+    if(d) d.scrollIntoView({behavior:'smooth',block:'nearest'});
+  });
+  updateUI();
 }
 
 function syncCheatToggles(){
@@ -928,13 +1088,17 @@ function cheatSetCoins(){
 
 function cheatToggleInfinite(){
   cheatInfiniteCoins=!cheatInfiniteCoins;
-  if(cheatInfiniteCoins) G.coins=Number.MAX_SAFE_INTEGER;
+  if(cheatInfiniteCoins){
+    cheatHudUnlocked=true;
+    G.coins=Number.MAX_SAFE_INTEGER;
+  }
   syncCheatToggles();
   saveGame();updateUI();
 }
 
 function cheatToggleFreeBuy(){
   cheatFreeBuy=!cheatFreeBuy;
+  if(cheatFreeBuy) cheatHudUnlocked=true;
   syncCheatToggles();
   updateUI();
 }
@@ -1074,8 +1238,8 @@ function updateUI(){
   const capH=offlineCapSecs()/3600;
   document.getElementById('stat-offline').textContent=fmtHours(Math.min(capH,MAX_OFFLINE_HOURS));
   updSaveLbl();
-  if(activeTab==='pps'||activeTab==='ppc') renderUpgrades();
-  else if(activeTab==='offline') renderOffline();
+  syncHeaderCheatVisibility();
+  syncHeaderCheatMenuToggles();
 }
 
 // ═══════════════════════════════════════════
@@ -1086,13 +1250,18 @@ function renderUpgrades(){
   list.innerHTML='';
   const upgs=activeTab==='pps'?PPS:PPC;
   const isPPC=activeTab==='ppc';
+  let anyAffordable=false;
+  let cheapestNext=null;
+  let cheapestCost=Infinity;
   upgs.forEach(u=>{
     const requested=buyAmt===0?maxBuy(u):buyAmt;
     const affordable=maxBuy(u);
     const actualN=buyAmt===0?affordable:Math.min(requested,affordable);
     const cost=costN(u,actualN);
     const canAfford=affordable>0;
+    if(canAfford) anyAffordable=true;
     const next1Cost=Math.floor(u.baseCost*Math.pow(1.15,u.owned));
+    if(next1Cost<cheapestCost){ cheapestCost=next1Cost; cheapestNext=u; }
 
     const row=document.createElement('div');
     row.className='upg-row '+(isPPC?'ppc-row ':' ')+(canAfford?'can':'cant');
@@ -1109,39 +1278,37 @@ function renderUpgrades(){
 
     if(buyAmt===0){
       if(affordable>0) ct.textContent='⬡ '+fmt(cost)+' (×'+affordable+')';
-      else ct.textContent='⬡ '+fmt(next1Cost)+' (×1)';
+      else ct.textContent='NEXT ×1 · ⬡ '+fmt(next1Cost);
     } else {
       if(affordable>=requested){
         ct.textContent='⬡ '+fmt(cost)+(requested>1?' (×'+requested+')':'');
       } else if(affordable>0){
         ct.innerHTML='⬡ '+fmt(cost)+' <span style="color:var(--c1);opacity:0.9">(×'+affordable+'</span><span style="opacity:0.35">/×'+requested+')</span>';
       } else {
-        ct.innerHTML='⬡ '+fmt(next1Cost)+' <span style="opacity:0.35">(×0/×'+requested+')</span>';
+        ct.textContent='NEXT ×1 · ⬡ '+fmt(next1Cost);
       }
     }
 
     const gainUnits=affordable>0?actualN:1;
     const dProd=u.baseProd*gainUnits*G.prestigeMult;
     const pr=document.createElement('div');pr.className='upg-prod';
-    const curProd=u.baseProd*u.owned*G.prestigeMult;
-    if(u.owned>0){
-      const cur=document.createElement('span');
-      cur.className='upg-cur';
-      cur.textContent=isPPC?'+'+fmt(curProd)+'/TAP':'+'+(curProd<1000?curProd.toFixed(2):fmt(curProd))+'/SEC';
-      pr.appendChild(cur);
-    }
     const nx=document.createElement('span');
     nx.className='upg-next';
-    const dStr=isPPC
+    nx.textContent=isPPC
       ?('+'+fmt(dProd)+'/TAP')
       :('+'+(dProd<1000?dProd.toFixed(2):fmt(dProd))+'/SEC');
-    nx.textContent='NEXT '+dStr;
     pr.appendChild(nx);
 
     top.appendChild(nm);top.appendChild(ow);bot.appendChild(ct);bot.appendChild(pr);
     info.appendChild(top);info.appendChild(dc);info.appendChild(bot);
     row.appendChild(icon);row.appendChild(info);list.appendChild(row);
   });
+  if(buyAmt===0&&!anyAffordable&&cheapestNext){
+    const hint=document.createElement('div');
+    hint.className='upg-global-hint';
+    hint.textContent='NEXT AVAILABLE: '+cheapestNext.name+' ×1 — ⬡ '+fmt(cheapestCost);
+    list.appendChild(hint);
+  }
 }
 
 function renderOffline(){
@@ -1194,6 +1361,7 @@ function buyUpg(u,isPPC){
   const col=isPPC?getComputedStyle(document.body).getPropertyValue('--c6').trim():themeCol();
   spawnSparks(r.left+r.width/2,r.top+r.height/2,col);
   saveGame();updateUI();
+  renderUpgrades();
 }
 
 function buyOffline(u){
@@ -1204,6 +1372,7 @@ function buyOffline(u){
   u.bought=true;
   spawnSparks(window.innerWidth/2,window.innerHeight*0.6,getComputedStyle(document.body).getPropertyValue('--c5').trim()||'#ffd60a');
   saveGame();updateUI();
+  renderOffline();
 }
 
 // ═══════════════════════════════════════════
@@ -1299,6 +1468,8 @@ function doPrestige(){
   PPS.forEach(u=>u.owned=0);PPC.forEach(u=>u.owned=0);
   if(cheatInfiniteCoins) G.coins=Number.MAX_SAFE_INTEGER;
   saveGame();updateUI();
+  if(activeTab==='pps'||activeTab==='ppc') renderUpgrades();
+  else if(activeTab==='offline') renderOffline();
 }
 
 // ═══════════════════════════════════════════
@@ -1352,6 +1523,18 @@ buildThemes();
 applySettings();      // calls applyTheme(S.theme) with saved theme
 switchTab('pps');
 updateUI();
+
+setInterval(()=>{
+  if(activeTab==='pps'||activeTab==='ppc') renderUpgrades();
+  else if(activeTab==='offline') renderOffline();
+},400);
+
+document.addEventListener('click', (e)=>{
+  const wrap=document.getElementById('header-cheat-wrap');
+  if(!wrap||wrap.hidden)return;
+  if(wrap.contains(e.target))return;
+  closeHeaderCheatMenu();
+});
 </script>
 
 
