@@ -6,23 +6,18 @@
     <title>Nexus Idle Game</title>
     <style>
         body {
-            background-color: #f0f0f0; /* Light theme background */
-            color: #333; /* Light theme text */
+            background-color: white;
+            color: black;
             transition: background-color 0.3s, color 0.3s;
         }
         body.dark {
-            background-color: #141414; /* Dark theme background */
-            color: #f0f0f0; /* Dark theme text */
-        }
-        #theme-toggle {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            padding: 5px 10px;
+            background-color: black;
+            color: white;
         }
     </style>
 </head>
 <body>
+    <h1>Welcome to Nexus Idle Game</h1>
     <button id="theme-toggle">Toggle Theme</button>
     <script>
         const toggleButton = document.getElementById('theme-toggle');
@@ -30,8 +25,5 @@
             document.body.classList.toggle('dark');
         });
     </script>
-    <!-- Original content maintained below -->
-    <h1>Welcome to Nexus Idle Game!</h1>
-    <p>Here is where you can manage your idle game.</p>
 </body>
 </html>
