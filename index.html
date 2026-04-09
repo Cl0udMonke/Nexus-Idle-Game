@@ -10,64 +10,33 @@
 }
 body{margin:0; padding:0; background:var(--bg); font-family:monospace; color:#fff; overflow:hidden; height:100vh; display:flex; flex-direction:column;}
 #header{padding:20px; border-bottom:1px solid var(--border);}
-#credit-count{font-size:32px; font-weight:700;}
+#credit-count{font-size:32px;}
 #core-area{flex:1; display:flex; justify-content:center; align-items:center; position:relative; transition: all 0.3s;}
-#core-btn{
-  width:120px; height:120px; border-radius:50%; border:2px solid var(--cyan);
-  background:radial-gradient(circle at 40% 35%, rgba(0,245,255,0.2), rgba(0,245,255,0.04));
-  cursor:pointer; display:flex; flex-direction:column; justify-content:center; align-items:center;
-  user-select:none; transition: all 0.3s; box-shadow:0 0 10px rgba(0,245,255,0.2);
-}
+#core-btn{width:120px; height:120px; border-radius:50%; border:2px solid var(--cyan); background:radial-gradient(circle at 40% 35%, rgba(0,245,255,0.2), rgba(0,245,255,0.04)); cursor:pointer; display:flex; flex-direction:column; justify-content:center; align-items:center; user-select:none;}
 #core-btn:active{transform:scale(0.95);}
-.tab-section{width:100%; background:rgba(0,0,0,0.4); border-bottom:1px solid var(--border); transition: max-height 0.3s ease, padding 0.3s ease; overflow:hidden; max-height:0; padding:0 10px;}
-.tab-section.open{max-height:400px; padding:10px;}
-.tab-header{padding:5px 0; cursor:pointer; border-bottom:1px solid var(--border); user-select:none; font-weight:700;}
-.tab-content{padding:5px 0;}
+.tab-section{position:absolute; bottom:0; width:100%; background:rgba(0,0,0,0.4); border-top:1px solid var(--border); transition: max-height 0.3s; overflow:hidden; max-height:0;}
+.tab-section.open{max-height:300px;}
+.tab-header{padding:5px 10px; cursor:pointer; border-bottom:1px solid var(--border); user-select:none;}
+.tab-content{padding:5px 10px;}
 .upg-row{padding:5px; border:1px solid var(--border); margin-bottom:4px; display:flex; justify-content:space-between; cursor:pointer;}
-#bulk-select,#theme-select{margin-left:5px;}
-/* Theme overrides */
-body.theme1{--cyan:#00f5ff; --neon:#39ff14; --pink:#ff006e; --gold:#ffd60a; --bg:#020810;}
-body.theme2{--cyan:#ff4500; --neon:#ffa500; --pink:#ff69b4; --gold:#ffd700; --bg:#1a001a;}
-body.theme3{--cyan:#39ff14; --neon:#00f5ff; --pink:#ff00ff; --gold:#ffff00; --bg:#000000;}
-body.theme4{--cyan:#ff00ff; --neon:#00ffff; --pink:#ff1493; --gold:#ffdd00; --bg:#050020;}
-body.theme5{--cyan:#ffffff; --neon:#cccccc; --pink:#aaaaaa; --gold:#888888; --bg:#111111;}
 </style>
 </head>
-<body class="theme1">
-
-<!-- Stats Tab -->
-<div id="stats-section" class="tab-section open">
-  <div class="tab-header">STATS</div>
-  <div class="tab-content">
-    <div>Credits: <span id="stat-credits">0</span></div>
-    <div>Total Credits: <span id="stat-total">0</span></div>
-    <div>CPS: <span id="stat-cps">0</span></div>
-    <div>Tap: <span id="stat-tap">1</span></div>
-    <div>Prestige x<span id="stat-prestige">1</span></div>
-  </div>
-</div>
-
-<!-- Current points display -->
+<body>
 <div id="header">
   <div id="credit-count">0</div>
-  <div>Credits</div>
+  <div style="margin-top:5px;">Credits</div>
 </div>
 
 <div id="core-area">
-  <button id="core-btn">⚡<br>GENERATE</button>
+  <button id="core-btn">
+    ⚡<br>GENERATE
+  </button>
 
   <!-- Upgrades Tab -->
   <div id="upgrades-section" class="tab-section">
     <div class="tab-header">UPGRADES</div>
     <div class="tab-content">
-      Bulk Buy:
-      <select id="bulk-select">
-        <option value="1">1</option>
-        <option value="10">10</option>
-        <option value="25">25</option>
-        <option value="50">50</option>
-        <option value="100">100</option>
-      </select>
+      Bulk Buy: <select id="bulk-select"><option value="1">1</option><option value="10">10</option><option value="25">25</option><option value="50">50</option><option value="100">100</option></select>
       <div id="upgrades-list"></div>
     </div>
   </div>
@@ -76,8 +45,7 @@ body.theme5{--cyan:#ffffff; --neon:#cccccc; --pink:#aaaaaa; --gold:#888888; --bg
   <div id="settings-section" class="tab-section">
     <div class="tab-header">SETTINGS</div>
     <div class="tab-content">
-      Theme:
-      <select id="theme-select">
+      Theme: <select id="theme-select">
         <option value="theme1">Default</option>
         <option value="theme2">Sunset</option>
         <option value="theme3">Neon</option>
@@ -89,84 +57,79 @@ body.theme5{--cyan:#ffffff; --neon:#cccccc; --pink:#aaaaaa; --gold:#888888; --bg
 </div>
 
 <script>
-let credits=0,totalCredits=0,cps=0,cpt=1,prestigeMult=1;
-const coreBtn=document.getElementById('core-btn');
-const creditCount=document.getElementById('credit-count');
-const statCredits=document.getElementById('stat-credits');
-const statTotal=document.getElementById('stat-total');
-const statCPS=document.getElementById('stat-cps');
-const statTap=document.getElementById('stat-tap');
-const statPrestige=document.getElementById('stat-prestige');
-const upgradesList=document.getElementById('upgrades-list');
-const bulkSelect=document.getElementById('bulk-select');
-const themeSelect=document.getElementById('theme-select');
+let credits = 0, cps = 0, cpt = 1, total = 0;
+const coreBtn = document.getElementById('core-btn');
+const creditCount = document.getElementById('credit-count');
+const upgradesSection = document.getElementById('upgrades-section');
+const settingsSection = document.getElementById('settings-section');
+const upgradesList = document.getElementById('upgrades-list');
+const bulkSelect = document.getElementById('bulk-select');
+const themeSelect = document.getElementById('theme-select');
 
 // Example upgrades
-let upgrades=[
+let upgrades = [
   {name:'Auto Miner', cost:50, cps:1, owned:0},
   {name:'Quantum Drill', cost:250, cps:5, owned:0},
-  {name:'Nano Factory', cost:1000, cps:25, owned:0}
+  {name:'Nano Factory', cost:1000, cps:25, owned:0},
 ];
 
+// Render upgrades
 function renderUpgrades(){
   upgradesList.innerHTML='';
-  let bulk=parseInt(bulkSelect.value);
-  upgrades.forEach(u=>{
-    let canBuy=credits>=u.cost*bulk;
-    let row=document.createElement('div');
-    row.className='upg-row';
-    row.style.opacity=canBuy?1:0.4;
-    row.innerHTML=`<span>${u.name} (${u.owned})</span><span>${u.cost*bulk}💎</span>`;
-    row.onclick=()=>{
+  let bulk = parseInt(bulkSelect.value);
+  upgrades.forEach((u,i)=>{
+    let canBuy = credits >= u.cost*bulk;
+    let row = document.createElement('div');
+    row.className = 'upg-row';
+    row.style.opacity = canBuy?1:0.4;
+    row.innerHTML = `<span>${u.name} (${u.owned})</span><span>${u.cost*bulk}💎</span>`;
+    row.onclick = ()=>{
       if(credits>=u.cost*bulk){
         u.owned+=bulk;
         credits-=u.cost*bulk;
         cps+=u.cps*bulk;
-        updateStats();
         renderUpgrades();
+        updateCredits();
       }
-    };
+    }
     upgradesList.appendChild(row);
   });
 }
 
-function updateStats(){
-  creditCount.innerText=Math.floor(credits);
-  statCredits.innerText=Math.floor(credits);
-  statTotal.innerText=Math.floor(totalCredits);
-  statCPS.innerText=cps.toFixed(2);
-  statTap.innerText=cpt;
-  statPrestige.innerText=prestigeMult;
-}
+// Update credits
+function updateCredits(){ creditCount.innerText = Math.floor(credits); total+=0; }
 
-// Core tap
-coreBtn.addEventListener('click',()=>{
+// Core button tap
+coreBtn.addEventListener('click', ()=>{
   credits+=cpt;
-  totalCredits+=cpt;
-  updateStats();
+  updateCredits();
 });
 
-// Auto CPS
-setInterval(()=>{credits+=cps/10; totalCredits+=cps/10; updateStats();},100);
+// Auto CPS loop
+setInterval(()=>{
+  credits+=cps/10;
+  updateCredits();
+},100);
 
-// Collapsible tabs
+// Toggle collapsible
 document.querySelectorAll('.tab-header').forEach(header=>{
   header.addEventListener('click',()=>{
-    let parent=header.parentElement;
+    let parent = header.parentElement;
     parent.classList.toggle('open');
   });
 });
 
-// Bulk selection change
+// Bulk select change
 bulkSelect.addEventListener('change', renderUpgrades);
 
-// Theme change
-themeSelect.addEventListener('change',(e)=>{document.body.className=e.target.value;});
+// Theme select
+themeSelect.addEventListener('change',(e)=>{
+  document.body.className = e.target.value;
+});
 
 // Initial render
 renderUpgrades();
-updateStats();
+updateCredits();
 </script>
-
 </body>
 </html>
