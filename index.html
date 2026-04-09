@@ -7,136 +7,216 @@
 <title>NEXUS // IDLE</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#00f5ff">
+<meta name="theme-color" content="#00f5ff" id="theme-meta">
 <style>
+/* ── THEMES ─────────────────────────────────────────── */
 :root {
-  --cyan:#00f5ff; --cyan2:#00bcd4; --neon:#39ff14; --pink:#ff006e; --gold:#ffd60a; --orange:#ff6b00;
+  --c1:#00f5ff; --c2:#00bcd4; --c3:#39ff14; --c4:#ff006e; --c5:#ffd60a; --c6:#ff6b00;
   --dim:rgba(0,245,255,0.08); --border:rgba(0,245,255,0.18); --bg:#020810;
+  --grid-color:rgba(0,245,255,0.04);
+  --header-bg:rgba(2,8,16,0.88); --tab-bg:rgba(2,8,16,0.7);
+  --upg-bg:rgba(0,245,255,0.02); --upg-can-bg:rgba(0,245,255,0.05);
+  --upg-border:rgba(0,245,255,0.07); --upg-can-border:rgba(0,245,255,0.22);
+  --ppc-can-bg:rgba(255,107,0,0.04); --ppc-can-border:rgba(255,107,0,0.25);
+  --tap-pulse:rgba(0,245,255,0.07);
 }
+body[data-theme="void"] {
+  --c1:#b44fff; --c2:#8a2be2; --c3:#ff44cc; --c4:#ff006e; --c5:#ffd60a; --c6:#dd44ff;
+  --dim:rgba(180,79,255,0.08); --border:rgba(180,79,255,0.2); --bg:#080210;
+  --grid-color:rgba(180,79,255,0.04);
+  --header-bg:rgba(8,2,16,0.9); --tab-bg:rgba(8,2,16,0.7);
+  --upg-bg:rgba(180,79,255,0.02); --upg-can-bg:rgba(180,79,255,0.06);
+  --upg-border:rgba(180,79,255,0.08); --upg-can-border:rgba(180,79,255,0.25);
+  --ppc-can-bg:rgba(255,68,204,0.05); --ppc-can-border:rgba(255,68,204,0.28);
+  --tap-pulse:rgba(180,79,255,0.07);
+}
+body[data-theme="inferno"] {
+  --c1:#ff4400; --c2:#cc2200; --c3:#ffaa00; --c4:#ff006e; --c5:#ffd60a; --c6:#ff8800;
+  --dim:rgba(255,68,0,0.08); --border:rgba(255,68,0,0.2); --bg:#100200;
+  --grid-color:rgba(255,68,0,0.04);
+  --header-bg:rgba(16,2,0,0.9); --tab-bg:rgba(16,2,0,0.7);
+  --upg-bg:rgba(255,68,0,0.02); --upg-can-bg:rgba(255,68,0,0.06);
+  --upg-border:rgba(255,68,0,0.08); --upg-can-border:rgba(255,68,0,0.25);
+  --ppc-can-bg:rgba(255,170,0,0.05); --ppc-can-border:rgba(255,170,0,0.28);
+  --tap-pulse:rgba(255,68,0,0.08);
+}
+body[data-theme="matrix"] {
+  --c1:#39ff14; --c2:#00cc00; --c3:#00ff88; --c4:#ffff00; --c5:#ffd60a; --c6:#00ff44;
+  --dim:rgba(57,255,20,0.07); --border:rgba(57,255,20,0.18); --bg:#000a00;
+  --grid-color:rgba(57,255,20,0.04);
+  --header-bg:rgba(0,10,0,0.92); --tab-bg:rgba(0,10,0,0.7);
+  --upg-bg:rgba(57,255,20,0.02); --upg-can-bg:rgba(57,255,20,0.05);
+  --upg-border:rgba(57,255,20,0.07); --upg-can-border:rgba(57,255,20,0.22);
+  --ppc-can-bg:rgba(0,255,136,0.05); --ppc-can-border:rgba(0,255,136,0.28);
+  --tap-pulse:rgba(57,255,20,0.07);
+}
+body[data-theme="ice"] {
+  --c1:#88eeff; --c2:#44ccff; --c3:#ffffff; --c4:#aaddff; --c5:#ffd60a; --c6:#66bbff;
+  --dim:rgba(136,238,255,0.07); --border:rgba(136,238,255,0.2); --bg:#010c14;
+  --grid-color:rgba(136,238,255,0.035);
+  --header-bg:rgba(1,12,20,0.9); --tab-bg:rgba(1,12,20,0.7);
+  --upg-bg:rgba(136,238,255,0.02); --upg-can-bg:rgba(136,238,255,0.06);
+  --upg-border:rgba(136,238,255,0.08); --upg-can-border:rgba(136,238,255,0.25);
+  --ppc-can-bg:rgba(255,255,255,0.04); --ppc-can-border:rgba(255,255,255,0.22);
+  --tap-pulse:rgba(136,238,255,0.07);
+}
+
+/* ── BASE ────────────────────────────────────────────── */
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-body{background:var(--bg);min-height:100vh;font-family:'Share Tech Mono',monospace;color:#fff;overflow:hidden;position:fixed;width:100%;height:100%;}
-#grid-bg{position:fixed;inset:0;background-image:linear-gradient(rgba(0,245,255,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(0,245,255,0.04) 1px,transparent 1px);background-size:40px 40px;z-index:0;animation:gridScroll 20s linear infinite;}
+body{background:var(–bg);min-height:100vh;font-family:‘Share Tech Mono’,monospace;color:#fff;overflow:hidden;position:fixed;width:100%;height:100%;transition:background 0.3s;}
+#grid-bg{position:fixed;inset:0;background-image:linear-gradient(var(–grid-color) 1px,transparent 1px),linear-gradient(90deg,var(–grid-color) 1px,transparent 1px);background-size:40px 40px;z-index:0;animation:gridScroll 20s linear infinite;}
 @keyframes gridScroll{from{background-position:0 0;}to{background-position:0 40px;}}
 .corner{position:fixed;width:50px;height:50px;z-index:2;}
-.corner.tl{top:0;left:0;border-top:2px solid var(--cyan);border-left:2px solid var(--cyan);}
-.corner.tr{top:0;right:0;border-top:2px solid var(--cyan);border-right:2px solid var(--cyan);}
-.corner.bl{bottom:0;left:0;border-bottom:2px solid var(--cyan);border-left:2px solid var(--cyan);}
-.corner.br{bottom:0;right:0;border-bottom:2px solid var(--cyan);border-right:2px solid var(--cyan);}
+.corner.tl{top:0;left:0;border-top:2px solid var(–c1);border-left:2px solid var(–c1);}
+.corner.tr{top:0;right:0;border-top:2px solid var(–c1);border-right:2px solid var(–c1);}
+.corner.bl{bottom:0;left:0;border-bottom:2px solid var(–c1);border-left:2px solid var(–c1);}
+.corner.br{bottom:0;right:0;border-bottom:2px solid var(–c1);border-right:2px solid var(–c1);}
 #app{position:relative;z-index:1;display:flex;flex-direction:column;height:100vh;overflow:hidden;}
 
-/* HEADER */
-#header{padding:44px 16px 10px;border-bottom:1px solid var(–border);background:rgba(2,8,16,0.85);backdrop-filter:blur(10px);flex-shrink:0;}
-#sys-label{font-family:‘Orbitron’,monospace;font-size:8px;letter-spacing:4px;color:var(–cyan);opacity:0.45;margin-bottom:2px;}
-#credit-count{font-family:‘Orbitron’,monospace;font-size:clamp(26px,7vw,42px);font-weight:900;color:var(–cyan);text-shadow:0 0 20px var(–cyan),0 0 40px rgba(0,245,255,0.3);letter-spacing:2px;line-height:1;}
-#credit-unit{font-size:9px;letter-spacing:3px;color:rgba(0,245,255,0.35);margin-top:2px;}
+/* ── HEADER ──────────────────────────────────────────── */
+#header{padding:44px 16px 10px;border-bottom:1px solid var(–border);background:var(–header-bg);backdrop-filter:blur(10px);flex-shrink:0;}
+#sys-label{font-family:‘Orbitron’,monospace;font-size:8px;letter-spacing:4px;color:var(–c1);opacity:0.45;margin-bottom:2px;}
+#credit-count{font-family:‘Orbitron’,monospace;font-size:clamp(26px,7vw,42px);font-weight:900;color:var(–c1);text-shadow:0 0 20px var(–c1),0 0 40px var(–c1);letter-spacing:2px;line-height:1;}
+#credit-unit{font-size:9px;letter-spacing:3px;color:var(–c1);opacity:0.35;margin-top:2px;}
 .stats-row{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;}
 .stat-box{border:1px solid var(–border);background:var(–dim);padding:3px 9px;border-radius:3px;font-size:9px;color:rgba(255,255,255,0.35);position:relative;overflow:hidden;}
-.stat-box::before{content:’’;position:absolute;top:0;left:0;right:0;height:1px;background:var(–cyan);opacity:0.4;}
-.stat-box .val{font-family:‘Orbitron’,monospace;font-size:12px;font-weight:700;display:block;color:var(–cyan);}
-.stat-box.green .val{color:var(–neon);}
+.stat-box::before{content:’’;position:absolute;top:0;left:0;right:0;height:1px;background:var(–c1);opacity:0.4;}
+.stat-box .val{font-family:‘Orbitron’,monospace;font-size:12px;font-weight:700;display:block;color:var(–c1);}
+.stat-box.green .val{color:var(–c3);}
 .stat-box.green{border-color:rgba(57,255,20,0.2);background:rgba(57,255,20,0.05);}
-.stat-box.green::before{background:var(–neon);}
-.stat-box.orange .val{color:var(–orange);}
+.stat-box.green::before{background:var(–c3);}
+.stat-box.orange .val{color:var(–c6);}
 .stat-box.orange{border-color:rgba(255,107,0,0.2);background:rgba(255,107,0,0.05);}
-.stat-box.orange::before{background:var(–orange);}
-.stat-box.pink .val{color:var(–pink);}
-.stat-box.pink{border-color:rgba(255,0,110,0.2);background:rgba(255,0,110,0.05);}
-.stat-box.pink::before{background:var(–pink);}
-#prestige-btn{display:none;width:100%;margin-top:7px;padding:7px;border:1px solid var(–pink);background:rgba(255,0,110,0.1);color:var(–pink);font-family:‘Orbitron’,monospace;font-size:10px;font-weight:700;letter-spacing:2px;cursor:pointer;text-shadow:0 0 10px var(–pink);box-shadow:0 0 15px rgba(255,0,110,0.2);border-radius:3px;}
+.stat-box.orange::before{background:var(–c6);}
+#prestige-btn{display:none;width:100%;margin-top:7px;padding:7px;border:1px solid var(–c4);background:rgba(255,0,110,0.1);color:var(–c4);font-family:‘Orbitron’,monospace;font-size:10px;font-weight:700;letter-spacing:2px;cursor:pointer;border-radius:3px;}
 #prestige-btn:active{background:rgba(255,0,110,0.25);}
 
-/* CORE */
-#core-area{display:flex;justify-content:center;align-items:center;height:185px;flex-shrink:0;position:relative;}
-.ring{position:absolute;border-radius:50%;border:1px solid transparent;animation:spin var(–spd) linear infinite;}
-.ring1{width:155px;height:155px;border-top-color:var(–cyan);border-right-color:rgba(0,245,255,0.15);–spd:4s;}
-.ring2{width:130px;height:130px;border-bottom-color:var(–neon);border-left-color:rgba(57,255,20,0.15);–spd:6s;animation-direction:reverse;}
-.ring3{width:178px;height:178px;border-top-color:rgba(0,245,255,0.08);border-right-color:rgba(0,245,255,0.2);border-bottom-color:rgba(0,245,255,0.08);–spd:12s;}
+/* ── TAP ZONE ────────────────────────────────────────── */
+#tap-zone{flex:0 0 190px;position:relative;overflow:hidden;cursor:pointer;user-select:none;-webkit-user-select:none;display:flex;align-items:center;justify-content:center;border-bottom:1px solid var(–border);transition:background 0.08s;}
+#tap-zone.tapped{background:var(–tap-pulse);}
+.ring{position:absolute;border-radius:50%;border:1px solid transparent;animation:spin var(–spd) linear infinite;pointer-events:none;}
+.ring1{width:150px;height:150px;border-top-color:var(–c1);border-right-color:var(–c1);opacity:0.35;–spd:4s;}
+.ring2{width:122px;height:122px;border-bottom-color:var(–c3);border-left-color:var(–c3);opacity:0.25;–spd:6s;animation-direction:reverse;}
+.ring3{width:176px;height:176px;border-top-color:var(–c1);opacity:0.07;–spd:12s;}
 @keyframes spin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
-#core-btn{width:100px;height:100px;border-radius:50%;border:2px solid var(–cyan);background:radial-gradient(circle at 40% 35%,rgba(0,245,255,0.2),rgba(0,245,255,0.04));box-shadow:0 0 25px rgba(0,245,255,0.35),0 0 50px rgba(0,245,255,0.12),inset 0 0 25px rgba(0,245,255,0.08);cursor:pointer;position:relative;z-index:5;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;user-select:none;-webkit-user-select:none;transition:transform 0.1s,box-shadow 0.1s;}
-#core-btn:active{transform:scale(0.88);box-shadow:0 0 12px rgba(0,245,255,0.25);}
-#core-icon{font-size:30px;filter:drop-shadow(0 0 8px var(–cyan));}
-#core-label{font-family:‘Orbitron’,monospace;font-size:6px;letter-spacing:2px;color:var(–cyan);opacity:0.6;}
-#idle-bar-wrap{position:absolute;bottom:6px;left:50%;transform:translateX(-50%);width:180px;text-align:center;}
-#idle-label{font-size:7px;letter-spacing:2px;color:rgba(0,245,255,0.35);margin-bottom:2px;}
-#idle-bar-bg{width:100%;height:2px;background:rgba(0,245,255,0.08);border-radius:1px;overflow:hidden;}
-#idle-bar{height:100%;width:0%;background:linear-gradient(90deg,var(–cyan2),var(–cyan));box-shadow:0 0 4px var(–cyan);border-radius:1px;}
-.float-num{position:fixed;font-family:‘Orbitron’,monospace;font-size:13px;font-weight:700;color:var(–cyan);text-shadow:0 0 8px var(–cyan);pointer-events:none;z-index:999;animation:floatUp 1s ease-out forwards;}
-@keyframes floatUp{0%{opacity:1;transform:translateY(0);}100%{opacity:0;transform:translateY(-65px);}}
+#core-visual{width:94px;height:94px;border-radius:50%;border:2px solid var(–c1);background:radial-gradient(circle at 40% 35%,var(–dim),transparent);box-shadow:0 0 22px var(–c1),0 0 44px var(–c1),inset 0 0 18px var(–dim);position:relative;z-index:2;pointer-events:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;transition:transform 0.08s,box-shadow 0.08s;}
+#tap-zone.tapped #core-visual{transform:scale(0.88);box-shadow:0 0 8px var(–c1),inset 0 0 8px var(–dim);}
+#core-icon{font-size:28px;filter:drop-shadow(0 0 8px var(–c1));pointer-events:none;}
+#core-label{font-family:‘Orbitron’,monospace;font-size:6px;letter-spacing:2px;color:var(–c1);opacity:0.55;pointer-events:none;}
+#tap-hint{position:absolute;bottom:7px;left:0;right:0;text-align:center;font-size:7px;letter-spacing:3px;color:var(–c1);opacity:0.2;pointer-events:none;}
+#idle-bar-wrap{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);width:155px;text-align:center;pointer-events:none;}
+#idle-label{font-size:7px;letter-spacing:2px;color:var(–c1);opacity:0.3;margin-bottom:2px;}
+#idle-bar-bg{width:100%;height:2px;background:rgba(255,255,255,0.05);border-radius:1px;overflow:hidden;}
+#idle-bar{height:100%;width:0%;background:linear-gradient(90deg,var(–c2),var(–c1));box-shadow:0 0 4px var(–c1);border-radius:1px;transition:width 0.1s linear;}
+.float-num{position:fixed;font-family:‘Orbitron’,monospace;font-size:14px;font-weight:700;pointer-events:none;z-index:999;animation:floatUp 0.9s ease-out forwards;transform:translateX(-50%);}
+@keyframes floatUp{0%{opacity:1;transform:translateX(-50%) translateY(0);}100%{opacity:0;transform:translateX(-50%) translateY(-72px);}}
 
-/* OFFLINE TOAST */
-#offline-toast{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:1000;background:rgba(2,8,16,0.97);border:1px solid var(–cyan);border-radius:6px;padding:20px 24px;text-align:center;min-width:240px;box-shadow:0 0 40px rgba(0,245,255,0.2);}
-#offline-toast h3{font-family:‘Orbitron’,monospace;font-size:11px;letter-spacing:3px;color:var(–cyan);margin-bottom:8px;}
-#offline-earned{font-family:‘Orbitron’,monospace;font-size:26px;font-weight:900;color:var(–neon);text-shadow:0 0 15px var(–neon);}
+/* ── OFFLINE TOAST ───────────────────────────────────── */
+#offline-toast{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:2000;background:var(–bg);border:1px solid var(–c1);border-radius:6px;padding:20px 24px;text-align:center;min-width:240px;box-shadow:0 0 40px var(–c1);}
+#offline-toast h3{font-family:‘Orbitron’,monospace;font-size:11px;letter-spacing:3px;color:var(–c1);margin-bottom:8px;}
+#offline-earned{font-family:‘Orbitron’,monospace;font-size:26px;font-weight:900;color:var(–c3);text-shadow:0 0 15px var(–c3);}
 #offline-sub{font-size:9px;color:rgba(255,255,255,0.35);margin-top:4px;letter-spacing:1px;}
-#offline-ok{margin-top:14px;padding:7px 20px;border:1px solid var(–cyan);background:rgba(0,245,255,0.08);color:var(–cyan);font-family:‘Orbitron’,monospace;font-size:10px;letter-spacing:2px;cursor:pointer;border-radius:3px;width:100%;}
-#offline-ok:active{background:rgba(0,245,255,0.2);}
+#offline-ok{margin-top:14px;padding:7px 20px;border:1px solid var(–c1);background:var(–dim);color:var(–c1);font-family:‘Orbitron’,monospace;font-size:10px;letter-spacing:2px;cursor:pointer;border-radius:3px;width:100%;}
 
-/* UPGRADE MENU */
-#upgrades-section{flex:1;display:flex;flex-direction:column;overflow:hidden;border-top:1px solid var(–border);}
+/* ── BOTTOM PANEL ────────────────────────────────────── */
+#bottom-panel{flex:1;display:flex;flex-direction:column;overflow:hidden;}
 
 /* TAB BAR */
-#tab-bar{display:flex;flex-shrink:0;border-bottom:1px solid var(–border);background:rgba(2,8,16,0.7);}
-.tab-btn{flex:1;padding:9px 4px;font-family:‘Orbitron’,monospace;font-size:8px;letter-spacing:2px;color:rgba(255,255,255,0.3);background:transparent;border:none;border-bottom:2px solid transparent;cursor:pointer;transition:all 0.2s;display:flex;flex-direction:column;align-items:center;gap:3px;}
-.tab-btn span.tab-icon{font-size:14px;}
-.tab-btn.active{color:var(–cyan);border-bottom-color:var(–cyan);background:rgba(0,245,255,0.04);text-shadow:0 0 8px var(–cyan);}
-.tab-btn.ppc.active{color:var(–orange);border-bottom-color:var(–orange);background:rgba(255,107,0,0.04);text-shadow:0 0 8px var(–orange);}
-.tab-btn .tab-badge{font-family:‘Orbitron’,monospace;font-size:7px;background:rgba(0,245,255,0.15);border:1px solid rgba(0,245,255,0.3);color:var(–cyan);padding:1px 5px;border-radius:10px;}
-.tab-btn.ppc .tab-badge{background:rgba(255,107,0,0.15);border-color:rgba(255,107,0,0.3);color:var(–orange);}
+#tab-bar{display:flex;flex-shrink:0;border-bottom:1px solid var(–border);background:var(–tab-bg);}
+.tab-btn{flex:1;padding:8px 2px 7px;font-family:‘Orbitron’,monospace;font-size:7px;letter-spacing:1px;color:rgba(255,255,255,0.27);background:transparent;border:none;border-bottom:2px solid transparent;cursor:pointer;transition:all 0.2s;display:flex;flex-direction:column;align-items:center;gap:2px;}
+.tab-btn .tab-icon{font-size:13px;}
+.tab-btn.active{color:var(–c1);border-bottom-color:var(–c1);background:var(–dim);}
+.tab-btn.t-ppc.active{color:var(–c6);border-bottom-color:var(–c6);background:rgba(255,107,0,0.05);}
+.tab-btn.t-settings.active{color:var(–c5);border-bottom-color:var(–c5);background:rgba(255,214,10,0.04);}
+.tab-badge{font-family:‘Orbitron’,monospace;font-size:7px;background:var(–dim);border:1px solid var(–border);color:var(–c1);padding:1px 5px;border-radius:10px;}
+.tab-btn.t-ppc .tab-badge{color:var(–c6);border-color:rgba(255,107,0,0.3);background:rgba(255,107,0,0.1);}
 
+/* BUY BAR */
+#buy-bar{display:flex;align-items:center;gap:5px;padding:5px 10px;border-bottom:1px solid var(–border);background:var(–tab-bg);flex-shrink:0;}
+#buy-label{font-family:‘Orbitron’,monospace;font-size:7px;letter-spacing:2px;color:rgba(255,255,255,0.28);flex-shrink:0;}
+.buy-btn{font-family:‘Orbitron’,monospace;font-size:8px;padding:3px 8px;border:1px solid var(–border);background:transparent;color:rgba(255,255,255,0.28);cursor:pointer;border-radius:2px;transition:all 0.15s;flex:1;}
+.buy-btn.active{border-color:var(–c1);color:var(–c1);background:var(–dim);}
+.buy-btn:active{opacity:0.6;}
+
+/* UPGRADE LIST */
 #upgrades-list{overflow-y:auto;-webkit-overflow-scrolling:touch;padding:6px 10px 40px;display:flex;flex-direction:column;gap:5px;}
 #upgrades-list::-webkit-scrollbar{display:none;}
-
-/* UPGRADE ROWS */
-.upg-row{display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid rgba(0,245,255,0.07);background:rgba(0,245,255,0.02);border-radius:3px;cursor:pointer;transition:all 0.15s;position:relative;overflow:hidden;}
-.upg-row::before{content:’’;position:absolute;left:0;top:0;bottom:0;width:2px;background:var(–cyan);opacity:0;transition:opacity 0.15s;}
-.upg-row.can{border-color:rgba(0,245,255,0.22);background:rgba(0,245,255,0.05);}
+.upg-row{display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid var(–upg-border);background:var(–upg-bg);border-radius:3px;cursor:pointer;transition:all 0.15s;position:relative;overflow:hidden;}
+.upg-row::before{content:’’;position:absolute;left:0;top:0;bottom:0;width:2px;background:var(–c1);opacity:0;transition:opacity 0.15s;}
+.upg-row.can{border-color:var(–upg-can-border);background:var(–upg-can-bg);}
 .upg-row.can::before{opacity:1;}
-.upg-row.cant{opacity:0.4;}
+.upg-row.cant{opacity:0.36;}
 .upg-row:active{transform:scale(0.98);}
-
-/* PPC rows orange accent */
-.upg-row.ppc-row::before{background:var(–orange);}
-.upg-row.ppc-row.can{border-color:rgba(255,107,0,0.25);background:rgba(255,107,0,0.04);}
-
-.upg-icon{font-size:20px;width:38px;height:38px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(0,245,255,0.08);border-radius:3px;background:rgba(0,245,255,0.03);flex-shrink:0;}
-.upg-row.can .upg-icon{border-color:rgba(0,245,255,0.25);background:rgba(0,245,255,0.08);}
-.upg-row.ppc-row.can .upg-icon{border-color:rgba(255,107,0,0.3);background:rgba(255,107,0,0.08);}
+.upg-row.ppc-row::before{background:var(–c6);}
+.upg-row.ppc-row.can{border-color:var(–ppc-can-border);background:var(–ppc-can-bg);}
+.upg-icon{font-size:19px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;border:1px solid var(–upg-border);border-radius:3px;background:var(–upg-bg);flex-shrink:0;}
+.upg-row.can .upg-icon{border-color:var(–upg-can-border);background:var(–upg-can-bg);}
+.upg-row.ppc-row.can .upg-icon{border-color:var(–ppc-can-border);background:var(–ppc-can-bg);}
 .upg-info{flex:1;min-width:0;}
 .upg-top{display:flex;align-items:center;justify-content:space-between;}
-.upg-name{font-family:‘Orbitron’,monospace;font-size:10px;font-weight:700;color:rgba(255,255,255,0.35);transition:color 0.15s;}
-.upg-row.can .upg-name{color:#fff;text-shadow:0 0 6px rgba(0,245,255,0.35);}
-.upg-row.ppc-row.can .upg-name{text-shadow:0 0 6px rgba(255,107,0,0.35);}
-.upg-owned{font-family:‘Orbitron’,monospace;font-size:9px;color:var(–cyan);background:rgba(0,245,255,0.1);border:1px solid rgba(0,245,255,0.2);padding:1px 5px;border-radius:2px;display:none;}
-.upg-row.ppc-row .upg-owned{color:var(–orange);background:rgba(255,107,0,0.1);border-color:rgba(255,107,0,0.2);}
-.upg-desc{font-size:8px;color:rgba(255,255,255,0.22);margin-top:1px;letter-spacing:0.5px;}
-.upg-bottom{display:flex;align-items:center;gap:8px;margin-top:2px;}
-.upg-cost{font-size:10px;color:rgba(0,245,255,0.3);transition:color 0.15s;}
-.upg-row.can .upg-cost{color:var(–gold);text-shadow:0 0 5px rgba(255,214,10,0.35);}
-.upg-prod{font-size:9px;color:var(–neon);opacity:0.7;display:none;}
-.upg-row.ppc-row .upg-prod{color:var(–orange);}
+.upg-name{font-family:‘Orbitron’,monospace;font-size:9px;font-weight:700;color:rgba(255,255,255,0.3);}
+.upg-row.can .upg-name{color:#fff;}
+.upg-owned{font-family:‘Orbitron’,monospace;font-size:9px;color:var(–c1);background:var(–dim);border:1px solid var(–border);padding:1px 5px;border-radius:2px;display:none;}
+.upg-row.ppc-row .upg-owned{color:var(–c6);background:rgba(255,107,0,0.08);border-color:rgba(255,107,0,0.2);}
+.upg-desc{font-size:8px;color:rgba(255,255,255,0.2);margin-top:1px;letter-spacing:0.5px;}
+.upg-bottom{display:flex;align-items:center;justify-content:space-between;margin-top:3px;}
+.upg-cost{font-size:10px;color:rgba(255,255,255,0.25);}
+.upg-row.can .upg-cost{color:var(–c5);}
+.upg-prod{font-size:8px;color:var(–c3);opacity:0.7;}
+.upg-row.ppc-row .upg-prod{color:var(–c6);}
+
+/* ── SETTINGS PANEL ──────────────────────────────────── */
+#settings-panel{display:none;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:10px 12px 50px;flex-direction:column;gap:0;}
+#settings-panel.vis{display:flex;}
+#settings-panel::-webkit-scrollbar{display:none;}
+.s-section{margin-bottom:18px;}
+.s-title{font-family:‘Orbitron’,monospace;font-size:8px;letter-spacing:3px;color:var(–c5);opacity:0.65;margin-bottom:9px;padding-bottom:5px;border-bottom:1px solid var(–border);}
+
+/* Theme swatches */
+.theme-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:4px;}
+.t-swatch{border-radius:4px;padding:7px 2px 5px;border:2px solid rgba(255,255,255,0.06);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;transition:all 0.18s;background:rgba(255,255,255,0.02);}
+.t-swatch.active{background:var(–dim);}
+.t-dot{width:22px;height:22px;border-radius:50%;}
+.t-name{font-family:‘Orbitron’,monospace;font-size:6px;letter-spacing:1px;color:rgba(255,255,255,0.35);text-align:center;}
+.t-swatch.active .t-name{color:var(–c1);}
+
+/* Setting rows */
+.s-row{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid rgba(255,255,255,0.04);}
+.s-left{flex:1;}
+.s-lbl{font-size:9px;color:rgba(255,255,255,0.5);letter-spacing:1px;}
+.s-sub{font-size:7px;color:rgba(255,255,255,0.2);margin-top:2px;}
+.toggle{width:36px;height:20px;background:rgba(255,255,255,0.1);border-radius:10px;position:relative;cursor:pointer;border:1px solid var(–border);transition:background 0.2s;flex-shrink:0;}
+.toggle.on{background:var(–c1);}
+.toggle::after{content:’’;position:absolute;width:14px;height:14px;background:#fff;border-radius:50%;top:2px;left:2px;transition:left 0.18s;box-shadow:0 1px 3px rgba(0,0,0,0.4);}
+.toggle.on::after{left:18px;}
+.d-btn{width:100%;padding:9px;border:1px solid var(–c4);background:rgba(255,0,110,0.07);color:var(–c4);font-family:‘Orbitron’,monospace;font-size:9px;letter-spacing:2px;cursor:pointer;border-radius:3px;margin-top:5px;}
+.d-btn:active{background:rgba(255,0,110,0.2);}
+.d-btn.warn{border-color:rgba(255,107,0,0.5);color:var(–c6);background:rgba(255,107,0,0.05);}
+.info-txt{font-size:8px;color:rgba(255,255,255,0.2);line-height:1.7;margin-top:3px;}
+.s-kv{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.04);}
+.s-kv-lbl{font-size:9px;color:rgba(255,255,255,0.4);}
+.s-kv-val{font-size:9px;color:var(–c1);font-family:‘Orbitron’,monospace;}
 
 #particles{position:fixed;inset:0;pointer-events:none;z-index:500;}
 </style>
 
 </head>
-<body>
+<body data-theme="nexus">
 <div id="grid-bg"></div>
 <div class="corner tl"></div><div class="corner tr"></div>
 <div class="corner bl"></div><div class="corner br"></div>
 <canvas id="particles"></canvas>
 
-<!-- OFFLINE EARNINGS TOAST -->
-
 <div id="offline-toast">
   <h3>// OFFLINE INCOME //</h3>
   <div id="offline-earned">0</div>
-  <div id="offline-sub">CREDITS COLLECTED WHILE AWAY</div>
+  <div id="offline-sub"></div>
   <button id="offline-ok">COLLECT</button>
 </div>
 
 <div id="app">
   <div id="header">
-    <div id="sys-label">NEXUS CREDIT SYSTEM v2.4</div>
+    <div id="sys-label">NEXUS CREDIT SYSTEM v2.5</div>
     <div id="credit-count">0</div>
     <div id="credit-unit">CREDITS</div>
     <div class="stats-row">
@@ -148,360 +228,500 @@ body{background:var(--bg);min-height:100vh;font-family:'Share Tech Mono',monospa
     <button id="prestige-btn">[ SYSTEM RESET — x2 PERMANENT BOOST ]</button>
   </div>
 
-  <div id="core-area">
+  <!-- FULL-WIDTH TAP ZONE — no button element -->
+
+  <div id="tap-zone">
     <div class="ring ring3"></div>
     <div class="ring ring1"></div>
     <div class="ring ring2"></div>
-    <button id="core-btn">
+    <div id="core-visual">
       <div id="core-icon">⚡</div>
-      <div id="core-label">GENERATE</div>
-    </button>
+      <div id="core-label">TAP</div>
+    </div>
     <div id="idle-bar-wrap">
       <div id="idle-label">PASSIVE INCOME</div>
       <div id="idle-bar-bg"><div id="idle-bar"></div></div>
     </div>
+    <div id="tap-hint">TAP ANYWHERE</div>
   </div>
 
-  <div id="upgrades-section">
+  <div id="bottom-panel">
     <div id="tab-bar">
       <button class="tab-btn active" id="tab-pps" onclick="switchTab('pps')">
-        <span class="tab-icon">⚙️</span>
-        <span>PASSIVE</span>
+        <span class="tab-icon">⚙️</span><span>PASSIVE</span>
         <span class="tab-badge" id="badge-pps">0</span>
       </button>
-      <button class="tab-btn ppc" id="tab-ppc" onclick="switchTab('ppc')">
-        <span class="tab-icon">👆</span>
-        <span>CLICKER</span>
+      <button class="tab-btn t-ppc" id="tab-ppc" onclick="switchTab('ppc')">
+        <span class="tab-icon">👆</span><span>CLICKER</span>
         <span class="tab-badge" id="badge-ppc">0</span>
       </button>
+      <button class="tab-btn t-settings" id="tab-settings" onclick="switchTab('settings')">
+        <span class="tab-icon">◈</span><span>SETTINGS</span>
+        <span class="tab-badge" style="visibility:hidden">·</span>
+      </button>
     </div>
-    <div id="upgrades-list"></div>
+
+```
+<div id="buy-bar">
+  <span id="buy-label">BUY</span>
+  <button class="buy-btn active" onclick="setBuy(1)">×1</button>
+  <button class="buy-btn" onclick="setBuy(10)">×10</button>
+  <button class="buy-btn" onclick="setBuy(25)">×25</button>
+  <button class="buy-btn" onclick="setBuy(100)">×100</button>
+  <button class="buy-btn" onclick="setBuy(0)">MAX</button>
+</div>
+
+<div id="upgrades-list"></div>
+
+<div id="settings-panel">
+  <!-- THEME -->
+  <div class="s-section">
+    <div class="s-title">// THEME</div>
+    <div class="theme-grid" id="theme-grid"></div>
+  </div>
+  <!-- DISPLAY -->
+  <div class="s-section">
+    <div class="s-title">// DISPLAY</div>
+    <div class="s-row">
+      <div class="s-left"><div class="s-lbl">PARTICLE EFFECTS</div><div class="s-sub">Sparks on tap &amp; purchase</div></div>
+      <div class="toggle on" id="tog-particles" onclick="tog('particles')"></div>
+    </div>
+    <div class="s-row">
+      <div class="s-left"><div class="s-lbl">FLOATING NUMBERS</div><div class="s-sub">+Credits popup on tap</div></div>
+      <div class="toggle on" id="tog-floats" onclick="tog('floats')"></div>
+    </div>
+    <div class="s-row">
+      <div class="s-left"><div class="s-lbl">GRID ANIMATION</div><div class="s-sub">Scrolling background grid</div></div>
+      <div class="toggle on" id="tog-grid" onclick="tog('grid')"></div>
+    </div>
+    <div class="s-row">
+      <div class="s-left"><div class="s-lbl">RING ANIMATIONS</div><div class="s-sub">Spinning decorative rings</div></div>
+      <div class="toggle on" id="tog-rings" onclick="tog('rings')"></div>
+    </div>
+  </div>
+  <!-- GAME -->
+  <div class="s-section">
+    <div class="s-title">// GAME</div>
+    <div class="s-row">
+      <div class="s-left"><div class="s-lbl">OFFLINE EARNINGS</div><div class="s-sub">Earn 50% CPS while away</div></div>
+      <div class="toggle on" id="tog-offline" onclick="tog('offline')"></div>
+    </div>
+    <div class="s-row">
+      <div class="s-left"><div class="s-lbl">PRESTIGE CONFIRM</div><div class="s-sub">Ask before resetting</div></div>
+      <div class="toggle on" id="tog-pconf" onclick="tog('pconf')"></div>
+    </div>
+  </div>
+  <!-- SAVE -->
+  <div class="s-section">
+    <div class="s-title">// SAVE DATA</div>
+    <div class="s-kv"><span class="s-kv-lbl">LAST SAVED</span><span class="s-kv-val" id="save-lbl">—</span></div>
+    <div class="s-kv"><span class="s-kv-lbl">TOTAL EARNED</span><span class="s-kv-val" id="stat-total">0</span></div>
+    <div class="s-kv"><span class="s-kv-lbl">PRESTIGES</span><span class="s-kv-val" id="stat-prestige">0</span></div>
+    <button class="d-btn" style="border-color:var(--c1);color:var(--c1);background:var(--dim);" onclick="manualSave()">[ SAVE NOW ]</button>
+    <button class="d-btn warn" style="margin-top:6px;" onclick="exportSave()">[ EXPORT SAVE CODE ]</button>
+    <button class="d-btn warn" style="margin-top:4px;" onclick="importSave()">[ IMPORT SAVE CODE ]</button>
+    <button class="d-btn" style="margin-top:12px;" onclick="hardReset()">[ WIPE ALL DATA ]</button>
+  </div>
+  <!-- ABOUT -->
+  <div class="s-section">
+    <div class="s-title">// ABOUT</div>
+    <div class="info-txt">NEXUS // IDLE v2.5<br>Tap anywhere to generate credits.<br>Buy upgrades to earn passively.<br>Prestige at 1M credits for a permanent ×2 multiplier.<br>Progress saves automatically.</div>
+  </div>
+</div>
+```
+
   </div>
 </div>
 
 <script>
-// ── SERVICE WORKER ─────────────────────────────────────────────
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/service-worker.js').catch(() => {});
-}
+// ── SERVICE WORKER ─────────────────────────────────────
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('/service-worker.js').catch(()=>{});
 
-// ── UPGRADE DEFINITIONS ─────────────────────────────────────────────
-const PPS_UPGRADES = [
-  {id:'pps0',name:'PROBE',desc:'Automated micro-collector',baseCost:10,baseProd:0.1,emoji:'🛸',owned:0},
-  {id:'pps1',name:'HARVESTER',desc:'Energy field extractor',baseCost:120,baseProd:0.6,emoji:'⚙️',owned:0},
-  {id:'pps2',name:'REACTOR',desc:'Fusion core output',baseCost:1300,baseProd:5,emoji:'⚛️',owned:0},
-  {id:'pps3',name:'NEXUS NODE',desc:'Grid synchronisation array',baseCost:14000,baseProd:35,emoji:'🔷',owned:0},
-  {id:'pps4',name:'ORBITAL',desc:'Space-based collection station',baseCost:150000,baseProd:250,emoji:'🛰️',owned:0},
-  {id:'pps5',name:'DYSON RING',desc:'Stellar energy capture',baseCost:2000000,baseProd:2000,emoji:'🌟',owned:0},
-  {id:'pps6',name:'WORMHOLE',desc:'Cross-dimensional siphon',baseCost:25000000,baseProd:12000,emoji:'🌀',owned:0},
-  {id:'pps7',name:'SINGULARITY',desc:'Reality-bending accumulator',baseCost:400000000,baseProd:80000,emoji:'🕳️',owned:0}
+// ── THEMES ─────────────────────────────────────────────
+const THEMES = [
+  {id:'nexus',   name:'NEXUS',  dot:'#00f5ff', accent:'rgba(0,245,255,0.5)',   meta:'#00f5ff'},
+  {id:'void',    name:'VOID',   dot:'#b44fff', accent:'rgba(180,79,255,0.5)',  meta:'#b44fff'},
+  {id:'inferno', name:'FIRE',   dot:'#ff4400', accent:'rgba(255,68,0,0.5)',    meta:'#ff4400'},
+  {id:'matrix',  name:'MATRIX', dot:'#39ff14', accent:'rgba(57,255,20,0.5)',   meta:'#39ff14'},
+  {id:'ice',     name:'ICE',    dot:'#88eeff', accent:'rgba(136,238,255,0.5)', meta:'#88eeff'},
 ];
 
-const PPC_UPGRADES = [
-  {id:'ppc0',name:'NEURAL TAP',desc:'Finger-to-credit neural link',baseCost:50,baseProd:1,emoji:'🧠',owned:0},
-  {id:'ppc1',name:'CYBER GLOVE',desc:'Haptic amplifier mk.I',baseCost:500,baseProd:5,emoji:'🦾',owned:0},
-  {id:'ppc2',name:'PULSE DRIVER',desc:'Electromagnetic tap boost',baseCost:5000,baseProd:25,emoji:'⚡',owned:0},
-  {id:'ppc3',name:'QUANTUM FINGER',desc:'Probability click collapse',baseCost:60000,baseProd:150,emoji:'🌐',owned:0},
-  {id:'ppc4',name:'DARK TOUCH',desc:'Dark matter interaction layer',baseCost:750000,baseProd:1000,emoji:'🖤',owned:0},
-  {id:'ppc5',name:'GOD CLICK',desc:'Omnipotent tap force',baseCost:10000000,baseProd:8000,emoji:'✨',owned:0},
+// ── SETTINGS ───────────────────────────────────────────
+const SD = {theme:'nexus',particles:true,floats:true,grid:true,rings:true,offline:true,pconf:true};
+let S = {...SD};
+
+// ── UPGRADES ───────────────────────────────────────────
+const PPS = [
+  {id:'pps0',name:'PROBE',       desc:'Automated micro-collector',       baseCost:10,       baseProd:0.1,   emoji:'🛸',owned:0},
+  {id:'pps1',name:'HARVESTER',   desc:'Energy field extractor',          baseCost:120,      baseProd:0.6,   emoji:'⚙️',owned:0},
+  {id:'pps2',name:'REACTOR',     desc:'Fusion core output',              baseCost:1300,     baseProd:5,     emoji:'⚛️',owned:0},
+  {id:'pps3',name:'NEXUS NODE',  desc:'Grid synchronisation array',      baseCost:14000,    baseProd:35,    emoji:'🔷',owned:0},
+  {id:'pps4',name:'ORBITAL',     desc:'Space-based collection station',  baseCost:150000,   baseProd:250,   emoji:'🛰️',owned:0},
+  {id:'pps5',name:'DYSON RING',  desc:'Stellar energy capture',          baseCost:2000000,  baseProd:2000,  emoji:'🌟',owned:0},
+  {id:'pps6',name:'WORMHOLE',    desc:'Cross-dimensional siphon',        baseCost:25000000, baseProd:12000, emoji:'🌀',owned:0},
+  {id:'pps7',name:'SINGULARITY', desc:'Reality-bending accumulator',     baseCost:400000000,baseProd:80000, emoji:'🕳️',owned:0},
+];
+const PPC = [
+  {id:'ppc0',name:'NEURAL TAP',     desc:'Finger-to-credit neural link',    baseCost:50,      baseProd:1,    emoji:'🧠',owned:0},
+  {id:'ppc1',name:'CYBER GLOVE',    desc:'Haptic amplifier mk.I',           baseCost:500,     baseProd:5,    emoji:'🦾',owned:0},
+  {id:'ppc2',name:'PULSE DRIVER',   desc:'Electromagnetic tap boost',       baseCost:5000,    baseProd:25,   emoji:'⚡',owned:0},
+  {id:'ppc3',name:'QUANTUM FINGER', desc:'Probability click collapse',      baseCost:60000,   baseProd:150,  emoji:'🌐',owned:0},
+  {id:'ppc4',name:'DARK TOUCH',     desc:'Dark matter interaction layer',   baseCost:750000,  baseProd:1000, emoji:'🖤',owned:0},
+  {id:'ppc5',name:'GOD CLICK',      desc:'Omnipotent tap force',            baseCost:10000000,baseProd:8000, emoji:'✨',owned:0},
 ];
 
-// ── STATE ─────────────────────────────────────────────
-const DEFAULT_STATE = {
-  coins: 0,
-  totalCoins: 0,
-  prestigeMult: 1,
-  prestigeCount: 0,
-  lastSeen: Date.now(),
-  ppsUpgrades: PPS_UPGRADES.map(u => ({id:u.id, owned:0})),
-  ppcUpgrades: PPC_UPGRADES.map(u => ({id:u.id, owned:0}))
-};
-
-let G = JSON.parse(JSON.stringify(DEFAULT_STATE));
+// ── GAME STATE ─────────────────────────────────────────
+let G = {coins:0, totalCoins:0, prestigeMult:1, prestigeCount:0, lastSeen:Date.now()};
 let activeTab = 'pps';
+let buyAmt    = 1;  // 0 = MAX
+let lastSaved = null;
 
-// ── SAVE / LOAD ─────────────────────────────────────────────
+// ── SAVE / LOAD ────────────────────────────────────────
 function saveGame() {
-  const saveData = {
-    coins: G.coins,
-    totalCoins: G.totalCoins,
-    prestigeMult: G.prestigeMult,
-    prestigeCount: G.prestigeCount,
-    lastSeen: Date.now(),
-    ppsUpgrades: PPS_UPGRADES.map(u => ({id:u.id, owned:u.owned})),
-    ppcUpgrades: PPC_UPGRADES.map(u => ({id:u.id, owned:u.owned}))
+  const d = {
+    ...G, lastSeen:Date.now(),
+    pps: PPS.map(u=>({id:u.id,owned:u.owned})),
+    ppc: PPC.map(u=>({id:u.id,owned:u.owned})),
+    settings: S,
   };
-  try { localStorage.setItem('nexus_save', JSON.stringify(saveData)); } catch(e) {}
+  try { localStorage.setItem('nexus_v3', JSON.stringify(d)); } catch(e){}
+  lastSaved = Date.now();
+  updSaveLbl();
 }
 
 function loadGame() {
   try {
-    const raw = localStorage.getItem('nexus_save');
+    const raw = localStorage.getItem('nexus_v3') || localStorage.getItem('nexus_save');
     if (!raw) return;
-    const saved = JSON.parse(raw);
-    G.coins = saved.coins || 0;
-    G.totalCoins = saved.totalCoins || 0;
-    G.prestigeMult = saved.prestigeMult || 1;
-    G.prestigeCount = saved.prestigeCount || 0;
-    G.lastSeen = saved.lastSeen || Date.now();
+    const d = JSON.parse(raw);
+    G.coins         = d.coins||0;
+    G.totalCoins    = d.totalCoins||0;
+    G.prestigeMult  = d.prestigeMult||1;
+    G.prestigeCount = d.prestigeCount||0;
+    G.lastSeen      = d.lastSeen||Date.now();
+    (d.pps||d.ppsUpgrades||[]).forEach(s=>{ const u=PPS.find(x=>x.id===s.id); if(u) u.owned=s.owned||0; });
+    (d.ppc||d.ppcUpgrades||[]).forEach(s=>{ const u=PPC.find(x=>x.id===s.id); if(u) u.owned=s.owned||0; });
+    if (d.settings) S={...SD,...d.settings};
 
-    if (saved.ppsUpgrades) {
-      saved.ppsUpgrades.forEach(s => {
-        const u = PPS_UPGRADES.find(x => x.id === s.id);
-        if (u) u.owned = s.owned || 0;
-      });
-    }
-    if (saved.ppcUpgrades) {
-      saved.ppcUpgrades.forEach(s => {
-        const u = PPC_UPGRADES.find(x => x.id === s.id);
-        if (u) u.owned = s.owned || 0;
-      });
-    }
-
-    // Offline earnings
-    const secondsGone = Math.max(0, (Date.now() - G.lastSeen) / 1000);
-    if (secondsGone > 10) {
-      const earned = totalCPS() * secondsGone * 0.5; // 50% rate offline
-      if (earned > 0) {
-        G.coins += earned;
-        G.totalCoins += earned;
-        showOfflineToast(earned, secondsGone);
+    if (S.offline) {
+      const sec = Math.max(0,(Date.now()-G.lastSeen)/1000);
+      if (sec>10) {
+        const earned = totalCPS()*sec*0.5;
+        if (earned>0) { G.coins+=earned; G.totalCoins+=earned; showOffline(earned,sec); }
       }
     }
-  } catch(e) {}
+  } catch(e){}
 }
 
-function showOfflineToast(earned, seconds) {
-  const mins = Math.floor(seconds / 60);
-  const hrs = Math.floor(mins / 60);
-  let timeStr = seconds < 60 ? Math.floor(seconds) + 's' :
-                mins < 60 ? mins + 'm' : hrs + 'h ' + (mins % 60) + 'm';
-  document.getElementById('offline-earned').textContent = fmt(earned);
-  document.getElementById('offline-sub').textContent = 'COLLECTED OVER ' + timeStr + ' AWAY (50% RATE)';
-  document.getElementById('offline-toast').style.display = 'block';
+function manualSave() {
+  saveGame();
+  const b = document.querySelector('#settings-panel .d-btn');
+  const o = b.textContent; b.textContent='[ SAVED ✓ ]';
+  setTimeout(()=>b.textContent=o, 1200);
 }
 
-document.getElementById('offline-ok').addEventListener('click', () => {
-  document.getElementById('offline-toast').style.display = 'none';
-});
-
-// ── GAME MATH ─────────────────────────────────────────────
-function upgCost(u) { return Math.floor(u.baseCost * Math.pow(1.15, u.owned)); }
-function totalCPS() {
-  return PPS_UPGRADES.reduce((s, u) => s + u.baseProd * u.owned, 0) * G.prestigeMult;
-}
-function baseTapAmount() {
-  return PPC_UPGRADES.reduce((s, u) => s + u.baseProd * u.owned, 0) || 1;
-}
-function tapAmount() {
-  return baseTapAmount() * G.prestigeMult;
-}
-function presThresh() { return 1000000 * Math.pow(10, G.prestigeCount); }
-function fmt(n) {
-  const t = ['','K','M','B','T','Qa','Qi','Sx','Sp','Oc'];
-  if (n < 1000) return Math.floor(n).toString();
-  let i = 0;
-  while (n >= 1000 && i < t.length - 1) { n /= 1000; i++; }
-  return (n >= 100 ? n.toFixed(1) : n.toFixed(2)) + t[i];
+function exportSave() {
+  const raw = localStorage.getItem('nexus_v3')||'{}';
+  try {
+    const ta=document.createElement('textarea');ta.value=btoa(raw);
+    document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);
+    alert('Save code copied to clipboard!');
+  } catch(e){ alert(btoa(raw)); }
 }
 
-// ── PARTICLES ─────────────────────────────────────────────
-const pc = document.getElementById('particles');
-const pct = pc.getContext('2d');
-let sparks = [];
-function resizeCanvas() { pc.width = window.innerWidth; pc.height = window.innerHeight; }
-resizeCanvas();
-window.addEventListener('resize', resizeCanvas);
-
-function spawnSparks(x, y, color) {
-  for (let i = 0; i < 14; i++) {
-    const a = Math.random() * Math.PI * 2;
-    const sp = 1.5 + Math.random() * 4;
-    sparks.push({x, y, vx: Math.cos(a)*sp, vy: Math.sin(a)*sp - 1.5,
-      life: 1, decay: 0.03 + Math.random()*0.03, r: 1.5 + Math.random()*2.5, color: color || '#00f5ff'});
-  }
-}
-(function drawLoop() {
-  pct.clearRect(0, 0, pc.width, pc.height);
-  sparks = sparks.filter(s => s.life > 0);
-  for (const s of sparks) {
-    pct.beginPath(); pct.arc(s.x, s.y, s.r, 0, Math.PI*2);
-    pct.fillStyle = s.color; pct.fill();
-    s.x += s.vx; s.y += s.vy; s.life -= s.decay;
-  }
-  requestAnimationFrame(drawLoop);
-})();
-
-// ── UI ─────────────────────────────────────────────
-const credit    = document.getElementById('credit-count');
-const cpsVal    = document.getElementById('cps-val');
-const cptVal    = document.getElementById('cpt-val');
-const totalVal  = document.getElementById('total-val');
-const multBox   = document.getElementById('mult-box');
-const multVal   = document.getElementById('mult-val');
-const prestBtn  = document.getElementById('prestige-btn');
-const upgradesList = document.getElementById('upgrades-list');
-const idleBar   = document.getElementById('idle-bar');
-
-function updateUI() {
-  credit.textContent = fmt(G.coins);
-  cpsVal.textContent = totalCPS().toFixed(2);
-  cptVal.textContent = fmt(tapAmount());
-  totalVal.textContent = fmt(G.totalCoins);
-  if (G.prestigeMult > 1) { multBox.style.display = 'inline-block'; multVal.textContent = 'x' + G.prestigeMult; }
-  prestBtn.style.display = G.coins >= presThresh() ? 'block' : 'none';
-
-  // Update tab badges (total owned per category)
-  const ppsTot = PPS_UPGRADES.reduce((s, u) => s + u.owned, 0);
-  const ppcTot = PPC_UPGRADES.reduce((s, u) => s + u.owned, 0);
-  document.getElementById('badge-pps').textContent = ppsTot;
-  document.getElementById('badge-ppc').textContent = ppcTot;
-
-  renderUpgrades();
+function importSave() {
+  const code=prompt('Paste your save code:');
+  if(!code) return;
+  try { const raw=atob(code.trim()); JSON.parse(raw); localStorage.setItem('nexus_v3',raw); location.reload(); }
+  catch(e){ alert('Invalid save code.'); }
 }
 
-function renderUpgrades() {
-  upgradesList.innerHTML = '';
-  const list = activeTab === 'pps' ? PPS_UPGRADES : PPC_UPGRADES;
-  const isPPC = activeTab === 'ppc';
+function hardReset() {
+  if(!confirm('DELETE ALL DATA? This cannot be undone.')) return;
+  localStorage.removeItem('nexus_v3'); localStorage.removeItem('nexus_save'); location.reload();
+}
 
-  list.forEach(u => {
-    const cost = upgCost(u);
-    const canAfford = G.coins >= cost;
-    const row = document.createElement('div');
-    row.className = 'upg-row ' + (isPPC ? 'ppc-row ' : '') + (canAfford ? 'can' : 'cant');
-    row.addEventListener('click', () => buyUpg(u, isPPC));
+function updSaveLbl() {
+  const el=document.getElementById('save-lbl');
+  if(!lastSaved){el.textContent='—';return;}
+  const s=Math.floor((Date.now()-lastSaved)/1000);
+  el.textContent=s<5?'JUST NOW':s+'S AGO';
+}
 
-    const icon = document.createElement('div');
-    icon.className = 'upg-icon';
-    icon.textContent = u.emoji;
+// ── SETTINGS LOGIC ─────────────────────────────────────
+function tog(key) {
+  S[key]=!S[key];
+  applySettings();
+  saveGame();
+}
 
-    const info = document.createElement('div');
-    info.className = 'upg-info';
+function applySettings() {
+  ['particles','floats','grid','rings','offline','pconf'].forEach(k=>{
+    const el=document.getElementById('tog-'+k);
+    if(el) el.classList.toggle('on',!!S[k]);
+  });
+  document.getElementById('grid-bg').style.animationPlayState = S.grid?'running':'paused';
+  document.querySelectorAll('.ring').forEach(r=>r.style.animationPlayState=S.rings?'running':'paused');
+  applyTheme(S.theme, false);
+}
 
-    const top = document.createElement('div');
-    top.className = 'upg-top';
+function applyTheme(id, save=true) {
+  S.theme=id;
+  document.body.setAttribute('data-theme',id);
+  const t=THEMES.find(x=>x.id===id);
+  if(t) document.getElementById('theme-meta').setAttribute('content',t.meta);
+  document.querySelectorAll('.t-swatch').forEach(s=>s.classList.toggle('active',s.dataset.theme===id));
+  if(save) saveGame();
+}
 
-    const name = document.createElement('div');
-    name.className = 'upg-name';
-    name.textContent = u.name;
-
-    const owned = document.createElement('div');
-    owned.className = 'upg-owned';
-    owned.textContent = u.owned;
-    owned.style.display = u.owned > 0 ? 'inline-block' : 'none';
-
-    const desc = document.createElement('div');
-    desc.className = 'upg-desc';
-    desc.textContent = u.desc;
-
-    const bottom = document.createElement('div');
-    bottom.className = 'upg-bottom';
-
-    const costEl = document.createElement('div');
-    costEl.className = 'upg-cost';
-    costEl.textContent = '⬡ ' + fmt(cost);
-
-    const prod = document.createElement('div');
-    prod.className = 'upg-prod';
-    if (u.owned > 0) {
-      prod.textContent = isPPC
-        ? '+' + fmt(u.baseProd * u.owned) + '/TAP'
-        : '+' + (u.baseProd * u.owned).toFixed(2) + '/SEC';
-      prod.style.display = 'block';
-    }
-
-    top.appendChild(name); top.appendChild(owned);
-    bottom.appendChild(costEl); bottom.appendChild(prod);
-    info.appendChild(top); info.appendChild(desc); info.appendChild(bottom);
-    row.appendChild(icon); row.appendChild(info);
-    upgradesList.appendChild(row);
+function buildThemes() {
+  const grid=document.getElementById('theme-grid');
+  THEMES.forEach(t=>{
+    const sw=document.createElement('div');
+    sw.className='t-swatch'+(t.id===S.theme?' active':'');
+    sw.dataset.theme=t.id;
+    sw.style.borderColor=t.accent;
+    sw.innerHTML=`<div class="t-dot" style="background:${t.dot};box-shadow:0 0 10px ${t.dot};"></div><div class="t-name">${t.name}</div>`;
+    sw.addEventListener('click',()=>applyTheme(t.id));
+    grid.appendChild(sw);
   });
 }
 
-function buyUpg(u, isPPC) {
-  const cost = upgCost(u);
-  if (G.coins >= cost) {
-    G.coins -= cost;
-    u.owned++;
-    spawnSparks(window.innerWidth / 2, window.innerHeight / 2, isPPC ? '#ff6b00' : '#00f5ff');
-    saveGame();
-    updateUI();
+// ── GAME MATH ──────────────────────────────────────────
+function totalCPS() { return PPS.reduce((s,u)=>s+u.baseProd*u.owned,0)*G.prestigeMult; }
+function tapAmt()   { return (PPC.reduce((s,u)=>s+u.baseProd*u.owned,0)||1)*G.prestigeMult; }
+function presThresh(){ return 1000000*Math.pow(10,G.prestigeCount); }
+
+function costN(u,n) {
+  let t=0;
+  for(let i=0;i<n;i++) t+=Math.floor(u.baseCost*Math.pow(1.15,u.owned+i));
+  return t;
+}
+function maxBuy(u) {
+  let n=0,t=0;
+  while(true){
+    const c=Math.floor(u.baseCost*Math.pow(1.15,u.owned+n));
+    if(t+c>G.coins) break;
+    t+=c; n++;
+    if(n>5000) break;
+  }
+  return n;
+}
+function effectiveN(u){ return buyAmt===0?maxBuy(u):buyAmt; }
+
+function fmt(n){
+  const t=['','K','M','B','T','Qa','Qi','Sx','Sp','Oc'];
+  if(n<1000) return Math.floor(n).toString();
+  let i=0; while(n>=1000&&i<t.length-1){n/=1000;i++;}
+  return(n>=100?n.toFixed(1):n.toFixed(2))+t[i];
+}
+
+// ── PARTICLES ──────────────────────────────────────────
+const pc=document.getElementById('particles'), pct=pc.getContext('2d');
+let sparks=[];
+function resizeCv(){pc.width=window.innerWidth;pc.height=window.innerHeight;}
+resizeCv(); window.addEventListener('resize',resizeCv);
+
+function themeCol(){
+  return getComputedStyle(document.body).getPropertyValue('--c1').trim()||'#00f5ff';
+}
+function spawnSparks(x,y,col){
+  if(!S.particles)return;
+  col=col||themeCol();
+  for(let i=0;i<18;i++){
+    const a=Math.random()*Math.PI*2,sp=1.8+Math.random()*5;
+    sparks.push({x,y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp-2.2,
+      life:1,decay:0.022+Math.random()*0.028,r:1.5+Math.random()*2.8,col});
+  }
+}
+(function loop(){
+  pct.clearRect(0,0,pc.width,pc.height);
+  sparks=sparks.filter(s=>s.life>0);
+  for(const s of sparks){
+    pct.globalAlpha=s.life*0.9;
+    pct.beginPath();pct.arc(s.x,s.y,s.r,0,Math.PI*2);
+    pct.fillStyle=s.col;pct.fill();
+    s.x+=s.vx;s.y+=s.vy;s.vy+=0.1;s.life-=s.decay;
+  }
+  pct.globalAlpha=1;
+  requestAnimationFrame(loop);
+})();
+
+// ── FLOATING NUMBERS ───────────────────────────────────
+function spawnFloat(x,y,text){
+  if(!S.floats)return;
+  const el=document.createElement('div');
+  el.className='float-num';
+  el.textContent='+'+text;
+  el.style.left=x+'px';
+  el.style.top=(y-12)+'px';
+  const col=themeCol();
+  el.style.color=col;
+  el.style.textShadow='0 0 8px '+col;
+  document.body.appendChild(el);
+  el.addEventListener('animationend',()=>el.remove());
+}
+
+// ── OFFLINE TOAST ──────────────────────────────────────
+function showOffline(earned,sec){
+  const m=Math.floor(sec/60),h=Math.floor(m/60);
+  const ts=sec<60?Math.floor(sec)+'s':m<60?m+'m':h+'h '+(m%60)+'m';
+  document.getElementById('offline-earned').textContent=fmt(earned);
+  document.getElementById('offline-sub').textContent='COLLECTED OVER '+ts+' AWAY (50% RATE)';
+  document.getElementById('offline-toast').style.display='block';
+}
+document.getElementById('offline-ok').addEventListener('click',()=>document.getElementById('offline-toast').style.display='none');
+
+// ── UI UPDATE ──────────────────────────────────────────
+function updateUI(){
+  document.getElementById('credit-count').textContent=fmt(G.coins);
+  document.getElementById('cps-val').textContent=totalCPS().toFixed(2);
+  document.getElementById('cpt-val').textContent=fmt(tapAmt());
+  document.getElementById('total-val').textContent=fmt(G.totalCoins);
+  const mb=document.getElementById('mult-box');
+  if(G.prestigeMult>1){mb.style.display='inline-block';document.getElementById('mult-val').textContent='×'+G.prestigeMult;}
+  document.getElementById('prestige-btn').style.display=G.coins>=presThresh()?'block':'none';
+  document.getElementById('badge-pps').textContent=PPS.reduce((s,u)=>s+u.owned,0);
+  document.getElementById('badge-ppc').textContent=PPC.reduce((s,u)=>s+u.owned,0);
+  document.getElementById('stat-total').textContent=fmt(G.totalCoins);
+  document.getElementById('stat-prestige').textContent=G.prestigeCount;
+  updSaveLbl();
+  if(activeTab!=='settings') renderUpgrades();
+}
+
+function renderUpgrades(){
+  const list=document.getElementById('upgrades-list');
+  list.innerHTML='';
+  const upgs=activeTab==='pps'?PPS:PPC;
+  const isPPC=activeTab==='ppc';
+  upgs.forEach(u=>{
+    const n=effectiveN(u);
+    const actualN=n===0?maxBuy(u):n;
+    const cost=costN(u,actualN);
+    const canAfford=actualN>0&&G.coins>=cost;
+
+    const row=document.createElement('div');
+    row.className='upg-row '+(isPPC?'ppc-row ':'')+(canAfford?'can':'cant');
+    row.addEventListener('click',()=>buyUpg(u,isPPC));
+
+    const icon=document.createElement('div');icon.className='upg-icon';icon.textContent=u.emoji;
+    const info=document.createElement('div');info.className='upg-info';
+    const top=document.createElement('div');top.className='upg-top';
+    const nm=document.createElement('div');nm.className='upg-name';nm.textContent=u.name;
+    const ow=document.createElement('div');ow.className='upg-owned';ow.textContent=u.owned;ow.style.display=u.owned>0?'inline-block':'none';
+    const dc=document.createElement('div');dc.className='upg-desc';dc.textContent=u.desc;
+    const bot=document.createElement('div');bot.className='upg-bottom';
+    const ct=document.createElement('div');ct.className='upg-cost';
+    ct.textContent='⬡ '+fmt(cost)+(actualN>1?' (×'+actualN+')':'');
+    const pr=document.createElement('div');pr.className='upg-prod';
+    if(u.owned>0) pr.textContent=isPPC?'+'+fmt(u.baseProd*u.owned)+'/TAP':'+'+(u.baseProd*u.owned).toFixed(2)+'/SEC';
+    top.appendChild(nm);top.appendChild(ow);
+    bot.appendChild(ct);bot.appendChild(pr);
+    info.appendChild(top);info.appendChild(dc);info.appendChild(bot);
+    row.appendChild(icon);row.appendChild(info);
+    list.appendChild(row);
+  });
+}
+
+function buyUpg(u,isPPC){
+  const n=effectiveN(u);
+  const actualN=n===0?maxBuy(u):n;
+  if(actualN<=0)return;
+  const cost=costN(u,actualN);
+  if(G.coins<cost)return;
+  G.coins-=cost; u.owned+=actualN;
+  // sparks at center of tap zone
+  const r=document.getElementById('tap-zone').getBoundingClientRect();
+  const col=isPPC?
+    getComputedStyle(document.body).getPropertyValue('--c6').trim():themeCol();
+  spawnSparks(r.left+r.width/2, r.top+r.height/2, col);
+  saveGame(); updateUI();
+}
+
+// ── TAB SWITCHING ──────────────────────────────────────
+function switchTab(tab){
+  activeTab=tab;
+  ['pps','ppc','settings'].forEach(t=>{
+    document.getElementById('tab-'+t).classList.toggle('active',t===tab);
+  });
+  const list=document.getElementById('upgrades-list');
+  const sp=document.getElementById('settings-panel');
+  const bb=document.getElementById('buy-bar');
+  if(tab==='settings'){
+    list.style.display='none'; sp.classList.add('vis'); bb.style.display='none';
+  } else {
+    list.style.display='flex'; sp.classList.remove('vis'); bb.style.display='flex';
+    list.scrollTop=0; renderUpgrades();
   }
 }
 
-// ── TAB SWITCHING ─────────────────────────────────────────────
-function switchTab(tab) {
-  activeTab = tab;
-  document.getElementById('tab-pps').classList.toggle('active', tab === 'pps');
-  document.getElementById('tab-ppc').classList.toggle('active', tab === 'ppc');
-  upgradesList.scrollTop = 0;
+// ── BUY AMOUNT ─────────────────────────────────────────
+function setBuy(n){
+  buyAmt=n;
+  const vals=[1,10,25,100,0];
+  document.querySelectorAll('.buy-btn').forEach((b,i)=>b.classList.toggle('active',vals[i]===n));
   renderUpgrades();
 }
 
-// ── CLICK & IDLE ─────────────────────────────────────────────
-document.getElementById('core-btn').addEventListener('click', () => {
-  const amt = tapAmount();
-  G.coins += amt;
-  G.totalCoins += amt;
-  spawnSparks(window.innerWidth / 2, window.innerHeight / 2, '#00f5ff');
+// ── TAP ZONE ───────────────────────────────────────────
+const tapZone=document.getElementById('tap-zone');
+let tapCooldown=false;
+
+function doTap(cx,cy){
+  const amt=tapAmt();
+  G.coins+=amt; G.totalCoins+=amt;
+  spawnSparks(cx,cy);
+  spawnFloat(cx,cy,fmt(amt));
+  tapZone.classList.add('tapped');
+  if(!tapCooldown){ tapCooldown=true; setTimeout(()=>{ tapZone.classList.remove('tapped'); tapCooldown=false; },120); }
   updateUI();
+}
+
+tapZone.addEventListener('click',e=>doTap(e.clientX,e.clientY));
+tapZone.addEventListener('touchstart',e=>{
+  e.preventDefault();
+  Array.from(e.changedTouches).forEach(t=>doTap(t.clientX,t.clientY));
+},{passive:false});
+
+// ── PRESTIGE ───────────────────────────────────────────
+document.getElementById('prestige-btn').addEventListener('click',()=>{
+  if(S.pconf&&!confirm('RESET ALL PROGRESS for a permanent ×2 multiplier?'))return;
+  G.prestigeCount++; G.prestigeMult*=2; G.coins=0;
+  PPS.forEach(u=>u.owned=0); PPC.forEach(u=>u.owned=0);
+  saveGame(); updateUI();
 });
 
-document.getElementById('prestige-btn').addEventListener('click', () => {
-  if (!confirm('RESET ALL PROGRESS for a permanent x2 multiplier?')) return;
-  G.prestigeCount++;
-  G.prestigeMult *= 2;
-  G.coins = 0;
-  PPS_UPGRADES.forEach(u => u.owned = 0);
-  PPC_UPGRADES.forEach(u => u.owned = 0);
-  saveGame();
+// ── IDLE TICK ──────────────────────────────────────────
+let barStep=0;
+setInterval(()=>{
+  const cps=totalCPS(), amt=cps/10;
+  G.coins+=amt; G.totalCoins+=amt;
+  barStep=(barStep+(cps>0?1:0))%10;
+  document.getElementById('idle-bar').style.width=(barStep*10)+'%';
   updateUI();
+},100);
+
+setInterval(saveGame,10000);
+
+// ── VISIBILITY ─────────────────────────────────────────
+document.addEventListener('visibilitychange',()=>{
+  if(document.hidden){ saveGame(); return; }
+  try {
+    const raw=localStorage.getItem('nexus_v3');
+    if(!raw)return;
+    const d=JSON.parse(raw);
+    const sec=Math.max(0,(Date.now()-(d.lastSeen||Date.now()))/1000);
+    if(S.offline&&sec>10){
+      const earned=totalCPS()*sec*0.5;
+      if(earned>0){ G.coins+=earned; G.totalCoins+=earned; showOffline(earned,sec); saveGame(); updateUI(); }
+    }
+  }catch(e){}
 });
 
-// Game tick — every 100ms
-let barProgress = 0;
-setInterval(() => {
-  const cps = totalCPS();
-  const amt = cps / 10;
-  G.coins += amt;
-  G.totalCoins += amt;
-  barProgress = (barProgress + (cps > 0 ? 1 : 0)) % 10;
-  idleBar.style.width = (barProgress * 10) + '%';
-  updateUI();
-}, 100);
-
-// Auto-save every 10 seconds
-setInterval(saveGame, 10000);
-
-// ── VISIBILITY CHANGE — save/apply offline on tab hide/show ─────────────────────────────────────────────
-document.addEventListener('visibilitychange', () => {
-  if (document.hidden) {
-    saveGame();
-  } else {
-    // Recalculate offline earnings since last save
-    try {
-      const raw = localStorage.getItem('nexus_save');
-      if (raw) {
-        const saved = JSON.parse(raw);
-        const secondsGone = Math.max(0, (Date.now() - (saved.lastSeen || Date.now())) / 1000);
-        if (secondsGone > 10) {
-          const earned = totalCPS() * secondsGone * 0.5;
-          if (earned > 0) {
-            G.coins += earned;
-            G.totalCoins += earned;
-            showOfflineToast(earned, secondsGone);
-            saveGame();
-            updateUI();
-          }
-        }
-      }
-    } catch(e) {}
-  }
-});
-
-// ── INIT ─────────────────────────────────────────────
+// ── INIT ───────────────────────────────────────────────
 loadGame();
+buildThemes();
+applySettings();
 updateUI();
 </script>
 
