@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>NEXUS // IDLE</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <link rel="manifest" href="./manifest.json">
@@ -64,10 +64,10 @@ animation:gridScroll 22s linear infinite;
 
 /* Corner brackets */
 .corner{position:fixed;width:44px;height:44px;z-index:3;}
-.corner.tl{top:0;left:0;border-top:2px solid var(--c1);border-left:2px solid var(--c1);}
-.corner.tr{top:0;right:0;border-top:2px solid var(--c1);border-right:2px solid var(--c1);}
-.corner.bl{bottom:0;left:0;border-bottom:2px solid var(--c1);border-left:2px solid var(--c1);}
-.corner.br{bottom:0;right:0;border-bottom:2px solid var(--c1);border-right:2px solid var(--c1);}
+.corner.tl{top:max(0px, env(safe-area-inset-top, 0px));left:max(0px, env(safe-area-inset-left, 0px));border-top:2px solid var(--c1);border-left:2px solid var(--c1);}
+.corner.tr{top:max(0px, env(safe-area-inset-top, 0px));right:max(0px, env(safe-area-inset-right, 0px));border-top:2px solid var(--c1);border-right:2px solid var(--c1);}
+.corner.bl{bottom:max(0px, env(safe-area-inset-bottom, 0px));left:max(0px, env(safe-area-inset-left, 0px));border-bottom:2px solid var(--c1);border-left:2px solid var(--c1);}
+.corner.br{bottom:max(0px, env(safe-area-inset-bottom, 0px));right:max(0px, env(safe-area-inset-right, 0px));border-bottom:2px solid var(--c1);border-right:2px solid var(--c1);}
 
 /* Canvas overlay */
 #particles{position:fixed;inset:0;pointer-events:none;z-index:5;}
@@ -79,12 +79,16 @@ tap-zone grows/shrinks via flex-grow
 #app{
 position:relative;z-index:2;
 display:flex;flex-direction:column;
-height:100vh;overflow:hidden;
+height:100vh;height:100dvh;min-height:100dvh;
+overflow:hidden;
 }
 
 /* ── HEADER ─────────────────────────────── */
 #header{
-padding:40px 16px 10px;
+padding-top:calc(20px + env(safe-area-inset-top, 0px));
+padding-left:max(16px, env(safe-area-inset-left, 0px));
+padding-right:max(16px, env(safe-area-inset-right, 0px));
+padding-bottom:10px;
 background:var(--bg2);
 border-bottom:1px solid var(--border);
 flex-shrink:0;
@@ -128,9 +132,13 @@ flex:1 1 0;           /* grows to fill space */
 min-height:115px;      /* always visible even when menus open */
 position:relative;overflow:hidden;
 cursor:pointer;user-select:none;-webkit-user-select:none;
+touch-action:manipulation;
 display:flex;align-items:center;justify-content:center;
-transition:flex-basis 0.3s ease, background 0.08s;
+transition:flex-basis 0.3s ease, min-height 0.25s ease, background 0.08s;
 border-bottom:1px solid var(--border2);
+}
+#tap-zone.tap-zone-menus-open{
+min-height:clamp(150px,30vh,260px);
 }
 #tap-zone.tapped{background:var(--tap-flash);}
 
@@ -189,7 +197,7 @@ BOTTOM DRAWER — collapsible panels
 #drawer{
 flex-shrink:0;
 display:flex;flex-direction:column;
-max-height:60vh;
+max-height:min(52vh, calc(100dvh - 240px));
 transition:max-height 0.3s ease;
 background:var(--bg2);
 border-top:1px solid var(--border);
@@ -202,14 +210,16 @@ flex-shrink:0;
 display:flex;
 background:var(--bg2);
 border-top:1px solid var(--border);
+padding:0 max(0px, env(safe-area-inset-left, 0px)) max(8px, env(safe-area-inset-bottom, 0px)) max(0px, env(safe-area-inset-right, 0px));
 }
 .tab-btn{
-flex:1;padding:8px 2px 7px;
+flex:1;padding:10px 2px 8px;
+min-height:48px;
 font-family:'Orbitron',monospace;font-size:7px;letter-spacing:1px;
 color:var(--txt3);background:transparent;border:none;
 border-top:2px solid transparent;
 cursor:pointer;transition:all 0.18s;
-display:flex;flex-direction:column;align-items:center;gap:2px;
+display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
 }
 .tab-btn .ti{font-size:14px;}
 .tab-btn.active{color:var(--c1);border-top-color:var(--c1);background:var(--c1dim);}
@@ -230,14 +240,14 @@ flex:1;overflow:hidden;display:flex;flex-direction:column;
 /* Buy bar */
 #buy-bar{
 display:flex;align-items:center;gap:4px;
-padding:5px 10px;
+padding:8px max(10px, env(safe-area-inset-left, 0px)) 8px max(10px, env(safe-area-inset-right, 0px));
 border-bottom:1px solid var(--border2);
 flex-shrink:0;
 }
 #buy-lbl{font-family:'Orbitron',monospace;font-size:7px;letter-spacing:2px;color:var(--txt3);flex-shrink:0;}
 .buy-btn{
 font-family:'Orbitron',monospace;font-size:8px;
-padding:3px 0;flex:1;
+padding:8px 2px;flex:1;min-height:36px;
 border:1px solid var(--border2);background:transparent;
 color:var(--txt3);cursor:pointer;border-radius:2px;transition:all 0.14s;
 }
@@ -246,7 +256,7 @@ color:var(--txt3);cursor:pointer;border-radius:2px;transition:all 0.14s;
 /* Upgrade list */
 #upgrades-list{
 overflow-y:auto;-webkit-overflow-scrolling:touch;
-padding:6px 10px 8px;display:flex;flex-direction:column;gap:5px;
+padding:6px max(10px, env(safe-area-inset-left, 0px)) max(12px, env(safe-area-inset-bottom, 0px)) max(10px, env(safe-area-inset-right, 0px));display:flex;flex-direction:column;gap:5px;
 }
 #upgrades-list::-webkit-scrollbar{display:none;}
 
@@ -281,16 +291,23 @@ padding:1px 5px;border-radius:2px;display:none;
 }
 .upg-row.ppc-row .upg-owned{color:var(--c6);background:rgba(255,107,0,0.08);border-color:rgba(255,107,0,0.2);}
 .upg-desc{font-size:7px;color:var(--txt3);margin-top:1px;}
-.upg-bottom{display:flex;align-items:center;justify-content:space-between;margin-top:3px;}
-.upg-cost{font-size:10px;color:var(--txt3);}
+.upg-bottom{display:flex;align-items:flex-start;justify-content:space-between;margin-top:3px;gap:8px;}
+.upg-cost{font-size:10px;color:var(--txt3);flex-shrink:0;max-width:58%;}
 .upg-row.can .upg-cost{color:var(--c5);}
-.upg-prod{font-size:8px;color:var(--c3);opacity:0.75;}
+.upg-prod{
+font-size:8px;color:var(--c3);opacity:0.9;
+display:flex;flex-direction:column;align-items:flex-end;gap:2px;text-align:right;
+min-width:0;
+}
 .upg-row.ppc-row .upg-prod{color:var(--c6);}
+.upg-cur{opacity:0.75;font-size:8px;}
+.upg-next{font-size:7px;font-weight:700;letter-spacing:0.3px;color:var(--c3);}
+.upg-row.ppc-row .upg-next{color:var(--c6);}
 
 /* ── OFFLINE UPGRADES tab panel ─── */
 #offline-list{
 overflow-y:auto;-webkit-overflow-scrolling:touch;
-padding:6px 10px 8px;display:none;flex-direction:column;gap:5px;
+padding:6px max(10px, env(safe-area-inset-left, 0px)) max(12px, env(safe-area-inset-bottom, 0px)) max(10px, env(safe-area-inset-right, 0px));display:none;flex-direction:column;gap:5px;
 }
 #offline-list::-webkit-scrollbar{display:none;}
 #offline-list.vis{display:flex;}
@@ -316,11 +333,12 @@ position:relative;overflow:hidden;transition:all 0.14s;
 .off-cost{font-size:10px;color:var(--txt3);}
 .off-row.can .off-cost{color:var(--c5);}
 .off-stat{font-size:8px;color:var(--c5);opacity:0.8;}
+.off-next{font-size:7px;color:var(--c5);margin-top:4px;letter-spacing:0.3px;opacity:0.95;line-height:1.35;}
 
 /* ── SETTINGS panel ─── */
 #settings-panel{
 overflow-y:auto;-webkit-overflow-scrolling:touch;
-padding:8px 12px 12px;display:none;flex-direction:column;
+padding:8px max(12px, env(safe-area-inset-left, 0px)) max(16px, env(safe-area-inset-bottom, 0px)) max(12px, env(safe-area-inset-right, 0px));display:none;flex-direction:column;
 }
 #settings-panel.vis{display:flex;}
 #settings-panel::-webkit-scrollbar{display:none;}
@@ -695,7 +713,7 @@ function effectiveN(u){return buyAmt===0?maxBuy(u):buyAmt;}
 function fmt(n){
   if(isNaN(n)||!isFinite(n)) return '0';
   const t=['','K','M','B','T','Qa','Qi','Sx','Sp','Oc'];
-  if(n<1000) return Math.floor(n).toString();
+  if(n<1000) return n.toFixed(2);
   let i=0; while(n>=1000&&i<t.length-1){n/=1000;i++;}
   return(n>=100?n.toFixed(1):n.toFixed(2))+t[i];
 }
@@ -1041,7 +1059,7 @@ document.getElementById('ot-ok').addEventListener('click',()=>
 // ═══════════════════════════════════════════
 function updateUI(){
   document.getElementById('credit-count').textContent=cheatInfiniteCoins?'∞':fmt(G.coins);
-  document.getElementById('cps-val').textContent=totalCPS().toFixed(2);
+  document.getElementById('cps-val').textContent=fmt(totalCPS());
   document.getElementById('cpt-val').textContent=fmt(tapAmt());
   document.getElementById('total-val').textContent=fmt(G.totalCoins);
   const mb=document.getElementById('mult-box');
@@ -1069,12 +1087,12 @@ function renderUpgrades(){
   const upgs=activeTab==='pps'?PPS:PPC;
   const isPPC=activeTab==='ppc';
   upgs.forEach(u=>{
-    const requested=buyAmt===0?maxBuy(u):buyAmt; // how many the button says
-    const affordable=maxBuy(u);                   // how many you can actually pay for
-    // actualN = what will be bought on click
+    const requested=buyAmt===0?maxBuy(u):buyAmt;
+    const affordable=maxBuy(u);
     const actualN=buyAmt===0?affordable:Math.min(requested,affordable);
     const cost=costN(u,actualN);
-    const canAfford=affordable>0;                 // can buy at least 1
+    const canAfford=affordable>0;
+    const next1Cost=Math.floor(u.baseCost*Math.pow(1.15,u.owned));
 
     const row=document.createElement('div');
     row.className='upg-row '+(isPPC?'ppc-row ':' ')+(canAfford?'can':'cant');
@@ -1089,31 +1107,37 @@ function renderUpgrades(){
     const bot=document.createElement('div');bot.className='upg-bottom';
     const ct=document.createElement('div');ct.className='upg-cost';
 
-    // Label logic:
-    // MAX mode  → "⬡ cost (×affordable)"  or "CANNOT AFFORD" if 0
-    // Fixed mode, full batch affordable → "⬡ cost (×n)"
-    // Fixed mode, partial batch → "⬡ cost (×affordable/×requested)"  dim slash part
-    // Fixed mode, none affordable → "⬡ next cost (×0/×n)"
     if(buyAmt===0){
-      // MAX
-      ct.textContent=affordable>0?'⬡ '+fmt(cost)+' (×'+affordable+')':'CANNOT AFFORD';
+      if(affordable>0) ct.textContent='⬡ '+fmt(cost)+' (×'+affordable+')';
+      else ct.textContent='⬡ '+fmt(next1Cost)+' (×1)';
     } else {
-      const fullCost=costN(u,requested); // cost if full batch were affordable
       if(affordable>=requested){
-        // Can buy the whole batch
         ct.textContent='⬡ '+fmt(cost)+(requested>1?' (×'+requested+')':'');
       } else if(affordable>0){
-        // Partial — show how many you can get vs how many were requested
         ct.innerHTML='⬡ '+fmt(cost)+' <span style="color:var(--c1);opacity:0.9">(×'+affordable+'</span><span style="opacity:0.35">/×'+requested+')</span>';
       } else {
-        // Can't afford even 1 — show next price
-        const nextCost=Math.floor(u.baseCost*Math.pow(1.15,u.owned));
-        ct.innerHTML='⬡ '+fmt(nextCost)+' <span style="opacity:0.35">(×0/×'+requested+')</span>';
+        ct.innerHTML='⬡ '+fmt(next1Cost)+' <span style="opacity:0.35">(×0/×'+requested+')</span>';
       }
     }
 
+    const gainUnits=affordable>0?actualN:1;
+    const dProd=u.baseProd*gainUnits*G.prestigeMult;
     const pr=document.createElement('div');pr.className='upg-prod';
-    if(u.owned>0) pr.textContent=isPPC?'+'+fmt(u.baseProd*u.owned)+'/TAP':'+'+(u.baseProd*u.owned).toFixed(2)+'/SEC';
+    const curProd=u.baseProd*u.owned*G.prestigeMult;
+    if(u.owned>0){
+      const cur=document.createElement('span');
+      cur.className='upg-cur';
+      cur.textContent=isPPC?'+'+fmt(curProd)+'/TAP':'+'+(curProd<1000?curProd.toFixed(2):fmt(curProd))+'/SEC';
+      pr.appendChild(cur);
+    }
+    const nx=document.createElement('span');
+    nx.className='upg-next';
+    const dStr=isPPC
+      ?('+'+fmt(dProd)+'/TAP')
+      :('+'+(dProd<1000?dProd.toFixed(2):fmt(dProd))+'/SEC');
+    nx.textContent='NEXT '+dStr;
+    pr.appendChild(nx);
+
     top.appendChild(nm);top.appendChild(ow);bot.appendChild(ct);bot.appendChild(pr);
     info.appendChild(top);info.appendChild(dc);info.appendChild(bot);
     row.appendChild(icon);row.appendChild(info);list.appendChild(row);
@@ -1141,6 +1165,12 @@ function renderOffline(){
     st.textContent='+'+u.addHours+'h offline';
     bot.appendChild(ct);bot.appendChild(st);
     info.appendChild(nm);info.appendChild(dc);info.appendChild(bot);
+    if(!maxed){
+      const onx=document.createElement('div');
+      onx.className='off-next';
+      onx.textContent='NEXT +'+u.addHours+'h offline cap · passive income while away lasts longer';
+      info.appendChild(onx);
+    }
     row.appendChild(icon);row.appendChild(info);list.appendChild(row);
   });
   // Show current cap
@@ -1179,11 +1209,20 @@ function buyOffline(u){
 // ═══════════════════════════════════════════
 //  TAB / DRAWER
 // ═══════════════════════════════════════════
+function syncTapDrawerLayout(){
+  const dr=document.getElementById('drawer');
+  const tz=document.getElementById('tap-zone');
+  if(!dr||!tz)return;
+  const open=!dr.classList.contains('collapsed');
+  tz.classList.toggle('tap-zone-menus-open',open);
+}
+
 function switchTab(tab){
   // If clicking the already-active tab, toggle drawer open/close
   if(tab===activeTab){
     drawerOpen=!drawerOpen;
     document.getElementById('drawer').classList.toggle('collapsed',!drawerOpen);
+    syncTapDrawerLayout();
     return;
   }
   activeTab=tab;
@@ -1215,6 +1254,7 @@ function switchTab(tab){
   } else if(tab==='settings'){
     sp.classList.add('vis');
   }
+  syncTapDrawerLayout();
 }
 
 // ═══════════════════════════════════════════
