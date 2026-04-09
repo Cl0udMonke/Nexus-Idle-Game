@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Nexus Idle Game + Auto-Save + Dynamic Bulk</title>
+<title>Nexus Idle Game + Stats Tab</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap');
 :root{
@@ -11,17 +11,17 @@
   --c3:#ff00ff;
   --c6:#ffff00;
   --dim:#111;
+  --bg:#111;
+  --fg:#fff;
 }
 body{
   margin:0;
-  background:#111;
-  color:#fff;
+  background:var(--bg);
+  color:var(--fg);
   font-family:'Orbitron',monospace;
   display:flex;
   flex-direction:column;
   align-items:center;
-  justify-content:flex-start;
-  min-height:100vh;
   padding:20px;
   overflow-x:hidden;
 }
@@ -40,7 +40,10 @@ body{
   position:relative;
   overflow:hidden;
 }
-#credits,#prestige-points,#stats{font-size:20px;margin-bottom:8px;}
+#credits,#prestige-points,#pps-display,#ppc-display,#stats-summary{
+  font-size:20px;
+  margin-bottom:8px;
+}
 .btn{
   padding:10px;
   border-radius:4px;
@@ -75,18 +78,46 @@ body{
   0%{transform:translateY(0) scale(1);opacity:1;}
   100%{transform:translateY(-80px) scale(1.3);opacity:0;}
 }
+.tab-content{
+  display:none;
+  width:90%;
+  max-width:600px;
+  margin-top:20px;
+  padding:10px;
+  border:2px solid var(--c1);
+  border-radius:6px;
+  background:#111;
+}
+.tab-content.active{display:block;}
+canvas{width:100%;height:200px; background:#111; border:1px solid var(--c1);}
 </style>
 </head>
 <body>
 
 <div id="credits">Credits: 0</div>
 <div id="prestige-points">Prestige Points: 0</div>
-<div id="stats">
-  Total Clicks: 0 | Passive Earned: 0 | Total Prestiges: 0
-</div>
+<div id="pps-display">PPS: 0</div>
+<div id="ppc-display">PPC: 0</div>
+<div id="stats-summary">Total Clicks: 0 | Passive Earned: 0 | Total Prestiges: 0</div>
 <div id="tap-zone">💥</div>
-<button class="btn" id="open-upgrades">Upgrades</button>
-<button class="btn" id="open-prestige">Prestige</button>
+
+<div>
+  <button class="btn" id="open-upgrades">Upgrades</button>
+  <button class="btn" id="open-prestige">Prestige</button>
+  <button class="btn" id="stats-tab-btn">Stats</button>
+  <button class="btn" id="toggle-theme">Toggle Theme</button>
+</div>
+
+<!-- Stats Tab -->
+<div id="stats-tab" class="tab-content">
+  <h3 style="color:var(--c1)">Stats Overview</h3>
+  <canvas id="graph-credits"></canvas>
+  <canvas id="graph-pps" style="margin-top:12px;"></canvas>
+  <div style="margin-top:8px;">Total Credits: <span id="stats-total-credits">0</span></div>
+  <div>Total Clicks: <span id="stats-total-clicks">0</span></div>
+  <div>Passive Earned: <span id="stats-passive-earned">0</span></div>
+  <div>Total Prestiges: <span id="stats-total-prestiges">0</span></div>
+</div>
 
 <!-- Upgrades Modal -->
 <div id="upgrades-modal" style="position:fixed;inset:0;background:rgba(0,0,0,0.85);display:none;flex-direction:column;z-index:15;">
@@ -125,13 +156,10 @@ body{
 </div>
 
 <script>
-// ----- Game Variables -----
+// ---- Game Variables ----
 let game = JSON.parse(localStorage.getItem('nexusSave')) || {
-  totalCredits:0,
-  prestigePoints:0,
-  totalClicks:0,
-  totalPassiveEarned:0,
-  totalPrestiges:0,
+  totalCredits:0, prestigePoints:0, totalClicks:0,
+  totalPassiveEarned:0, totalPrestiges:0, prestigeMultiplier:1,
   PPS:[
     {name:'Auto Miner',desc:'Generates 0.1/sec',emoji:'⛏️',baseCost:10,baseProd:0.1,owned:0},
     {name:'Factory',desc:'Generates 1/sec',emoji:'🏭',baseCost:100,baseProd:1,owned:0},
@@ -142,25 +170,34 @@ let game = JSON.parse(localStorage.getItem('nexusSave')) || {
     {name:'Hyper Finger',desc:'Each click +5',emoji:'🤏',baseCost:200,baseProd:5,owned:0}
   ],
   PrestigeUpgrades:[
-    {name:'+10% PPS',desc:'Boost all passive income by 10%',cost:1,owned:0,effect:()=>{game.PPS.forEach(u=>u.baseProd*=1.1)}},
-    {name:'+10% PPC',desc:'Boost all click power by 10%',cost:1,owned:0,effect:()=>{game.PPC.forEach(u=>u.baseProd*=1.1)}}
-  ]
+    {name:'+10% PPS',desc:'Boost all passive income by 10%',cost:1,owned:0,effect:()=>{game.PPS.forEach(u=>u.baseProd*=1.1); updateDisplay();}},
+    {name:'+10% PPC',desc:'Boost all click power by 10%',cost:1,owned:0,effect:()=>{game.PPC.forEach(u=>u.baseProd*=1.1); updateDisplay();}}
+  ],
+  theme:'dark'
 };
 let bulkBuy = 1;
 
-// ----- Display Updates -----
+// ---- Display Updates ----
 function updateDisplay(){
+  const totalPPS = game.PPS.reduce((a,u)=>a+u.baseProd*u.owned,0) * game.prestigeMultiplier;
+  const totalPPC = game.PPC.reduce((a,u)=>a+u.baseProd*u.owned,0) * game.prestigeMultiplier;
   document.getElementById('credits').textContent='Credits: '+game.totalCredits.toFixed(2);
   document.getElementById('prestige-points').textContent='Prestige Points: '+game.prestigePoints;
   document.getElementById('prestige-count').textContent=game.prestigePoints;
-  document.getElementById('stats').textContent=`Total Clicks: ${game.totalClicks} | Passive Earned: ${game.totalPassiveEarned.toFixed(2)} | Total Prestiges: ${game.totalPrestiges}`;
+  document.getElementById('pps-display').textContent='PPS: '+totalPPS.toFixed(2);
+  document.getElementById('ppc-display').textContent='PPC: '+totalPPC.toFixed(2);
+  document.getElementById('stats-summary').textContent=`Total Clicks: ${game.totalClicks} | Passive Earned: ${game.totalPassiveEarned.toFixed(2)} | Total Prestiges: ${game.totalPrestiges}`;
+  document.getElementById('stats-total-credits').textContent=game.totalCredits.toFixed(2);
+  document.getElementById('stats-total-clicks').textContent=game.totalClicks;
+  document.getElementById('stats-passive-earned').textContent=game.totalPassiveEarned.toFixed(2);
+  document.getElementById('stats-total-prestiges').textContent=game.totalPrestiges;
   saveGame();
 }
 
-// ----- Save -----
+// ---- Save ----
 function saveGame(){localStorage.setItem('nexusSave',JSON.stringify(game));}
 
-// ----- Floating Numbers -----
+// ---- Floating Numbers ----
 function floatNumber(x,y,val){
   const span=document.createElement('span');
   span.className='float-num';
@@ -171,33 +208,33 @@ function floatNumber(x,y,val){
   setTimeout(()=>span.remove(),1000);
 }
 
-// ----- Click Event -----
+// ---- Click Event ----
 document.getElementById('tap-zone').addEventListener('click',e=>{
   let clickPower = 1;
   game.PPC.forEach(u=>{clickPower+=u.baseProd*u.owned;});
+  clickPower*=game.prestigeMultiplier;
   game.totalCredits+=clickPower;
   game.totalClicks++;
   updateDisplay();
   floatNumber(e.offsetX,e.offsetY,clickPower);
 });
 
-// ----- Passive Income -----
+// ---- Passive Income ----
 setInterval(()=>{
   let totalPPS=0;
   game.PPS.forEach(u=>{totalPPS+=u.baseProd*u.owned;});
+  totalPPS*=game.prestigeMultiplier;
   let earned = totalPPS/10;
   game.totalCredits+=earned;
   game.totalPassiveEarned+=earned;
   updateDisplay();
 },100);
 
-// ----- Upgrades Modal -----
+// ---- Upgrades ----
 let upgradesModal=document.getElementById('upgrades-modal');
 document.getElementById('open-upgrades').addEventListener('click',()=>{upgradesModal.style.display='flex'; renderModalUpgrades();});
 document.getElementById('upgrades-close').addEventListener('click',()=>{upgradesModal.style.display='none';});
 function setBulkBuy(n){bulkBuy=n; renderModalUpgrades();}
-
-// ----- Render Upgrades -----
 function renderModalUpgrades(){
   const ppsList=document.getElementById('modal-pps-list');
   const ppcList=document.getElementById('modal-ppc-list');
@@ -205,12 +242,11 @@ function renderModalUpgrades(){
   game.PPS.forEach(u=>ppsList.appendChild(createUpgradeRow(u,true)));
   game.PPC.forEach(u=>ppcList.appendChild(createUpgradeRow(u,false)));
 }
-
 function createUpgradeRow(u,isPPS){
   const div=document.createElement('div');
   const amount = bulkBuy==='max'?Math.floor(game.totalCredits/u.baseCost):bulkBuy;
   const totalCost = u.baseCost*amount;
-  const totalGain = u.baseProd*amount;
+  const totalGain = u.baseProd*amount*game.prestigeMultiplier;
   div.className='upg-row '+(game.totalCredits>=totalCost?'can':'cant');
   div.innerHTML=`
     <div class="upg-icon">${u.emoji}</div>
@@ -225,7 +261,6 @@ function createUpgradeRow(u,isPPS){
   div.addEventListener('click',()=>{buyUpgrade(u,isPPS); renderModalUpgrades();});
   return div;
 }
-
 function buyUpgrade(u,isPPS){
   let amount = bulkBuy==='max'?Math.floor(game.totalCredits/u.baseCost):bulkBuy;
   let cost = u.baseCost*amount;
@@ -236,11 +271,10 @@ function buyUpgrade(u,isPPS){
   }
 }
 
-// ----- Prestige Modal -----
+// ---- Prestige ----
 let prestigeModal=document.getElementById('prestige-modal');
 document.getElementById('open-prestige').addEventListener('click',()=>{prestigeModal.style.display='flex'; renderPrestige();});
 document.getElementById('prestige-close').addEventListener('click',()=>{prestigeModal.style.display='none';});
-
 function renderPrestige(){
   const container=document.getElementById('prestige-upgrades');
   container.innerHTML='';
@@ -253,13 +287,12 @@ function renderPrestige(){
       <div class="upg-bottom"><span>Cost: ${u.cost} PP</span></div>
     </div>`;
     div.addEventListener('click',()=>{
-      if(game.prestigePoints>=u.cost){game.prestigePoints-=u.cost; u.owned++; u.effect(); updateDisplay();}
+      if(game.prestigePoints>=u.cost){game.prestigePoints-=u.cost; u.owned++; u.effect(); game.prestigeMultiplier*=1.1; updateDisplay();}
       renderPrestige();
     });
     container.appendChild(div);
   });
 }
-
 function doPrestige(){
   let gained = Math.floor(game.totalCredits/1000);
   if(gained>0){
@@ -274,7 +307,55 @@ function doPrestige(){
   } else alert('Need at least 1000 credits to prestige.');
 }
 
-updateDisplay();
-</script>
-</body>
-</html>
+// ---- Theme ----
+document.getElementById('toggle-theme').addEventListener('click',()=>{
+  if(game.theme==='dark'){
+    document.documentElement.style.setProperty('--bg','#fff');
+    document.documentElement.style.setProperty('--fg','#000');
+    game.theme='light';
+  } else {
+    document.documentElement.style.setProperty('--bg','#111');
+    document.documentElement.style.setProperty('--fg','#fff');
+    game.theme='dark';
+  }
+  saveGame();
+});
+
+// ---- Stats Tab ----
+document.getElementById('stats-tab-btn').addEventListener('click',()=>{
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.getElementById('stats-tab').classList.add('active');
+});
+
+// ---- Graphs ----
+const canvasCredits=document.getElementById('graph-credits');
+const ctxCredits=canvasCredits.getContext('2d');
+canvasCredits.width=canvasCredits.offsetWidth; canvasCredits.height=canvasCredits.offsetHeight;
+
+const canvasPPS=document.getElementById('graph-pps');
+const ctxPPS=canvasPPS.getContext('2d');
+canvasPPS.width=canvasPPS.offsetWidth; canvasPPS.height=canvasPPS.offsetHeight;
+
+let creditsHistory=[]; let ppsHistory=[];
+setInterval(()=>{
+  creditsHistory.push(game.totalCredits);
+  const totalPPS = game.PPS.reduce((a,u)=>a+u.baseProd*u.owned,0) * game.prestigeMultiplier;
+  ppsHistory.push(totalPPS);
+  if(creditsHistory.length>canvasCredits.width) creditsHistory.shift();
+  if(ppsHistory.length>canvasPPS.width) ppsHistory.shift();
+
+  // Credits Graph
+  ctxCredits.clearRect(0,0,canvasCredits.width,canvasCredits.height);
+  ctxCredits.beginPath();
+  ctxCredits.strokeStyle='cyan'; ctxCredits.lineWidth=2;
+  creditsHistory.forEach((v,i)=>{
+    const x=i; const y=canvasCredits.height - (v/Math.max(...creditsHistory,1))*canvasCredits.height;
+    if(i===0) ctxCredits.moveTo(x,y); else ctxCredits.lineTo(x,y);
+  }); ctxCredits.stroke();
+
+  // PPS Graph
+  ctxPPS.clearRect(0,0,canvasPPS.width,canvasPPS.height);
+  ctxPPS.beginPath();
+  ctxPPS.strokeStyle='magenta'; ctxPPS.lineWidth=2;
+  ppsHistory.forEach((v,i)=>{
+    const x=i; const y=canvasPPS.height - (v/Math.max(...ppsHistory,1
