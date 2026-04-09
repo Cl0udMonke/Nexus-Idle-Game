@@ -10,70 +10,31 @@
 <meta name="theme-color" content="#00f5ff" id="theme-meta">
 <style>
 /* ═══════════════════════════════════════════
-   THEMES — every var used explicitly below
+   THEMES — vars on :root, swapped via JS
+   iOS PWA safe: no attribute selectors,
+   all vars hard-coded as fallbacks too.
 ═══════════════════════════════════════════ */
 :root {
-  /* NEXUS — dark navy + cyan */
+  /* NEXUS default (cyan) */
   --bg:     #020810;
   --bg2:    #040f1e;
   --c1:     #00f5ff;
-  --c1dim:  rgba(0,245,255,0.12);
-  --c1glow: rgba(0,245,255,0.25);
+  --c1dim:  rgba(0,245,255,0.15);
+  --c1glow: rgba(0,245,255,0.30);
   --c2:     #00bcd4;
-  --c3:     #39ff14;   /* accent green  */
-  --c4:     #ff006e;   /* danger/prestige*/
-  --c5:     #ffd60a;   /* gold/cost      */
-  --c6:     #ff6b00;   /* clicker orange */
-  --border: rgba(0,245,255,0.20);
-  --border2:rgba(0,245,255,0.08);
-  --txt:    #e8f4ff;   /* main body text */
-  --txt2:   rgba(232,244,255,0.45);
-  --txt3:   rgba(232,244,255,0.22);
-  --panel:  rgba(2,8,16,0.92);
-  --tap-flash: rgba(0,245,255,0.08);
-  --grid-c: rgba(0,245,255,0.04);
-  --ring1:  rgba(0,245,255,0.40);
-  --ring2:  rgba(57,255,20,0.28);
-}
-[data-theme="void"]{
-  --bg:#080213; --bg2:#10042a;
-  --c1:#c44fff; --c1dim:rgba(196,79,255,0.12); --c1glow:rgba(196,79,255,0.25);
-  --c2:#8a2be2; --c3:#ff44dd;
-  --border:rgba(196,79,255,0.22); --border2:rgba(196,79,255,0.09);
-  --txt:#f0e8ff; --txt2:rgba(240,232,255,0.45); --txt3:rgba(240,232,255,0.22);
-  --panel:rgba(8,2,19,0.93);
-  --tap-flash:rgba(196,79,255,0.09); --grid-c:rgba(196,79,255,0.04);
-  --ring1:rgba(196,79,255,0.40); --ring2:rgba(255,68,221,0.28);
-}
-[data-theme="inferno"]{
-  --bg:#0f0200; --bg2:#1e0500;
-  --c1:#ff5500; --c1dim:rgba(255,85,0,0.12); --c1glow:rgba(255,85,0,0.25);
-  --c2:#cc2200; --c3:#ffbb00;
-  --border:rgba(255,85,0,0.22); --border2:rgba(255,85,0,0.09);
-  --txt:#fff0e8; --txt2:rgba(255,240,232,0.45); --txt3:rgba(255,240,232,0.22);
-  --panel:rgba(15,2,0,0.93);
-  --tap-flash:rgba(255,85,0,0.09); --grid-c:rgba(255,85,0,0.04);
-  --ring1:rgba(255,85,0,0.40); --ring2:rgba(255,187,0,0.28);
-}
-[data-theme="matrix"]{
-  --bg:#000a00; --bg2:#001400;
-  --c1:#39ff14; --c1dim:rgba(57,255,20,0.10); --c1glow:rgba(57,255,20,0.22);
-  --c2:#00cc00; --c3:#00ffaa;
-  --border:rgba(57,255,20,0.20); --border2:rgba(57,255,20,0.08);
-  --txt:#e8ffe8; --txt2:rgba(232,255,232,0.45); --txt3:rgba(232,255,232,0.22);
-  --panel:rgba(0,10,0,0.93);
-  --tap-flash:rgba(57,255,20,0.08); --grid-c:rgba(57,255,20,0.04);
-  --ring1:rgba(57,255,20,0.40); --ring2:rgba(0,255,170,0.28);
-}
-[data-theme="ice"]{
-  --bg:#010c14; --bg2:#031828;
-  --c1:#7ae8ff; --c1dim:rgba(122,232,255,0.10); --c1glow:rgba(122,232,255,0.22);
-  --c2:#44bbdd; --c3:#ccf0ff;
-  --border:rgba(122,232,255,0.20); --border2:rgba(122,232,255,0.08);
-  --txt:#e8f8ff; --txt2:rgba(232,248,255,0.45); --txt3:rgba(232,248,255,0.22);
-  --panel:rgba(1,12,20,0.93);
-  --tap-flash:rgba(122,232,255,0.08); --grid-c:rgba(122,232,255,0.04);
-  --ring1:rgba(122,232,255,0.38); --ring2:rgba(204,240,255,0.22);
+  --c3:     #39ff14;
+  --c4:     #ff006e;
+  --c5:     #ffd60a;
+  --c6:     #ff6b00;
+  --border: rgba(0,245,255,0.28);
+  --border2:rgba(0,245,255,0.12);
+  --txt:    #e8f4ff;
+  --txt2:   #8ab4cc;
+  --txt3:   #4a7a90;
+  --tap-flash: rgba(0,245,255,0.10);
+  --grid-c: rgba(0,245,255,0.05);
+  --ring1:  rgba(0,245,255,0.45);
+  --ring2:  rgba(57,255,20,0.32);
 }
 
 /* ═══════════════════════════════════════════
@@ -86,13 +47,7 @@ background:var(–bg);
 font-family:‘Share Tech Mono’,monospace;
 color:var(–txt);
 position:fixed;width:100%;height:100%;
-transition:background 0.35s, color 0.35s;
 }
-/* Keep html bg in sync with theme so no white leaks */
-body[data-theme=“void”]    { background:#080213; }
-body[data-theme=“inferno”] { background:#0f0200; }
-body[data-theme=“matrix”]  { background:#000a00; }
-body[data-theme=“ice”]     { background:#010c14; }
 
 /* Grid background */
 #grid-bg{
@@ -787,13 +742,63 @@ function applySettings(){
   applyTheme(S.theme,false);
 }
 
-const THEME_BGS = {nexus:'#020810',void:'#080213',inferno:'#0f0200',matrix:'#000a00',ice:'#010c14'};
+const THEME_VARS = {
+  nexus:{
+    '--bg':'#020810','--bg2':'#040f1e',
+    '--c1':'#00f5ff','--c1dim':'rgba(0,245,255,0.15)','--c1glow':'rgba(0,245,255,0.30)',
+    '--c2':'#00bcd4','--c3':'#39ff14','--c4':'#ff006e','--c5':'#ffd60a','--c6':'#ff6b00',
+    '--border':'rgba(0,245,255,0.28)','--border2':'rgba(0,245,255,0.12)',
+    '--txt':'#e8f4ff','--txt2':'#8ab4cc','--txt3':'#4a7a90',
+    '--tap-flash':'rgba(0,245,255,0.10)','--grid-c':'rgba(0,245,255,0.05)',
+    '--ring1':'rgba(0,245,255,0.45)','--ring2':'rgba(57,255,20,0.32)',
+  },
+  void:{
+    '--bg':'#080213','--bg2':'#10042a',
+    '--c1':'#c44fff','--c1dim':'rgba(196,79,255,0.15)','--c1glow':'rgba(196,79,255,0.30)',
+    '--c2':'#8a2be2','--c3':'#ff44dd','--c4':'#ff006e','--c5':'#ffd60a','--c6':'#dd44ff',
+    '--border':'rgba(196,79,255,0.30)','--border2':'rgba(196,79,255,0.12)',
+    '--txt':'#f0e8ff','--txt2':'#b090cc','--txt3':'#6a4a80',
+    '--tap-flash':'rgba(196,79,255,0.10)','--grid-c':'rgba(196,79,255,0.05)',
+    '--ring1':'rgba(196,79,255,0.45)','--ring2':'rgba(255,68,221,0.32)',
+  },
+  inferno:{
+    '--bg':'#0f0200','--bg2':'#1e0500',
+    '--c1':'#ff5500','--c1dim':'rgba(255,85,0,0.15)','--c1glow':'rgba(255,85,0,0.30)',
+    '--c2':'#cc2200','--c3':'#ffbb00','--c4':'#ff006e','--c5':'#ffd60a','--c6':'#ff8800',
+    '--border':'rgba(255,85,0,0.30)','--border2':'rgba(255,85,0,0.12)',
+    '--txt':'#fff0e8','--txt2':'#cc8866','--txt3':'#804433',
+    '--tap-flash':'rgba(255,85,0,0.10)','--grid-c':'rgba(255,85,0,0.05)',
+    '--ring1':'rgba(255,85,0,0.45)','--ring2':'rgba(255,187,0,0.32)',
+  },
+  matrix:{
+    '--bg':'#000a00','--bg2':'#001400',
+    '--c1':'#39ff14','--c1dim':'rgba(57,255,20,0.13)','--c1glow':'rgba(57,255,20,0.26)',
+    '--c2':'#00cc00','--c3':'#00ffaa','--c4':'#ffff00','--c5':'#ffd60a','--c6':'#00ff44',
+    '--border':'rgba(57,255,20,0.28)','--border2':'rgba(57,255,20,0.11)',
+    '--txt':'#e8ffe8','--txt2':'#80cc80','--txt3':'#407840',
+    '--tap-flash':'rgba(57,255,20,0.09)','--grid-c':'rgba(57,255,20,0.05)',
+    '--ring1':'rgba(57,255,20,0.45)','--ring2':'rgba(0,255,170,0.32)',
+  },
+  ice:{
+    '--bg':'#010c14','--bg2':'#031828',
+    '--c1':'#7ae8ff','--c1dim':'rgba(122,232,255,0.13)','--c1glow':'rgba(122,232,255,0.26)',
+    '--c2':'#44bbdd','--c3':'#ccf0ff','--c4':'#aaddff','--c5':'#ffd60a','--c6':'#66bbff',
+    '--border':'rgba(122,232,255,0.28)','--border2':'rgba(122,232,255,0.11)',
+    '--txt':'#e8f8ff','--txt2':'#88bbcc','--txt3':'#446677',
+    '--tap-flash':'rgba(122,232,255,0.09)','--grid-c':'rgba(122,232,255,0.05)',
+    '--ring1':'rgba(122,232,255,0.42)','--ring2':'rgba(204,240,255,0.26)',
+  },
+};
 
 function applyTheme(id,save=true){
   S.theme=id;
-  document.body.setAttribute('data-theme',id);
-  // Set html element bg directly so no white shows in sandboxed iframes
-  document.documentElement.style.background = THEME_BGS[id] || '#020810';
+  const vars=THEME_VARS[id]||THEME_VARS.nexus;
+  const root=document.documentElement;
+  // Inject every CSS var directly onto :root — reliable on iOS PWA / WebKit
+  Object.entries(vars).forEach(([k,v])=>root.style.setProperty(k,v));
+  // Also set background directly so no flash or inheritance issue
+  root.style.background=vars['--bg'];
+  document.body.style.background=vars['--bg'];
   const t=THEMES.find(x=>x.id===id);
   if(t) document.getElementById('theme-meta').setAttribute('content',t.meta);
   document.querySelectorAll('.t-swatch').forEach(s=>s.classList.toggle('active',s.dataset.theme===id));
@@ -1134,12 +1139,12 @@ document.addEventListener('visibilitychange',()=>{
 // ═══════════════════════════════════════════
 //  INIT
 // ═══════════════════════════════════════════
-// Set bg immediately before load so no white flash
-document.documentElement.style.background = '#020810';
-loadGame();
+// Apply dark bg and default theme vars immediately — before loadGame
+// so there's zero white flash on any platform
+applyTheme('nexus', false);
+loadGame();           // may override theme from saved settings
 buildThemes();
-applySettings();
-// Start with drawer open on pps tab
+applySettings();      // calls applyTheme(S.theme) with saved theme
 switchTab('pps');
 updateUI();
 </script>
