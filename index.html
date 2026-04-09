@@ -80,7 +80,7 @@
 RESET & BODY
 ═══════════════════════════════════════════ */
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-html,body{height:100%;overflow:hidden;}
+html{height:100%;overflow:hidden;background:#020810;}
 body{
 background:var(–bg);
 font-family:‘Share Tech Mono’,monospace;
@@ -88,6 +88,11 @@ color:var(–txt);
 position:fixed;width:100%;height:100%;
 transition:background 0.35s, color 0.35s;
 }
+/* Keep html bg in sync with theme so no white leaks */
+body[data-theme=“void”]    { background:#080213; }
+body[data-theme=“inferno”] { background:#0f0200; }
+body[data-theme=“matrix”]  { background:#000a00; }
+body[data-theme=“ice”]     { background:#010c14; }
 
 /* Grid background */
 #grid-bg{
@@ -123,8 +128,7 @@ height:100vh;overflow:hidden;
 /* ── HEADER ─────────────────────────────── */
 #header{
 padding:40px 16px 10px;
-background:var(–panel);
-backdrop-filter:blur(12px);
+background:var(–bg2);
 border-bottom:1px solid var(–border);
 flex-shrink:0;
 }
@@ -228,11 +232,10 @@ BOTTOM DRAWER — collapsible panels
 #drawer{
 flex-shrink:0;
 display:flex;flex-direction:column;
-max-height:60vh;        /* cap so tap zone always shows */
+max-height:60vh;
 transition:max-height 0.3s ease;
-background:var(–panel);
+background:var(–bg2);
 border-top:1px solid var(–border);
-backdrop-filter:blur(12px);
 }
 #drawer.collapsed{max-height:0;overflow:hidden;border-top:none;}
 
@@ -240,9 +243,8 @@ backdrop-filter:blur(12px);
 #tab-bar{
 flex-shrink:0;
 display:flex;
-background:var(–panel);
+background:var(–bg2);
 border-top:1px solid var(–border);
-backdrop-filter:blur(12px);
 }
 .tab-btn{
 flex:1;padding:8px 2px 7px;
@@ -406,13 +408,14 @@ top:2px;left:2px;transition:left 0.18s;box-shadow:0 1px 3px rgba(0,0,0,0.35);
 .s-kv-val{font-size:9px;color:var(–c1);font-family:‘Orbitron’,monospace;}
 .sv-btn{
 width:100%;padding:8px;margin-top:5px;
-border:1px solid var(–c1);background:var(–c1dim);
-color:var(–c1);font-family:‘Orbitron’,monospace;
+border:1px solid var(–c1, #00f5ff);background:var(–c1dim, rgba(0,245,255,0.12));
+color:var(–c1, #00f5ff);font-family:‘Orbitron’,monospace;
 font-size:9px;letter-spacing:2px;cursor:pointer;border-radius:3px;
+display:block;
 }
 .sv-btn:active{opacity:0.7;}
-.sv-btn.warn{border-color:var(–c6);color:var(–c6);background:rgba(255,107,0,0.07);}
-.sv-btn.danger{border-color:var(–c4);color:var(–c4);background:rgba(255,0,110,0.07);}
+.sv-btn.warn{border-color:var(–c6, #ff6b00);color:var(–c6, #ff6b00);background:rgba(255,107,0,0.07);}
+.sv-btn.danger{border-color:var(–c4, #ff006e);color:var(–c4, #ff006e);background:rgba(255,0,110,0.07);}
 .info-txt{font-size:8px;color:var(–txt3);line-height:1.7;margin-top:3px;}
 
 /* ═══════════════════════════════════════════
@@ -784,9 +787,13 @@ function applySettings(){
   applyTheme(S.theme,false);
 }
 
+const THEME_BGS = {nexus:'#020810',void:'#080213',inferno:'#0f0200',matrix:'#000a00',ice:'#010c14'};
+
 function applyTheme(id,save=true){
   S.theme=id;
   document.body.setAttribute('data-theme',id);
+  // Set html element bg directly so no white shows in sandboxed iframes
+  document.documentElement.style.background = THEME_BGS[id] || '#020810';
   const t=THEMES.find(x=>x.id===id);
   if(t) document.getElementById('theme-meta').setAttribute('content',t.meta);
   document.querySelectorAll('.t-swatch').forEach(s=>s.classList.toggle('active',s.dataset.theme===id));
@@ -983,8 +990,9 @@ function renderOffline(){
 }
 
 function buyUpg(u,isPPC){
-  const n=effectiveN(u);
-  const actualN=n===0?maxBuy(u):n;
+  const requested=buyAmt===0?maxBuy(u):buyAmt;
+  const affordable=maxBuy(u);
+  const actualN=buyAmt===0?affordable:Math.min(requested,affordable);
   if(actualN<=0)return;
   const cost=costN(u,actualN);
   if(G.coins<cost)return;
@@ -1126,6 +1134,8 @@ document.addEventListener('visibilitychange',()=>{
 // ═══════════════════════════════════════════
 //  INIT
 // ═══════════════════════════════════════════
+// Set bg immediately before load so no white flash
+document.documentElement.style.background = '#020810';
 loadGame();
 buildThemes();
 applySettings();
