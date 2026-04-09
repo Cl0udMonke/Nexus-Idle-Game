@@ -2,134 +2,135 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>NEXUS // IDLE</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nexus Idle Game</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@700&display=swap" rel="stylesheet">
 <style>
-:root{
-  --cyan:#00f5ff; --cyan2:#00bcd4; --neon:#39ff14; --pink:#ff006e; --gold:#ffd60a; --dim:rgba(0,245,255,0.08); --border:rgba(0,245,255,0.18); --bg:#020810;
+/* ── THEMES ─────────────────────────────────────────── */
+:root {
+  --c1:#00f5ff; --c2:#00bcd4; --c3:#39ff14; --c4:#ff006e; --c5:#ffd60a; --c6:#ff6b00;
+  --dim:rgba(0,245,255,0.08); --border:rgba(0,245,255,0.18); --bg:#020810;
+  --grid-color:rgba(0,245,255,0.04);
+  --header-bg:rgba(2,8,16,0.88); --tab-bg:rgba(2,8,16,0.7);
+  --upg-bg:rgba(0,245,255,0.02); --upg-can-bg:rgba(0,245,255,0.05);
+  --upg-border:rgba(0,245,255,0.07); --upg-can-border:rgba(0,245,255,0.22);
+  --ppc-can-bg:rgba(255,107,0,0.04); --ppc-can-border:rgba(255,107,0,0.25);
+  --tap-pulse:rgba(0,245,255,0.07);
 }
-body{margin:0; padding:0; background:var(--bg); font-family:monospace; color:#fff; overflow:hidden; height:100vh; display:flex; flex-direction:column;}
-#header{padding:20px; border-bottom:1px solid var(--border);}
-#credit-count{font-size:32px;}
-#core-area{flex:1; display:flex; justify-content:center; align-items:center; position:relative; transition: all 0.3s;}
-#core-btn{width:120px; height:120px; border-radius:50%; border:2px solid var(--cyan); background:radial-gradient(circle at 40% 35%, rgba(0,245,255,0.2), rgba(0,245,255,0.04)); cursor:pointer; display:flex; flex-direction:column; justify-content:center; align-items:center; user-select:none;}
-#core-btn:active{transform:scale(0.95);}
-.tab-section{position:absolute; bottom:0; width:100%; background:rgba(0,0,0,0.4); border-top:1px solid var(--border); transition: max-height 0.3s; overflow:hidden; max-height:0;}
-.tab-section.open{max-height:300px;}
-.tab-header{padding:5px 10px; cursor:pointer; border-bottom:1px solid var(--border); user-select:none;}
-.tab-content{padding:5px 10px;}
-.upg-row{padding:5px; border:1px solid var(--border); margin-bottom:4px; display:flex; justify-content:space-between; cursor:pointer;}
+body[data-theme="void"]{--c1:#b44fff;--c2:#8a2be2;--c3:#ff44cc;--c4:#ff006e;--c5:#ffd60a;--c6:#dd44ff;--dim:rgba(180,79,255,0.08);--border:rgba(180,79,255,0.2);--bg:#080210;--grid-color:rgba(180,79,255,0.04);--header-bg:rgba(8,2,16,0.9);--tab-bg:rgba(8,2,16,0.7);--upg-bg:rgba(180,79,255,0.02);--upg-can-bg:rgba(180,79,255,0.06);--upg-border:rgba(180,79,255,0.08);--upg-can-border:rgba(180,79,255,0.25);--ppc-can-bg:rgba(255,68,204,0.05);--ppc-can-border:rgba(255,68,204,0.28);--tap-pulse:rgba(180,79,255,0.07);}
+body[data-theme="inferno"]{--c1:#ff4400;--c2:#cc2200;--c3:#ffaa00;--c4:#ff006e;--c5:#ffd60a;--c6:#ff8800;--dim:rgba(255,68,0,0.08);--border:rgba(255,68,0,0.2);--bg:#100200;--grid-color:rgba(255,68,0,0.04);--header-bg:rgba(16,2,0,0.9);--tab-bg:rgba(16,2,0,0.7);--upg-bg:rgba(255,68,0,0.02);--upg-can-bg:rgba(255,68,0,0.06);--upg-border:rgba(255,68,0,0.08);--upg-can-border:rgba(255,68,0,0.25);--ppc-can-bg:rgba(255,170,0,0.05);--ppc-can-border:rgba(255,170,0,0.28);--tap-pulse:rgba(255,68,0,0.08);}
+body[data-theme="matrix"]{--c1:#39ff14;--c2:#00cc00;--c3:#00ff88;--c4:#ffff00;--c5:#ffd60a;--c6:#00ff44;--dim:rgba(57,255,20,0.07);--border:rgba(57,255,20,0.18);--bg:#000a00;--grid-color:rgba(57,255,20,0.04);--header-bg:rgba(0,10,0,0.92);--tab-bg:rgba(0,10,0,0.7);--upg-bg:rgba(57,255,20,0.02);--upg-can-bg:rgba(57,255,20,0.05);--upg-border:rgba(57,255,20,0.07);--upg-can-border:rgba(57,255,20,0.22);--ppc-can-bg:rgba(0,255,136,0.05);--ppc-can-border:rgba(0,255,136,0.28);--tap-pulse:rgba(57,255,20,0.07);}
+body[data-theme="ice"]{--c1:#88eeff;--c2:#44ccff;--c3:#ffffff;--c4:#aaddff;--c5:#ffd60a;--c6:#66bbff;--dim:rgba(136,238,255,0.07);--border:rgba(136,238,255,0.2);--bg:#010c14;--grid-color:rgba(136,238,255,0.035);--header-bg:rgba(1,12,20,0.9);--tab-bg:rgba(1,12,20,0.7);--upg-bg:rgba(136,238,255,0.02);--upg-can-bg:rgba(136,238,255,0.06);--upg-border:rgba(136,238,255,0.08);--upg-can-border:rgba(136,238,255,0.25);--ppc-can-bg:rgba(255,255,255,0.04);--ppc-can-border:rgba(255,255,255,0.22);--tap-pulse:rgba(136,238,255,0.07);}
+
+/* ── BASE ────────────────────────────────────────────── */
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+body{background:var(--bg);min-height:100vh;font-family:'Share Tech Mono',monospace;color:#fff;overflow:hidden;position:fixed;width:100%;height:100%;transition:background 0.3s;}
+#grid-bg{position:fixed;inset:0;background-image:linear-gradient(var(--grid-color) 1px,transparent 1px),linear-gradient(90deg,var(--grid-color) 1px,transparent 1px);background-size:40px 40px;z-index:0;animation:gridScroll 20s linear infinite;}
+@keyframes gridScroll{from{background-position:0 0;}to{background-position:0 40px;}}
+#app{position:relative;z-index:1;display:flex;flex-direction:column;height:100vh;overflow:hidden;}
+
+/* ── HEADER ──────────────────────────────────────────── */
+#header{padding:44px 16px 10px;border-bottom:1px solid var(--border);background:var(--header-bg);backdrop-filter:blur(10px);flex-shrink:0;}
+#sys-label{font-family:'Orbitron',monospace;font-size:8px;letter-spacing:4px;color:var(--c1);opacity:0.45;margin-bottom:2px;}
+#credit-count{font-family:'Orbitron',monospace;font-size:clamp(26px,7vw,42px);font-weight:900;color:var(--c1);text-shadow:0 0 20px var(--c1),0 0 40px var(--c1);letter-spacing:2px;line-height:1;}
+#credit-unit{font-size:9px;letter-spacing:3px;color:var(--c1);opacity:0.35;margin-top:2px;}
+.stats-row{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;}
+.stat-box{border:1px solid var(--border);background:var(--dim);padding:3px 9px;border-radius:3px;font-size:9px;color:rgba(255,255,255,0.35);position:relative;overflow:hidden;}
+.stat-box::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:var(--c1);opacity:0.4;}
+.stat-box .val{font-family:'Orbitron',monospace;font-size:12px;font-weight:700;display:block;color:var(--c1);}
+.stat-box.green .val{color:var(--c3);}
+.stat-box.green{border-color:rgba(57,255,20,0.2);background:rgba(57,255,20,0.05);}
+.stat-box.green::before{background:var(--c3);}
+.stat-box.orange .val{color:var(--c6);}
+.stat-box.orange{border-color:rgba(255,107,0,0.2);background:rgba(255,107,0,0.05);}
+.stat-box.orange::before{background:var(--c6);}
+#prestige-btn{display:none;width:100%;margin-top:7px;padding:7px;border:1px solid var(--c4);background:rgba(255,0,110,0.1);color:var(--c4);font-family:'Orbitron',monospace;font-size:10px;font-weight:700;letter-spacing:2px;cursor:pointer;border-radius:3px;}
+#prestige-btn:active{background:rgba(255,0,110,0.25);}
+
+/* ── TAP ZONE ────────────────────────────────────────── */
+#tap-zone{flex:0 0 190px;position:relative;overflow:hidden;cursor:pointer;user-select:none;-webkit-user-select:none;display:flex;align-items:center;justify-content:center;border-bottom:1px solid var(--border);transition:background 0.08s;}
+#tap-zone.tapped{background:var(--tap-pulse);}
+.ring{position:absolute;border-radius:50%;border:1px solid transparent;animation:spin var(--spd) linear infinite;pointer-events:none;}
+.ring1{width:150px;height:150px;border-top-color:var(--c1);border-right-color:var(--c1);opacity:0.35;--spd:4s;}
+.ring2{width:122px;height:122px;border-bottom-color:var(--c3);border-left-color:var(--c3);opacity:0.25;--spd:6s;animation-direction:reverse;}
+.ring3{width:176px;height:176px;border-top-color:var(--c1);opacity:0.07;--spd:12s;}
+@keyframes spin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+#core-visual{width:94px;height:94px;border-radius:50%;border:2px solid var(--c1);background:radial-gradient(circle at 40% 35%,var(--dim),transparent);box-shadow:0 0 22px var(--c1),0 0 44px var(--c1),inset 0 0 18px var(--dim);position:relative;z-index:2;pointer-events:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;transition:transform 0.08s,box-shadow 0.08s;}
+#tap-zone.tapped #core-visual{transform:scale(0.88);box-shadow:0 0 8px var(--c1),inset 0 0 8px var(--dim);}
+#core-icon{font-size:28px;filter:drop-shadow(0 0 8px var(--c1));pointer-events:none;}
+#core-label{font-family:'Orbitron',monospace;font-size:6px;letter-spacing:2px;color:var(--c1);opacity:0.55;pointer-events:none;}
+#tap-hint{position:absolute;bottom:7px;left:0;right:0;text-align:center;font-size:7px;letter-spacing:3px;color:var(--c1);opacity:0.2;pointer-events:none;}
+#idle-bar-wrap{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);width:155px;text-align:center;pointer-events:none;}
+#idle-label{font-size:7px;letter-spacing:2px;color:var(--c1);opacity:0.3;margin-bottom:2px;}
+#idle-bar-bg{width:100%;height:2px;background:rgba(255,255,255,0.05);border-radius:1px;overflow:hidden;}
+#idle-bar{height:100%;width:0%;background:linear-gradient(90deg,var(--c2),var(--c1));box-shadow:0 0 4px var(--c1);border-radius:1px;transition:width 0.1s linear;}
+
+/* ── BOTTOM MENU & TABS ─────────────────────────────── */
+#bottom-menu{position:absolute;bottom:0;width:100%;display:flex;justify-content:space-around;border-top:1px solid var(--border);background:var(--header-bg);backdrop-filter:blur(6px);padding:3px 0;}
+.bottom-tab{flex:1;text-align:center;font-family:'Orbitron',monospace;font-size:10px;color:var(--c1);cursor:pointer;opacity:0.65;transition:opacity 0.2s;}
+.bottom-tab.active{opacity:1;color:var(--c3);}
+.tab-content{position:absolute;bottom:34px;left:0;width:100%;max-height:calc(100% - 190px - 34px);overflow-y:auto;display:none;background:var(--tab-bg);backdrop-filter:blur(10px);border-top:1px solid var(--border);}
+.tab-content.active{display:block;}
+.upgrade-item{border:1px solid var(--upg-border);background:var(--upg-bg);margin:4px;padding:8px;border-radius:4px;font-size:10px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;transition:background 0.1s,transform 0.1s;}
+.upgrade-item.can-buy{background:var(--upg-can-bg);border-color:var(--upg-can-border);}
+.upgrade-item:hover{transform:scale(1.02);}
+.upgrade-name{flex:1;color:var(--c1);}
+.upgrade-cost{color:var(--c4);font-weight:700;letter-spacing:1px;}
+
+/* ── COLLAPSIBLE SECTIONS ───────────────────────────── */
+.collapsible{cursor:pointer;padding:8px;border:1px solid var(--border);border-radius:4px;background:var(--upg-bg);margin:4px 0;font-size:10px;display:flex;justify-content:space-between;align-items:center;}
+.collapsible:after{content:'▼';font-size:8px;transform:rotate(0deg);transition:0.2s;}
+.collapsible.active:after{transform:rotate(-180deg);}
+.content-collapsible{max-height:0;overflow:hidden;transition:max-height 0.3s ease;}
+.content-collapsible.active{max-height:500px;}
+
+/* ── FLOATING NUMBERS & EFFECTS ─────────────────────── */
+.float-up{position:absolute;font-family:'Orbitron',monospace;font-weight:700;color:var(--c3);pointer-events:none;animation:floatUp 0.9s ease-out forwards;}
+@keyframes floatUp{0%{opacity:1;transform:translateX(-50%) translateY(0);}100%{opacity:0;transform:translateX(-50%) translateY(-72px);}}
 </style>
 </head>
-<body>
-<div id="header">
-  <div id="credit-count">0</div>
-  <div style="margin-top:5px;">Credits</div>
-</div>
+<body data-theme="default">
+<div id="grid-bg"></div>
+<div id="app">
+  <!-- HEADER -->
+  <div id="header">
+    <div id="sys-label">NEXUS IDLE</div>
+    <div id="credit-count">0</div>
+    <div id="credit-unit">POINTS</div>
+    <div class="stats-row">
+      <div class="stat-box green"><span class="val">0</span> PPS</div>
+      <div class="stat-box orange"><span class="val">0</span> Click</div>
+    </div>
+    <button id="prestige-btn">PRESTIGE</button>
+  </div>
 
-<div id="core-area">
-  <button id="core-btn">
-    ⚡<br>GENERATE
-  </button>
-
-  <!-- Upgrades Tab -->
-  <div id="upgrades-section" class="tab-section">
-    <div class="tab-header">UPGRADES</div>
-    <div class="tab-content">
-      Bulk Buy: <select id="bulk-select"><option value="1">1</option><option value="10">10</option><option value="25">25</option><option value="50">50</option><option value="100">100</option></select>
-      <div id="upgrades-list"></div>
+  <!-- TAP ZONE -->
+  <div id="tap-zone">
+    <div class="ring ring1"></div>
+    <div class="ring ring2"></div>
+    <div class="ring ring3"></div>
+    <div id="core-visual">
+      <div id="core-icon">⚡</div>
+      <div id="core-label">CORE</div>
+    </div>
+    <div id="tap-hint">TAP</div>
+    <div id="idle-bar-wrap">
+      <div id="idle-label">IDLE PROGRESS</div>
+      <div id="idle-bar-bg">
+        <div id="idle-bar"></div>
+      </div>
     </div>
   </div>
 
-  <!-- Settings Tab -->
-  <div id="settings-section" class="tab-section">
-    <div class="tab-header">SETTINGS</div>
-    <div class="tab-content">
-      Theme: <select id="theme-select">
-        <option value="theme1">Default</option>
-        <option value="theme2">Sunset</option>
-        <option value="theme3">Neon</option>
-        <option value="theme4">Cosmic</option>
-        <option value="theme5">Monochrome</option>
-      </select>
-    </div>
+  <!-- TABS -->
+  <div id="bottom-menu">
+    <div class="bottom-tab active" data-tab="upgrades">UPGRADES</div>
+    <div class="bottom-tab" data-tab="prestige">PRESTIGE</div>
+    <div class="bottom-tab" data-tab="settings">SETTINGS</div>
   </div>
-</div>
 
-<script>
-let credits = 0, cps = 0, cpt = 1, total = 0;
-const coreBtn = document.getElementById('core-btn');
-const creditCount = document.getElementById('credit-count');
-const upgradesSection = document.getElementById('upgrades-section');
-const settingsSection = document.getElementById('settings-section');
-const upgradesList = document.getElementById('upgrades-list');
-const bulkSelect = document.getElementById('bulk-select');
-const themeSelect = document.getElementById('theme-select');
-
-// Example upgrades
-let upgrades = [
-  {name:'Auto Miner', cost:50, cps:1, owned:0},
-  {name:'Quantum Drill', cost:250, cps:5, owned:0},
-  {name:'Nano Factory', cost:1000, cps:25, owned:0},
-];
-
-// Render upgrades
-function renderUpgrades(){
-  upgradesList.innerHTML='';
-  let bulk = parseInt(bulkSelect.value);
-  upgrades.forEach((u,i)=>{
-    let canBuy = credits >= u.cost*bulk;
-    let row = document.createElement('div');
-    row.className = 'upg-row';
-    row.style.opacity = canBuy?1:0.4;
-    row.innerHTML = `<span>${u.name} (${u.owned})</span><span>${u.cost*bulk}💎</span>`;
-    row.onclick = ()=>{
-      if(credits>=u.cost*bulk){
-        u.owned+=bulk;
-        credits-=u.cost*bulk;
-        cps+=u.cps*bulk;
-        renderUpgrades();
-        updateCredits();
-      }
-    }
-    upgradesList.appendChild(row);
-  });
-}
-
-// Update credits
-function updateCredits(){ creditCount.innerText = Math.floor(credits); total+=0; }
-
-// Core button tap
-coreBtn.addEventListener('click', ()=>{
-  credits+=cpt;
-  updateCredits();
-});
-
-// Auto CPS loop
-setInterval(()=>{
-  credits+=cps/10;
-  updateCredits();
-},100);
-
-// Toggle collapsible
-document.querySelectorAll('.tab-header').forEach(header=>{
-  header.addEventListener('click',()=>{
-    let parent = header.parentElement;
-    parent.classList.toggle('open');
-  });
-});
-
-// Bulk select change
-bulkSelect.addEventListener('change', renderUpgrades);
-
-// Theme select
-themeSelect.addEventListener('change',(e)=>{
-  document.body.className = e.target.value;
-});
-
-// Initial render
-renderUpgrades();
-updateCredits();
-</script>
-</body>
-</html>
+  <!-- TAB CONTENTS -->
+  <div id="upgrades" class="tab-content active">
+    <div class="collapsible">Production Upgrades</div>
+    <div class="content-collapsible">
+      <div class="upgrade-item can-buy"><span class="upgrade-name">Auto Miner</span
