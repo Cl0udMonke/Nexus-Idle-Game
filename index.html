@@ -4,167 +4,169 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>NEXUS // IDLE</title>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#00f5ff">
 <style>
-:root {
+:root{
   --cyan:#00f5ff; --cyan2:#00bcd4; --neon:#39ff14; --pink:#ff006e; --gold:#ffd60a; --dim:rgba(0,245,255,0.08); --border:rgba(0,245,255,0.18); --bg:#020810;
 }
-/* -- THEME CLASSES -- */
-.theme1 { --cyan:#00f5ff; --cyan2:#00bcd4; --neon:#39ff14; --pink:#ff006e; --gold:#ffd60a; --dim:rgba(0,245,255,0.08); --border:rgba(0,245,255,0.18); --bg:#020810; }
-.theme2 { --cyan:#ff4f00; --cyan2:#ff6a00; --neon:#ffe600; --pink:#ff00d6; --gold:#00ffff; --dim:rgba(255,79,0,0.08); --border:rgba(255,79,0,0.18); --bg:#0a0010; }
-.theme3 { --cyan:#00ffea; --cyan2:#00cfff; --neon:#ff00ff; --pink:#ff0000; --gold:#fff700; --dim:rgba(0,255,234,0.08); --border:rgba(0,255,234,0.18); --bg:#10020a; }
-.theme4 { --cyan:#ff00ff; --cyan2:#ff8cff; --neon:#00ff00; --pink:#00ffff; --gold:#ffd700; --dim:rgba(255,0,255,0.08); --border:rgba(255,0,255,0.18); --bg:#000a10; }
-.theme5 { --cyan:#ffff00; --cyan2:#ff9900; --neon:#00ffff; --pink:#ff00aa; --gold:#ffffff; --dim:rgba(255,255,0,0.08); --border:rgba(255,255,0,0.18); --bg:#101010; }
-
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-body{background:var(--bg);min-height:100vh;font-family:'Share Tech Mono', monospace;color:#fff;overflow:hidden;position:fixed;width:100%;height:100%;}
-#grid-bg{position:fixed;inset:0;background-image:linear-gradient(rgba(0,245,255,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(0,245,255,0.04) 1px,transparent 1px);background-size:40px 40px;z-index:0;animation:gridScroll 20s linear infinite;}
-@keyframes gridScroll{from{background-position:0 0;}to{background-position:0 40px;}}
-.corner{position:fixed;width:50px;height:50px;z-index:2;}
-.corner.tl{top:0;left:0;border-top:2px solid var(--cyan);border-left:2px solid var(--cyan);}
-.corner.tr{top:0;right:0;border-top:2px solid var(--cyan);border-right:2px solid var(--cyan);}
-.corner.bl{bottom:0;left:0;border-bottom:2px solid var(--cyan);border-left:2px solid var(--cyan);}
-.corner.br{bottom:0;right:0;border-bottom:2px solid var(--cyan);border-right:2px solid var(--cyan);}
-#app{position:relative;z-index:1;display:flex;flex-direction:column;height:100vh;overflow:hidden;}
-/* HEADER */
-#header{padding:44px 16px 10px;border-bottom:1px solid var(--border);background:rgba(2,8,16,0.85);backdrop-filter:blur(10px);flex-shrink:0;}
-#sys-label{font-family:'Orbitron', monospace;font-size:8px;letter-spacing:4px;color:var(--cyan);opacity:0.45;margin-bottom:2px;}
-#credit-count{font-family:'Orbitron', monospace;font-size:clamp(26px,7vw,42px);font-weight:900;color:var(--cyan);text-shadow:0 0 20px var(--cyan),0 0 40px rgba(0,245,255,0.3);letter-spacing:2px;line-height:1;}
-#credit-unit{font-size:9px;letter-spacing:3px;color:rgba(0,245,255,0.35);margin-top:2px;}
-.stats-row{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;}
-.stat-box{border:1px solid var(--border);background:var(--dim);padding:3px 9px;border-radius:3px;font-size:9px;color:rgba(255,255,255,0.35);position:relative;overflow:hidden;}
-.stat-box::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:var(--cyan);opacity:0.4;}
-.stat-box .val{font-family:'Orbitron', monospace;font-size:12px;font-weight:700;display:block;color:var(--cyan);}
-.stat-box.green .val{color:var(--neon);}
-.stat-box.green{border-color:rgba(57,255,20,0.2);background:rgba(57,255,20,0.05);}
-.stat-box.green::before{background:var(--neon);}
-.stat-box.pink .val{color:var(--pink);}
-.stat-box.pink{border-color:rgba(255,0,110,0.2);background:rgba(255,0,110,0.05);}
-.stat-box.pink::before{background:var(--pink);}
-#prestige-btn{display:none;width:100%;margin-top:7px;padding:7px;border:1px solid var(--pink);background:rgba(255,0,110,0.1);color:var(--pink);font-family:'Orbitron', monospace;font-size:10px;font-weight:700;letter-spacing:2px;cursor:pointer;text-shadow:0 0 10px var(--pink);box-shadow:0 0 15px rgba(255,0,110,0.2);border-radius:3px;}
-#prestige-btn:active{background:rgba(255,0,110,0.25);}
-#core-area{display:flex;justify-content:center;align-items:center;height:200px;flex-shrink:0;position:relative;}
-.ring{position:absolute;border-radius:50%;border:1px solid transparent;animation:spin var(--spd) linear infinite;}
-.ring1{width:165px;height:165px;border-top-color:var(--cyan);border-right-color:rgba(0,245,255,0.15);--spd:4s;}
-.ring2{width:140px;height:140px;border-bottom-color:var(--neon);border-left-color:rgba(57,255,20,0.15);--spd:6s;animation-direction:reverse;}
-.ring3{width:188px;height:188px;border-top-color:rgba(0,245,255,0.08);border-right-color:rgba(0,245,255,0.2);border-bottom-color:rgba(0,245,255,0.08);--spd:12s;}
-@keyframes spin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
-#core-btn{width:110px;height:110px;border-radius:50%;border:2px solid var(--cyan);background:radial-gradient(circle at 40% 35%, rgba(0,245,255,0.2), rgba(0,245,255,0.04));box-shadow:0 0 25px rgba(0,245,255,0.35),0 0 50px rgba(0,245,255,0.12),inset 0 0 25px rgba(0,245,255,0.08);cursor:pointer;position:relative;z-index:5;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;user-select:none;-webkit-user-select:none;transition: transform 0.1s, box-shadow 0.1s;}
-#core-btn:active{transform:scale(0.88);box-shadow:0 0 12px rgba(0,245,255,0.25);}
-#core-icon{font-size:34px;filter:drop-shadow(0 0 8px var(--cyan));}
-#core-label{font-family:'Orbitron', monospace;font-size:6px;letter-spacing:2px;color:var(--cyan);opacity:0.6;}
-#idle-bar-wrap{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);width:190px;text-align:center;}
-#idle-label{font-size:7px;letter-spacing:2px;color:rgba(0,245,255,0.35);margin-bottom:2px;}
-#idle-bar-bg{width:100%;height:2px;background:rgba(0,245,255,0.08);border-radius:1px;overflow:hidden;}
-#idle-bar{height:100%;width:0%;background:linear-gradient(90deg,var(--cyan2),var(--cyan));box-shadow:0 0 4px var(--cyan);border-radius:1px;}
-.float-num{position:fixed;font-family:'Orbitron', monospace;font-size:13px;font-weight:700;color:var(--cyan);text-shadow:0 0 8px var(--cyan);pointer-events:none;z-index:999;animation:floatUp 1s ease-out forwards;}
-@keyframes floatUp{0%{opacity:1;transform:translateY(0);}100%{opacity:0;transform:translateY(-65px);}}
-#upgrades-section,#stats-section,#settings-section{flex:1;display:flex;flex-direction:column;overflow:hidden;border-top:1px solid var(--border);}
-#upgrades-header,#stats-header,#settings-header{display:flex;align-items:center;gap:8px;padding:6px 14px;border-bottom:1px solid var(--border);flex-shrink:0;}
-#upgrades-title,#stats-title,#settings-title{font-family:'Orbitron', monospace;font-size:8px;letter-spacing:3px;color:rgba(0,245,255,0.45);}
-.hline{flex:1;height:1px;background:linear-gradient(90deg,var(--border),transparent);}
-#upgrades-list,#stats-list,#settings-list{overflow-y:auto;-webkit-overflow-scrolling:touch;padding:6px 10px 40px;display:flex;flex-direction:column;gap:5px;}
-#upgrades-list::-webkit-scrollbar,#stats-list::-webkit-scrollbar,#settings-list::-webkit-scrollbar{display:none;}
-.upg-row{display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid rgba(0,245,255,0.07);background:rgba(0,245,255,0.02);border-radius:3px;cursor:pointer;transition:all 0.15s;position:relative;overflow:hidden;}
-.upg-row::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--cyan);opacity:0;transition:opacity 0.15s;}
-.upg-row.can{border-color:rgba(0,245,255,0.22);background:rgba(0,245,255,0.05);}
-.upg-row.can::before{opacity:1;}
-.upg-row.cant{opacity:0.4;}
-.upg-row:active{transform:scale(0.98);}
-.upg-icon{font-size:20px;width:38px;height:38px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(0,245,255,0.08);border-radius:3px;background:rgba(0,245,255,0.03);flex-shrink:0;}
-.upg-row.can .upg-icon{border-color:rgba(0,245,255,0.25);background:rgba(0,245,255,0.08);}
-.upg-info{flex:1;min-width:0;}
-.upg-top{display:flex;align-items:center;justify-content:space-between;}
-.upg-name{font-family:'Orbitron', monospace;font-size:10px;font-weight:700;color:rgba(255,255,255,0.35);transition:color 0.15s;}
-.upg-row.can .upg-name{color:#fff;text-shadow:0 0 6px rgba(0,245,255,0.35);}
-.upg-owned{font-family:'Orbitron', monospace;font-size:9px;color:var(--cyan);background:rgba(0,245,255,0.1);border:1px solid rgba(0,245,255,0.2);padding:1px 5px;border-radius:2px;display:none;}
-.upg-desc{font-size:8px;color:rgba(255,255,255,0.22);margin-top:1px;letter-spacing:0.5px;}
-.upg-bottom{display:flex;align-items:center;gap:8px;margin-top:2px;}
-.upg-cost{font-size:10px;color:rgba(0,245,255,0.3);transition:color 0.15s;}
-.upg-row.can .upg-cost{color:var(--gold);text-shadow:0 0 5px rgba(255,214,10,0.35);}
-.upg-prod{font-size:9px;color:var(--neon);opacity:0.7;display:none;}
-#particles{position:fixed;inset:0;pointer-events:none;z-index:500;}
+body{margin:0; padding:0; background:var(--bg); font-family:monospace; color:#fff; overflow:hidden; height:100vh; display:flex; flex-direction:column;}
+#header{padding:20px; border-bottom:1px solid var(--border);}
+#credit-count{font-size:32px; font-weight:700;}
+#core-area{flex:1; display:flex; justify-content:center; align-items:center; position:relative; transition: all 0.3s;}
+#core-btn{
+  width:120px; height:120px; border-radius:50%; border:2px solid var(--cyan);
+  background:radial-gradient(circle at 40% 35%, rgba(0,245,255,0.2), rgba(0,245,255,0.04));
+  cursor:pointer; display:flex; flex-direction:column; justify-content:center; align-items:center;
+  user-select:none; transition: all 0.3s; box-shadow:0 0 10px rgba(0,245,255,0.2);
+}
+#core-btn:active{transform:scale(0.95);}
+.tab-section{width:100%; background:rgba(0,0,0,0.4); border-bottom:1px solid var(--border); transition: max-height 0.3s ease, padding 0.3s ease; overflow:hidden; max-height:0; padding:0 10px;}
+.tab-section.open{max-height:400px; padding:10px;}
+.tab-header{padding:5px 0; cursor:pointer; border-bottom:1px solid var(--border); user-select:none; font-weight:700;}
+.tab-content{padding:5px 0;}
+.upg-row{padding:5px; border:1px solid var(--border); margin-bottom:4px; display:flex; justify-content:space-between; cursor:pointer;}
+#bulk-select,#theme-select{margin-left:5px;}
+/* Theme overrides */
+body.theme1{--cyan:#00f5ff; --neon:#39ff14; --pink:#ff006e; --gold:#ffd60a; --bg:#020810;}
+body.theme2{--cyan:#ff4500; --neon:#ffa500; --pink:#ff69b4; --gold:#ffd700; --bg:#1a001a;}
+body.theme3{--cyan:#39ff14; --neon:#00f5ff; --pink:#ff00ff; --gold:#ffff00; --bg:#000000;}
+body.theme4{--cyan:#ff00ff; --neon:#00ffff; --pink:#ff1493; --gold:#ffdd00; --bg:#050020;}
+body.theme5{--cyan:#ffffff; --neon:#cccccc; --pink:#aaaaaa; --gold:#888888; --bg:#111111;}
 </style>
 </head>
 <body class="theme1">
-<div id="grid-bg"></div>
-<div class="corner tl"></div><div class="corner tr"></div>
-<div class="corner bl"></div><div class="corner br"></div>
-<canvas id="particles"></canvas>
-<div id="app">
-  <div id="header">
-    <div id="sys-label">NEXUS CREDIT SYSTEM v2.5</div>
-    <div id="credit-count">0</div>
-    <div id="credit-unit">CREDITS</div>
-    <div class="stats-row">
-      <div class="stat-box green"><span class="val" id="cps-val">0</span>/SEC</div>
-      <div class="stat-box pink"><span class="val" id="cpt-val">1</span>/TAP</div>
-      <div class="stat-box"><span class="val" id="total-val">0</span>TOTAL</div>
-      <div class="stat-box" id="mult-box" style="display:none"><span class="val" id="mult-val">x2</span>BOOST</div>
-    </div>
-    <button id="prestige-btn">[ SYSTEM RESET — x2 PERMANENT BOOST ]</button>
-    <button id="settings-btn">⚙️ SETTINGS</button>
-  </div>
-  <div id="core-area">
-    <div class="ring ring3"></div>
-    <div class="ring ring1"></div>
-    <div class="ring ring2"></div>
-    <button id="core-btn">
-      <div id="core-icon">⚡</div>
-      <div id="core-label">GENERATE</div>
-    </button>
-    <div id="idle-bar-wrap">
-      <div id="idle-label">PASSIVE INCOME</div>
-      <div id="idle-bar-bg"><div id="idle-bar"></div></div>
-    </div>
-  </div>
 
-  <!-- UPGRADES SECTION -->
-  <div id="upgrades-section">
-    <div id="upgrades-header">
-      <div id="upgrades-title">SYSTEMS</div>
-      <div class="hline"></div>
-    </div>
-    <label>Bulk Buy:
+<!-- Stats Tab -->
+<div id="stats-section" class="tab-section open">
+  <div class="tab-header">STATS</div>
+  <div class="tab-content">
+    <div>Credits: <span id="stat-credits">0</span></div>
+    <div>Total Credits: <span id="stat-total">0</span></div>
+    <div>CPS: <span id="stat-cps">0</span></div>
+    <div>Tap: <span id="stat-tap">1</span></div>
+    <div>Prestige x<span id="stat-prestige">1</span></div>
+  </div>
+</div>
+
+<!-- Current points display -->
+<div id="header">
+  <div id="credit-count">0</div>
+  <div>Credits</div>
+</div>
+
+<div id="core-area">
+  <button id="core-btn">⚡<br>GENERATE</button>
+
+  <!-- Upgrades Tab -->
+  <div id="upgrades-section" class="tab-section">
+    <div class="tab-header">UPGRADES</div>
+    <div class="tab-content">
+      Bulk Buy:
       <select id="bulk-select">
-        <option value="1" selected>1</option>
+        <option value="1">1</option>
         <option value="10">10</option>
         <option value="25">25</option>
         <option value="50">50</option>
         <option value="100">100</option>
       </select>
-    </label>
-    <div id="upgrades-list"></div>
-  </div>
-
-  <!-- STATS SECTION -->
-  <div id="stats-section">
-    <div id="stats-header">
-      <div id="stats-title">STATS</div>
-      <div class="hline"></div>
-    </div>
-    <div id="stats-list">
-      <!-- Dynamic stats like total CPS, total taps, total spent etc -->
+      <div id="upgrades-list"></div>
     </div>
   </div>
 
-  <!-- SETTINGS SECTION -->
-  <div id="settings-section" style="display:none">
-    <div id="settings-header">
-      <div id="settings-title">SETTINGS</div>
-      <div class="hline"></div>
+  <!-- Settings Tab -->
+  <div id="settings-section" class="tab-section">
+    <div class="tab-header">SETTINGS</div>
+    <div class="tab-content">
+      Theme:
+      <select id="theme-select">
+        <option value="theme1">Default</option>
+        <option value="theme2">Sunset</option>
+        <option value="theme3">Neon</option>
+        <option value="theme4">Cosmic</option>
+        <option value="theme5">Monochrome</option>
+      </select>
     </div>
-    <div id="settings-list">
-      <label>Theme:
-        <select id="theme-select">
-          <option value="theme1" selected>Default</option>
-          <option value="theme2">Sunset</option>
-          <option value="theme3">Neon</option>
-          <option value="theme4">Cosmic</option>
-          <option value="theme5">Monochrome</option>
-        </select>
-      </label>
-    </div>
- 
+  </div>
+</div>
+
+<script>
+let credits=0,totalCredits=0,cps=0,cpt=1,prestigeMult=1;
+const coreBtn=document.getElementById('core-btn');
+const creditCount=document.getElementById('credit-count');
+const statCredits=document.getElementById('stat-credits');
+const statTotal=document.getElementById('stat-total');
+const statCPS=document.getElementById('stat-cps');
+const statTap=document.getElementById('stat-tap');
+const statPrestige=document.getElementById('stat-prestige');
+const upgradesList=document.getElementById('upgrades-list');
+const bulkSelect=document.getElementById('bulk-select');
+const themeSelect=document.getElementById('theme-select');
+
+// Example upgrades
+let upgrades=[
+  {name:'Auto Miner', cost:50, cps:1, owned:0},
+  {name:'Quantum Drill', cost:250, cps:5, owned:0},
+  {name:'Nano Factory', cost:1000, cps:25, owned:0}
+];
+
+function renderUpgrades(){
+  upgradesList.innerHTML='';
+  let bulk=parseInt(bulkSelect.value);
+  upgrades.forEach(u=>{
+    let canBuy=credits>=u.cost*bulk;
+    let row=document.createElement('div');
+    row.className='upg-row';
+    row.style.opacity=canBuy?1:0.4;
+    row.innerHTML=`<span>${u.name} (${u.owned})</span><span>${u.cost*bulk}💎</span>`;
+    row.onclick=()=>{
+      if(credits>=u.cost*bulk){
+        u.owned+=bulk;
+        credits-=u.cost*bulk;
+        cps+=u.cps*bulk;
+        updateStats();
+        renderUpgrades();
+      }
+    };
+    upgradesList.appendChild(row);
+  });
+}
+
+function updateStats(){
+  creditCount.innerText=Math.floor(credits);
+  statCredits.innerText=Math.floor(credits);
+  statTotal.innerText=Math.floor(totalCredits);
+  statCPS.innerText=cps.toFixed(2);
+  statTap.innerText=cpt;
+  statPrestige.innerText=prestigeMult;
+}
+
+// Core tap
+coreBtn.addEventListener('click',()=>{
+  credits+=cpt;
+  totalCredits+=cpt;
+  updateStats();
+});
+
+// Auto CPS
+setInterval(()=>{credits+=cps/10; totalCredits+=cps/10; updateStats();},100);
+
+// Collapsible tabs
+document.querySelectorAll('.tab-header').forEach(header=>{
+  header.addEventListener('click',()=>{
+    let parent=header.parentElement;
+    parent.classList.toggle('open');
+  });
+});
+
+// Bulk selection change
+bulkSelect.addEventListener('change', renderUpgrades);
+
+// Theme change
+themeSelect.addEventListener('change',(e)=>{document.body.className=e.target.value;});
+
+// Initial render
+renderUpgrades();
+updateStats();
+</script>
+
+</body>
+</html>
