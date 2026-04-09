@@ -2,360 +2,144 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Nexus Idle Game + Stats Tab</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>NEXUS // IDLE</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#00f5ff">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap');
-:root{
-  --c1:#00ffff;
-  --c3:#ff00ff;
-  --c6:#ffff00;
-  --dim:#111;
-  --bg:#111;
-  --fg:#fff;
+:root {
+  --cyan:#00f5ff; --cyan2:#00bcd4; --neon:#39ff14; --pink:#ff006e; --gold:#ffd60a; --dim:rgba(0,245,255,0.08); --border:rgba(0,245,255,0.18); --bg:#020810;
 }
-body{
-  margin:0;
-  background:var(--bg);
-  color:var(--fg);
-  font-family:'Orbitron',monospace;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  padding:20px;
-  overflow-x:hidden;
-}
-#tap-zone{
-  width:220px;
-  height:220px;
-  background:#222;
-  border:4px solid var(--c1);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:36px;
-  cursor:pointer;
-  user-select:none;
-  margin-bottom:20px;
-  position:relative;
-  overflow:hidden;
-}
-#credits,#prestige-points,#pps-display,#ppc-display,#stats-summary{
-  font-size:20px;
-  margin-bottom:8px;
-}
-.btn{
-  padding:10px;
-  border-radius:4px;
-  background:var(--dim);
-  border:1px solid var(--c1);
-  color:var(--c1);
-  margin:4px;
-  cursor:pointer;
-  font-family:'Orbitron',monospace;
-}
-.upg-row{
-  display:flex;
-  align-items:flex-start;
-  padding:6px;
-  border:1px solid var(--c1);
-  border-radius:4px;
-  cursor:pointer;
-}
-.upg-row.can:hover{background:#222;}
-.upg-row .upg-icon{font-size:24px;margin-right:6px;}
-.upg-info{flex:1;}
-.upg-top{display:flex;justify-content:space-between;font-weight:bold;}
-.upg-bottom{display:flex;justify-content:space-between;font-size:12px;margin-top:2px;}
-.float-num{
-  position:absolute;
-  color:#0ff;
-  font-weight:bold;
-  pointer-events:none;
-  animation:floatUp 1s forwards;
-}
-@keyframes floatUp{
-  0%{transform:translateY(0) scale(1);opacity:1;}
-  100%{transform:translateY(-80px) scale(1.3);opacity:0;}
-}
-.tab-content{
-  display:none;
-  width:90%;
-  max-width:600px;
-  margin-top:20px;
-  padding:10px;
-  border:2px solid var(--c1);
-  border-radius:6px;
-  background:#111;
-}
-.tab-content.active{display:block;}
-canvas{width:100%;height:200px; background:#111; border:1px solid var(--c1);}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+body{background:var(--bg);min-height:100vh;font-family:'Share Tech Mono', monospace;color:#fff;overflow:hidden;position:fixed;width:100%;height:100%;}
+#grid-bg{position:fixed;inset:0;background-image:linear-gradient(rgba(0,245,255,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(0,245,255,0.04) 1px,transparent 1px);background-size:40px 40px;z-index:0;animation:gridScroll 20s linear infinite;}
+@keyframes gridScroll{from{background-position:0 0;}to{background-position:0 40px;}}
+.corner{position:fixed;width:50px;height:50px;z-index:2;}
+.corner.tl{top:0;left:0;border-top:2px solid var(--cyan);border-left:2px solid var(--cyan);}
+.corner.tr{top:0;right:0;border-top:2px solid var(--cyan);border-right:2px solid var(--cyan);}
+.corner.bl{bottom:0;left:0;border-bottom:2px solid var(--cyan);border-left:2px solid var(--cyan);}
+.corner.br{bottom:0;right:0;border-bottom:2px solid var(--cyan);border-right:2px solid var(--cyan);}
+#app{position:relative;z-index:1;display:flex;flex-direction:column;height:100vh;overflow:hidden;}
+/* HEADER */
+#header{padding:44px 16px 10px;border-bottom:1px solid var(--border);background:rgba(2,8,16,0.85);backdrop-filter:blur(10px);flex-shrink:0;}
+#sys-label{font-family:'Orbitron', monospace;font-size:8px;letter-spacing:4px;color:var(--cyan);opacity:0.45;margin-bottom:2px;}
+#credit-count{font-family:'Orbitron', monospace;font-size:clamp(26px,7vw,42px);font-weight:900;color:var(--cyan);text-shadow:0 0 20px var(--cyan),0 0 40px rgba(0,245,255,0.3);letter-spacing:2px;line-height:1;}
+#credit-unit{font-size:9px;letter-spacing:3px;color:rgba(0,245,255,0.35);margin-top:2px;}
+.stats-row{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;}
+.stat-box{border:1px solid var(--border);background:var(--dim);padding:3px 9px;border-radius:3px;font-size:9px;color:rgba(255,255,255,0.35);position:relative;overflow:hidden;}
+.stat-box::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:var(--cyan);opacity:0.4;}
+.stat-box .val{font-family:'Orbitron', monospace;font-size:12px;font-weight:700;display:block;color:var(--cyan);}
+.stat-box.green .val{color:var(--neon);}
+.stat-box.green{border-color:rgba(57,255,20,0.2);background:rgba(57,255,20,0.05);}
+.stat-box.green::before{background:var(--neon);}
+.stat-box.pink .val{color:var(--pink);}
+.stat-box.pink{border-color:rgba(255,0,110,0.2);background:rgba(255,0,110,0.05);}
+.stat-box.pink::before{background:var(--pink);}
+#prestige-btn{display:none;width:100%;margin-top:7px;padding:7px;border:1px solid var(--pink);background:rgba(255,0,110,0.1);color:var(--pink);font-family:'Orbitron', monospace;font-size:10px;font-weight:700;letter-spacing:2px;cursor:pointer;text-shadow:0 0 10px var(--pink);box-shadow:0 0 15px rgba(255,0,110,0.2);border-radius:3px;}
+#prestige-btn:active{background:rgba(255,0,110,0.25);}
+#core-area{display:flex;justify-content:center;align-items:center;height:200px;flex-shrink:0;position:relative;}
+.ring{position:absolute;border-radius:50%;border:1px solid transparent;animation:spin var(--spd) linear infinite;}
+.ring1{width:165px;height:165px;border-top-color:var(--cyan);border-right-color:rgba(0,245,255,0.15);--spd:4s;}
+.ring2{width:140px;height:140px;border-bottom-color:var(--neon);border-left-color:rgba(57,255,20,0.15);--spd:6s;animation-direction:reverse;}
+.ring3{width:188px;height:188px;border-top-color:rgba(0,245,255,0.08);border-right-color:rgba(0,245,255,0.2);border-bottom-color:rgba(0,245,255,0.08);--spd:12s;}
+@keyframes spin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+#core-btn{width:110px;height:110px;border-radius:50%;border:2px solid var(--cyan);background:radial-gradient(circle at 40% 35%, rgba(0,245,255,0.2), rgba(0,245,255,0.04));box-shadow:0 0 25px rgba(0,245,255,0.35),0 0 50px rgba(0,245,255,0.12),inset 0 0 25px rgba(0,245,255,0.08);cursor:pointer;position:relative;z-index:5;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;user-select:none;-webkit-user-select:none;transition: transform 0.1s, box-shadow 0.1s;}
+#core-btn:active{transform:scale(0.88);box-shadow:0 0 12px rgba(0,245,255,0.25);}
+#core-icon{font-size:34px;filter:drop-shadow(0 0 8px var(--cyan));}
+#core-label{font-family:'Orbitron', monospace;font-size:6px;letter-spacing:2px;color:var(--cyan);opacity:0.6;}
+#idle-bar-wrap{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);width:190px;text-align:center;}
+#idle-label{font-size:7px;letter-spacing:2px;color:rgba(0,245,255,0.35);margin-bottom:2px;}
+#idle-bar-bg{width:100%;height:2px;background:rgba(0,245,255,0.08);border-radius:1px;overflow:hidden;}
+#idle-bar{height:100%;width:0%;background:linear-gradient(90deg,var(--cyan2),var(--cyan));box-shadow:0 0 4px var(--cyan);border-radius:1px;}
+.float-num{position:fixed;font-family:'Orbitron', monospace;font-size:13px;font-weight:700;color:var(--cyan);text-shadow:0 0 8px var(--cyan);pointer-events:none;z-index:999;animation:floatUp 1s ease-out forwards;}
+@keyframes floatUp{0%{opacity:1;transform:translateY(0);}100%{opacity:0;transform:translateY(-65px);}}
+#upgrades-section{flex:1;display:flex;flex-direction:column;overflow:hidden;border-top:1px solid var(--border);}
+#upgrades-header{display:flex;align-items:center;gap:8px;padding:6px 14px;border-bottom:1px solid var(--border);flex-shrink:0;}
+#upgrades-title{font-family:'Orbitron', monospace;font-size:8px;letter-spacing:3px;color:rgba(0,245,255,0.45);}
+.hline{flex:1;height:1px;background:linear-gradient(90deg,var(--border),transparent);}
+#upgrades-list{overflow-y:auto;-webkit-overflow-scrolling:touch;padding:6px 10px 40px;display:flex;flex-direction:column;gap:5px;}
+#upgrades-list::-webkit-scrollbar{display:none;}
+.upg-row{display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid rgba(0,245,255,0.07);background:rgba(0,245,255,0.02);border-radius:3px;cursor:pointer;transition:all 0.15s;position:relative;overflow:hidden;}
+.upg-row::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--cyan);opacity:0;transition:opacity 0.15s;}
+.upg-row.can{border-color:rgba(0,245,255,0.22);background:rgba(0,245,255,0.05);}
+.upg-row.can::before{opacity:1;}
+.upg-row.cant{opacity:0.4;}
+.upg-row:active{transform:scale(0.98);}
+.upg-icon{font-size:20px;width:38px;height:38px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(0,245,255,0.08);border-radius:3px;background:rgba(0,245,255,0.03);flex-shrink:0;}
+.upg-row.can .upg-icon{border-color:rgba(0,245,255,0.25);background:rgba(0,245,255,0.08);}
+.upg-info{flex:1;min-width:0;}
+.upg-top{display:flex;align-items:center;justify-content:space-between;}
+.upg-name{font-family:'Orbitron', monospace;font-size:10px;font-weight:700;color:rgba(255,255,255,0.35);transition:color 0.15s;}
+.upg-row.can .upg-name{color:#fff;text-shadow:0 0 6px rgba(0,245,255,0.35);}
+.upg-owned{font-family:'Orbitron', monospace;font-size:9px;color:var(--cyan);background:rgba(0,245,255,0.1);border:1px solid rgba(0,245,255,0.2);padding:1px 5px;border-radius:2px;display:none;}
+.upg-desc{font-size:8px;color:rgba(255,255,255,0.22);margin-top:1px;letter-spacing:0.5px;}
+.upg-bottom{display:flex;align-items:center;gap:8px;margin-top:2px;}
+.upg-cost{font-size:10px;color:rgba(0,245,255,0.3);transition:color 0.15s;}
+.upg-row.can .upg-cost{color:var(--gold);text-shadow:0 0 5px rgba(255,214,10,0.35);}
+.upg-prod{font-size:9px;color:var(--neon);opacity:0.7;display:none;}
+#particles{position:fixed;inset:0;pointer-events:none;z-index:500;}
+
+/* STATS TAB */
+#stats-tab{display:none;position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(2,8,16,0.95);backdrop-filter:blur(6px);padding:30px;overflow-y:auto;z-index:10;}
+#stats-tab h2{font-family:'Orbitron', monospace;color:var(--cyan);margin-bottom:12px;font-size:14px;}
+.stat-line{display:flex;justify-content:space-between;padding:5px 0;font-size:10px;color:#fff;border-bottom:1px solid rgba(0,245,255,0.1);}
+#stats-close{position:absolute;top:12px;right:12px;padding:4px 8px;border:1px solid var(--pink);border-radius:3px;background:rgba(255,0,110,0.1);color:var(--pink);cursor:pointer;font-family:'Orbitron', monospace;font-size:10px;letter-spacing:1px;}
+#stats-close:active{background:rgba(255,0,110,0.25);}
 </style>
 </head>
 <body>
-
-<div id="credits">Credits: 0</div>
-<div id="prestige-points">Prestige Points: 0</div>
-<div id="pps-display">PPS: 0</div>
-<div id="ppc-display">PPC: 0</div>
-<div id="stats-summary">Total Clicks: 0 | Passive Earned: 0 | Total Prestiges: 0</div>
-<div id="tap-zone">💥</div>
-
-<div>
-  <button class="btn" id="open-upgrades">Upgrades</button>
-  <button class="btn" id="open-prestige">Prestige</button>
-  <button class="btn" id="stats-tab-btn">Stats</button>
-  <button class="btn" id="toggle-theme">Toggle Theme</button>
-</div>
-
-<!-- Stats Tab -->
-<div id="stats-tab" class="tab-content">
-  <h3 style="color:var(--c1)">Stats Overview</h3>
-  <canvas id="graph-credits"></canvas>
-  <canvas id="graph-pps" style="margin-top:12px;"></canvas>
-  <div style="margin-top:8px;">Total Credits: <span id="stats-total-credits">0</span></div>
-  <div>Total Clicks: <span id="stats-total-clicks">0</span></div>
-  <div>Passive Earned: <span id="stats-passive-earned">0</span></div>
-  <div>Total Prestiges: <span id="stats-total-prestiges">0</span></div>
-</div>
-
-<!-- Upgrades Modal -->
-<div id="upgrades-modal" style="position:fixed;inset:0;background:rgba(0,0,0,0.85);display:none;flex-direction:column;z-index:15;">
-  <div style="flex:1;overflow-y:auto;padding:16px;">
-    <h3 style="color:var(--c1);margin-bottom:12px;">UPGRADES</h3>
-    <div style="margin-bottom:12px;">
-      <span>Buy ×</span>
-      <button class="btn" onclick="setBulkBuy(1)">1</button>
-      <button class="btn" onclick="setBulkBuy(10)">10</button>
-      <button class="btn" onclick="setBulkBuy(25)">25</button>
-      <button class="btn" onclick="setBulkBuy('max')">MAX</button>
+<div id="grid-bg"></div>
+<div class="corner tl"></div><div class="corner tr"></div>
+<div class="corner bl"></div><div class="corner br"></div>
+<canvas id="particles"></canvas>
+<div id="app">
+  <div id="header">
+    <div id="sys-label">NEXUS CREDIT SYSTEM v2.4</div>
+    <div id="credit-count">0</div>
+    <div id="credit-unit">CREDITS</div>
+    <div class="stats-row">
+      <div class="stat-box green"><span class="val" id="cps-val">0</span>/SEC</div>
+      <div class="stat-box pink"><span class="val" id="cpt-val">1</span>/TAP</div>
+      <div class="stat-box"><span class="val" id="total-val">0</span>TOTAL</div>
+      <div class="stat-box" id="mult-box" style="display:none"><span class="val" id="mult-val">x2</span>BOOST</div>
     </div>
-    <div style="margin-bottom:20px;">
-      <h4 style="color:var(--c3);margin-bottom:6px;">PASSIVE</h4>
-      <div id="modal-pps-list" style="display:flex;flex-direction:column;gap:8px;"></div>
-    </div>
-    <div>
-      <h4 style="color:var(--c6);margin-bottom:6px;">CLICKER</h4>
-      <div id="modal-ppc-list" style="display:flex;flex-direction:column;gap:8px;"></div>
+    <button id="prestige-btn">[ SYSTEM RESET — x2 PERMANENT BOOST ]</button>
+    <button id="stats-btn" style="margin-top:5px;padding:4px 6px;border:1px solid var(--cyan);border-radius:3px;background:rgba(0,245,255,0.1);color:var(--cyan);font-family:'Orbitron', monospace;font-size:9px;cursor:pointer;">STATS</button>
+  </div>
+  <div id="core-area">
+    <div class="ring ring3"></div>
+    <div class="ring ring1"></div>
+    <div class="ring ring2"></div>
+    <button id="core-btn">
+      <div id="core-icon">⚡</div>
+      <div id="core-label">GENERATE</div>
+    </button>
+    <div id="idle-bar-wrap">
+      <div id="idle-label">PASSIVE INCOME</div>
+      <div id="idle-bar-bg"><div id="idle-bar"></div></div>
     </div>
   </div>
-  <button id="upgrades-close" class="btn" style="margin:12px;">CLOSE</button>
+  <div id="upgrades-section">
+    <div id="upgrades-header">
+      <div id="upgrades-title">SYSTEMS</div>
+      <div class="hline"></div>
+    </div>
+    <div id="upgrades-list"></div>
+  </div>
 </div>
 
-<!-- Prestige Modal -->
-<div id="prestige-modal" style="position:fixed;inset:0;background:rgba(0,0,0,0.85);display:none;flex-direction:column;z-index:15;">
-  <div style="flex:1;overflow-y:auto;padding:16px;">
-    <h3 style="color:var(--c1);margin-bottom:12px;">PRESTIGE</h3>
-    <p>Prestige resets credits and upgrades, but grants Prestige Points based on total credits.</p>
-    <p>Current Prestige Points: <span id="prestige-count">0</span></p>
-    <button class="btn" onclick="doPrestige()">Prestige Now</button>
-    <h4 style="color:var(--c3);margin-top:12px;">Spend Prestige Points</h4>
-    <div id="prestige-upgrades" style="display:flex;flex-direction:column;gap:8px;"></div>
-  </div>
-  <button id="prestige-close" class="btn" style="margin:12px;">CLOSE</button>
+<!-- STATS TAB -->
+<div id="stats-tab">
+  <div id="stats-close">CLOSE</div>
+  <h2>PLAYER STATS</h2>
+  <div class="stat-line"><span>Total Credits:</span><span id="stat-total-coins">0</span></div>
+  <div class="stat-line"><span>Credits per Second:</span><span id="stat-cps">0</span></div>
+  <div class="stat-line"><span>Credits per Tap:</span><span id="stat-cpt">0</span></div>
+  <div class="stat-line"><span>Prestige Multiplier:</span><span id="stat-prestige">x1</span></div>
+  <div class="stat-line"><span>Prestige Count:</span><span id="stat-prestige-count">0</span></div>
 </div>
 
 <script>
-// ---- Game Variables ----
-let game = JSON.parse(localStorage.getItem('nexusSave')) || {
-  totalCredits:0, prestigePoints:0, totalClicks:0,
-  totalPassiveEarned:0, totalPrestiges:0, prestigeMultiplier:1,
-  PPS:[
-    {name:'Auto Miner',desc:'Generates 0.1/sec',emoji:'⛏️',baseCost:10,baseProd:0.1,owned:0},
-    {name:'Factory',desc:'Generates 1/sec',emoji:'🏭',baseCost:100,baseProd:1,owned:0},
-    {name:'Mega Lab',desc:'Generates 5/sec',emoji:'🔬',baseCost:500,baseProd:5,owned:0}
-  ],
-  PPC:[
-    {name:'Double Click',desc:'Each click gives +1',emoji:'✨',baseCost:50,baseProd:1,owned:0},
-    {name:'Hyper Finger',desc:'Each click +5',emoji:'🤏',baseCost:200,baseProd:5,owned:0}
-  ],
-  PrestigeUpgrades:[
-    {name:'+10% PPS',desc:'Boost all passive income by 10%',cost:1,owned:0,effect:()=>{game.PPS.forEach(u=>u.baseProd*=1.1); updateDisplay();}},
-    {name:'+10% PPC',desc:'Boost all click power by 10%',cost:1,owned:0,effect:()=>{game.PPC.forEach(u=>u.baseProd*=1.1); updateDisplay();}}
-  ],
-  theme:'dark'
-};
-let bulkBuy = 1;
-
-// ---- Display Updates ----
-function updateDisplay(){
-  const totalPPS = game.PPS.reduce((a,u)=>a+u.baseProd*u.owned,0) * game.prestigeMultiplier;
-  const totalPPC = game.PPC.reduce((a,u)=>a+u.baseProd*u.owned,0) * game.prestigeMultiplier;
-  document.getElementById('credits').textContent='Credits: '+game.totalCredits.toFixed(2);
-  document.getElementById('prestige-points').textContent='Prestige Points: '+game.prestigePoints;
-  document.getElementById('prestige-count').textContent=game.prestigePoints;
-  document.getElementById('pps-display').textContent='PPS: '+totalPPS.toFixed(2);
-  document.getElementById('ppc-display').textContent='PPC: '+totalPPC.toFixed(2);
-  document.getElementById('stats-summary').textContent=`Total Clicks: ${game.totalClicks} | Passive Earned: ${game.totalPassiveEarned.toFixed(2)} | Total Prestiges: ${game.totalPrestiges}`;
-  document.getElementById('stats-total-credits').textContent=game.totalCredits.toFixed(2);
-  document.getElementById('stats-total-clicks').textContent=game.totalClicks;
-  document.getElementById('stats-passive-earned').textContent=game.totalPassiveEarned.toFixed(2);
-  document.getElementById('stats-total-prestiges').textContent=game.totalPrestiges;
-  saveGame();
-}
-
-// ---- Save ----
-function saveGame(){localStorage.setItem('nexusSave',JSON.stringify(game));}
-
-// ---- Floating Numbers ----
-function floatNumber(x,y,val){
-  const span=document.createElement('span');
-  span.className='float-num';
-  span.style.left=(x-10)+'px';
-  span.style.top=(y-20)+'px';
-  span.textContent='+'+val.toFixed(2);
-  document.getElementById('tap-zone').appendChild(span);
-  setTimeout(()=>span.remove(),1000);
-}
-
-// ---- Click Event ----
-document.getElementById('tap-zone').addEventListener('click',e=>{
-  let clickPower = 1;
-  game.PPC.forEach(u=>{clickPower+=u.baseProd*u.owned;});
-  clickPower*=game.prestigeMultiplier;
-  game.totalCredits+=clickPower;
-  game.totalClicks++;
-  updateDisplay();
-  floatNumber(e.offsetX,e.offsetY,clickPower);
-});
-
-// ---- Passive Income ----
-setInterval(()=>{
-  let totalPPS=0;
-  game.PPS.forEach(u=>{totalPPS+=u.baseProd*u.owned;});
-  totalPPS*=game.prestigeMultiplier;
-  let earned = totalPPS/10;
-  game.totalCredits+=earned;
-  game.totalPassiveEarned+=earned;
-  updateDisplay();
-},100);
-
-// ---- Upgrades ----
-let upgradesModal=document.getElementById('upgrades-modal');
-document.getElementById('open-upgrades').addEventListener('click',()=>{upgradesModal.style.display='flex'; renderModalUpgrades();});
-document.getElementById('upgrades-close').addEventListener('click',()=>{upgradesModal.style.display='none';});
-function setBulkBuy(n){bulkBuy=n; renderModalUpgrades();}
-function renderModalUpgrades(){
-  const ppsList=document.getElementById('modal-pps-list');
-  const ppcList=document.getElementById('modal-ppc-list');
-  ppsList.innerHTML=''; ppcList.innerHTML='';
-  game.PPS.forEach(u=>ppsList.appendChild(createUpgradeRow(u,true)));
-  game.PPC.forEach(u=>ppcList.appendChild(createUpgradeRow(u,false)));
-}
-function createUpgradeRow(u,isPPS){
-  const div=document.createElement('div');
-  const amount = bulkBuy==='max'?Math.floor(game.totalCredits/u.baseCost):bulkBuy;
-  const totalCost = u.baseCost*amount;
-  const totalGain = u.baseProd*amount*game.prestigeMultiplier;
-  div.className='upg-row '+(game.totalCredits>=totalCost?'can':'cant');
-  div.innerHTML=`
-    <div class="upg-icon">${u.emoji}</div>
-    <div class="upg-info">
-      <div class="upg-top"><span>${u.name}</span><span>${u.owned}</span></div>
-      <div class="upg-desc">${u.desc}</div>
-      <div class="upg-bottom">
-        <span>Cost: ${totalCost.toFixed(2)} (${bulkBuy==='max'?'MAX':amount})</span>
-        <span>+${totalGain.toFixed(2)}/${isPPS?'sec':'click'}</span>
-      </div>
-    </div>`;
-  div.addEventListener('click',()=>{buyUpgrade(u,isPPS); renderModalUpgrades();});
-  return div;
-}
-function buyUpgrade(u,isPPS){
-  let amount = bulkBuy==='max'?Math.floor(game.totalCredits/u.baseCost):bulkBuy;
-  let cost = u.baseCost*amount;
-  if(game.totalCredits>=cost){
-    game.totalCredits-=cost;
-    u.owned+=amount;
-    updateDisplay();
-  }
-}
-
-// ---- Prestige ----
-let prestigeModal=document.getElementById('prestige-modal');
-document.getElementById('open-prestige').addEventListener('click',()=>{prestigeModal.style.display='flex'; renderPrestige();});
-document.getElementById('prestige-close').addEventListener('click',()=>{prestigeModal.style.display='none';});
-function renderPrestige(){
-  const container=document.getElementById('prestige-upgrades');
-  container.innerHTML='';
-  game.PrestigeUpgrades.forEach(u=>{
-    const div=document.createElement('div');
-    div.className='upg-row '+(game.prestigePoints>=u.cost?'can':'cant');
-    div.innerHTML=`<div class="upg-info">
-      <div class="upg-top"><span>${u.name}</span><span>${u.owned}</span></div>
-      <div class="upg-desc">${u.desc}</div>
-      <div class="upg-bottom"><span>Cost: ${u.cost} PP</span></div>
-    </div>`;
-    div.addEventListener('click',()=>{
-      if(game.prestigePoints>=u.cost){game.prestigePoints-=u.cost; u.owned++; u.effect(); game.prestigeMultiplier*=1.1; updateDisplay();}
-      renderPrestige();
-    });
-    container.appendChild(div);
-  });
-}
-function doPrestige(){
-  let gained = Math.floor(game.totalCredits/1000);
-  if(gained>0){
-    game.prestigePoints+=gained;
-    game.totalCredits=0;
-    game.PPS.forEach(u=>u.owned=0);
-    game.PPC.forEach(u=>u.owned=0);
-    game.totalPrestiges++;
-    updateDisplay();
-    renderModalUpgrades();
-    renderPrestige();
-  } else alert('Need at least 1000 credits to prestige.');
-}
-
-// ---- Theme ----
-document.getElementById('toggle-theme').addEventListener('click',()=>{
-  if(game.theme==='dark'){
-    document.documentElement.style.setProperty('--bg','#fff');
-    document.documentElement.style.setProperty('--fg','#000');
-    game.theme='light';
-  } else {
-    document.documentElement.style.setProperty('--bg','#111');
-    document.documentElement.style.setProperty('--fg','#fff');
-    game.theme='dark';
-  }
-  saveGame();
-});
-
-// ---- Stats Tab ----
-document.getElementById('stats-tab-btn').addEventListener('click',()=>{
-  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
-  document.getElementById('stats-tab').classList.add('active');
-});
-
-// ---- Graphs ----
-const canvasCredits=document.getElementById('graph-credits');
-const ctxCredits=canvasCredits.getContext('2d');
-canvasCredits.width=canvasCredits.offsetWidth; canvasCredits.height=canvasCredits.offsetHeight;
-
-const canvasPPS=document.getElementById('graph-pps');
-const ctxPPS=canvasPPS.getContext('2d');
-canvasPPS.width=canvasPPS.offsetWidth; canvasPPS.height=canvasPPS.offsetHeight;
-
-let creditsHistory=[]; let ppsHistory=[];
-setInterval(()=>{
-  creditsHistory.push(game.totalCredits);
-  const totalPPS = game.PPS.reduce((a,u)=>a+u.baseProd*u.owned,0) * game.prestigeMultiplier;
-  ppsHistory.push(totalPPS);
-  if(creditsHistory.length>canvasCredits.width) creditsHistory.shift();
-  if(ppsHistory.length>canvasPPS.width) ppsHistory.shift();
-
-  // Credits Graph
-  ctxCredits.clearRect(0,0,canvasCredits.width,canvasCredits.height);
-  ctxCredits.beginPath();
-  ctxCredits.strokeStyle='cyan'; ctxCredits.lineWidth=2;
-  creditsHistory.forEach((v,i)=>{
-    const x=i; const y=canvasCredits.height - (v/Math.max(...creditsHistory,1))*canvasCredits.height;
-    if(i===0) ctxCredits.moveTo(x,y); else ctxCredits.lineTo(x,y);
-  }); ctxCredits.stroke();
-
-  // PPS Graph
-  ctxPPS.clearRect(0,0,canvasPPS.width,canvasPPS.height);
-  ctxPPS.beginPath();
-  ctxPPS.strokeStyle='magenta'; ctxPPS.lineWidth=2;
-  ppsHistory.forEach((v,i)=>{
-    const x=i; const y=canvasPPS.height - (v/Math.max(...ppsHistory,1
+// ── STATE ─────────────────────────────────────────────
+const G={coins:0,totalCoins:0,prestigeMult:1,prestigeCount:0,upgrades:[{id:0,name:'PROBE',desc:'Automated micro-collector',baseCost:10,baseProd:0.1,emoji:'🛸',owned:0},{id:1,name:'HARVESTER',desc:'Energy field extractor',baseCost:120,baseProd:0.6,emoji:'⚙️',owned:0},{id:2,name:'REACTOR',desc:'Fusion core output',baseCost:1300,baseProd:5,emoji:'⚛️',owned:0},{id:3,name:'NEXUS NODE',desc:'Grid synchronisation array',baseCost:14000,baseProd:35,emoji:'🔷',owned:0},{id:4,name:'ORBITAL',desc:'Space-based collection station',baseCost:150000,baseProd:250,emoji:'🛰️',owned:0},{id:5,name:'DYSON RING',desc:'Stellar energy capture',baseCost:2000000,baseProd:2000,emoji:'🌟',owned:0},{id:6,name:'WORMHOLE',desc:'Cross-dimensional siphon',baseCost:25000000,baseProd:12000,emoji:'🌀',owned:0},{id:7,name:'SING
