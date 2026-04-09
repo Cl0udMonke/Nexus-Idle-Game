@@ -3,42 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
     <title>Nexus Idle Game</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background: linear-gradient(to right, #202b38, #1c2738);
-            color: #e0eafb;
-            transition: background 0.5s, color 0.5s;
+            background-color: white;
+            color: black;
         }
-        .light-theme {
-            background: linear-gradient(to right, #ffffff, #f0f0f0);
-            color: #20232a;
-        }
-        h1, h2, h3 {
-            color: #40c8f4;
-        }
-        button {
-            background-color: #3cabff;
-            color: #fff;
-            border: none;
-            padding: 10px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #3596d1;
+        .dark-mode {
+            background-color: black;
+            color: white;
         }
     </style>
 </head>
 <body>
     <h1>Nexus Idle Game</h1>
-    <p>Welcome to the Nexus Idle Game. Enjoy your experience!</p>
-    <button onclick="toggleTheme()">Toggle Theme</button>
+    <p>Welcome to Nexus Idle Game. Enjoy your time here!</p>
+    <button id="theme-toggle">Toggle Theme</button>
+
     <script>
-        function toggleTheme() {
-            document.body.classList.toggle('light-theme');
-        }
+        const toggleButton = document.getElementById('theme-toggle');
+        toggleButton.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+        });
     </script>
 </body>
 </html>
