@@ -322,9 +322,16 @@ touch-action:manipulation;-webkit-user-select:none;user-select:none;
 .upg-row.can{border-color:var(--border);background:var(--c1dim);}
 .upg-row.can::before{opacity:1;}
 .upg-row.cant{opacity:0.35;}
+.upg-row.next{
+opacity:0.72;
+border-color:var(--border2);
+background:rgba(255,255,255,0.02);
+}
+.upg-row.next::before{opacity:0.45;}
 .upg-row:active{transform:scale(0.98);}
 .upg-row.ppc-row::before{background:var(--c6);}
 .upg-row.ppc-row.can{border-color:rgba(255,107,0,0.28);background:rgba(255,107,0,0.06);}
+.upg-row.ppc-row.next{border-color:rgba(255,107,0,0.18);background:rgba(255,107,0,0.04);}
 .upg-icon{
 font-size:18px;width:34px;height:34px;flex-shrink:0;
 display:flex;align-items:center;justify-content:center;
@@ -793,10 +800,17 @@ function effectiveN(u){return buyAmt===0?maxBuy(u):buyAmt;}
 
 function fmt(n){
   if(isNaN(n)||!isFinite(n)) return '0';
+  const sign=n<0?'-':'';
+  n=Math.abs(n);
   const t=['','K','M','B','T','Qa','Qi','Sx','Sp','Oc'];
-  if(n<1000) return n.toFixed(2);
+  if(n<1000) return sign+n.toFixed(2);
   let i=0; while(n>=1000&&i<t.length-1){n/=1000;i++;}
-  return(n>=100?n.toFixed(1):n.toFixed(2))+t[i];
+  return sign+(n>=100?n.toFixed(1):n.toFixed(2))+t[i];
+}
+
+function fmtUpgradeGain(u,isPPC){
+  const gain=u.baseProd*G.prestigeMult;
+  return isPPC?('NEXT +'+fmt(gain)+'/TAP'):('NEXT +'+fmt(gain)+'/SEC');
 }
 
 function fmtHours(h){
@@ -1259,12 +1273,13 @@ function renderUpgrades(){
     const actualN=buyAmt===0?affordable:Math.min(requested,affordable);
     const cost=costN(u,actualN);
     const canAfford=affordable>0;
+    const showNextOnly=buyAmt===0&&!canAfford;
     if(canAfford) anyAffordable=true;
     const next1Cost=Math.floor(u.baseCost*Math.pow(1.15,u.owned));
     if(next1Cost<cheapestCost){ cheapestCost=next1Cost; cheapestNext=u; }
 
     const row=document.createElement('div');
-    row.className='upg-row '+(isPPC?'ppc-row ':' ')+(canAfford?'can':'cant');
+    row.className='upg-row '+(isPPC?'ppc-row ':' ')+(canAfford?'can':showNextOnly?'next':'cant');
     row.addEventListener('click',()=>buyUpg(u,isPPC));
 
     const icon=document.createElement('div');icon.className='upg-icon';icon.textContent=u.emoji;
@@ -1289,14 +1304,10 @@ function renderUpgrades(){
       }
     }
 
-    const gainUnits=affordable>0?actualN:1;
-    const dProd=u.baseProd*gainUnits*G.prestigeMult;
     const pr=document.createElement('div');pr.className='upg-prod';
     const nx=document.createElement('span');
     nx.className='upg-next';
-    nx.textContent=isPPC
-      ?('+'+fmt(dProd)+'/TAP')
-      :('+'+(dProd<1000?dProd.toFixed(2):fmt(dProd))+'/SEC');
+    nx.textContent=fmtUpgradeGain(u,isPPC);
     pr.appendChild(nx);
 
     top.appendChild(nm);top.appendChild(ow);bot.appendChild(ct);bot.appendChild(pr);
