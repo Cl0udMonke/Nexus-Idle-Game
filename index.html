@@ -374,6 +374,24 @@ display:block;
 .sv-btn.warn{border-color:var(--c6, #ff6b00);color:var(--c6, #ff6b00);background:rgba(255,107,0,0.07);}
 .sv-btn.danger{border-color:var(--c4, #ff006e);color:var(--c4, #ff006e);background:rgba(255,0,110,0.07);}
 .info-txt{font-size:8px;color:var(--txt3);line-height:1.7;margin-top:3px;}
+/* Debug / cheat panel (toggled via secret gesture) */
+#debug-cheat-section{display:none;border:1px dashed rgba(255,0,110,0.35);border-radius:4px;padding:10px;background:rgba(255,0,110,0.04);}
+#debug-cheat-section.vis{display:block;}
+.debug-cheat-section .s-title{color:var(--c4);opacity:0.9;}
+.ch-row{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px;}
+.ch-btn{
+flex:1;min-width:72px;padding:6px 4px;
+border:1px solid rgba(255,0,110,0.4);background:rgba(255,0,110,0.08);
+color:var(--c4);font-family:'Orbitron',monospace;font-size:7px;letter-spacing:1px;
+cursor:pointer;border-radius:3px;
+}
+.ch-btn:active{opacity:0.75;}
+.ch-inp{
+flex:1;min-width:0;padding:6px 8px;border-radius:3px;
+border:1px solid rgba(255,0,110,0.35);background:rgba(0,0,0,0.25);
+color:var(--txt);font-family:'Share Tech Mono',monospace;font-size:10px;
+}
+.ch-inp::placeholder{color:var(--txt3);opacity:0.7;}
 
 /* ═══════════════════════════════════════════
 OFFLINE TOAST
@@ -489,6 +507,48 @@ font-size:10px;letter-spacing:2px;cursor:pointer;border-radius:3px;
       <div class="s-title">// GAME</div>
       <div class="s-row"><div class="s-left"><div class="s-lbl">PRESTIGE CONFIRM</div><div class="s-sub">Ask before resetting</div></div><div class="toggle on" id="tog-pconf" onclick="tog('pconf')"></div></div>
     </div>
+    <div id="debug-cheat-section" class="s-section debug-cheat-section">
+      <div class="s-title">// DEBUG</div>
+      <div class="s-row" style="border-bottom:none;padding-top:0">
+        <div class="s-left"><div class="s-lbl">PANEL</div><div class="s-sub">Hide until you use the gesture again</div></div>
+        <button type="button" class="ch-btn" style="flex:0 0 auto;min-width:auto;padding:6px 10px" onclick="toggleDebugCheat(false)">HIDE</button>
+      </div>
+      <div class="s-title" style="margin-top:10px;margin-bottom:4px">CREDITS</div>
+      <div class="ch-row" style="align-items:stretch">
+        <input type="text" id="cheat-coins-input" class="ch-inp" placeholder="Amount" inputmode="decimal" autocomplete="off">
+        <button type="button" class="ch-btn" style="flex:0 0 auto;min-width:56px" onclick="cheatSetCoins()">SET</button>
+      </div>
+      <div class="ch-row">
+        <button type="button" class="ch-btn" onclick="cheatAddCredits(1e3)">+1K</button>
+        <button type="button" class="ch-btn" onclick="cheatAddCredits(1e5)">+100K</button>
+        <button type="button" class="ch-btn" onclick="cheatAddCredits(1e7)">+10M</button>
+        <button type="button" class="ch-btn" onclick="cheatAddCredits(1e9)">+1B</button>
+      </div>
+      <div class="s-row" style="padding-top:8px;border-bottom:none">
+        <div class="s-left"><div class="s-lbl">INFINITE COINS</div><div class="s-sub">Huge balance; shows ∞</div></div>
+        <div class="toggle" id="tog-cheat-infinite" onclick="cheatToggleInfinite()"></div>
+      </div>
+      <div class="s-row" style="border-bottom:none;padding-bottom:4px">
+        <div class="s-left"><div class="s-lbl">FREE BUYS</div><div class="s-sub">Purchase without spending</div></div>
+        <div class="toggle" id="tog-cheat-freebuy" onclick="cheatToggleFreeBuy()"></div>
+      </div>
+      <div class="s-title" style="margin-top:8px;margin-bottom:4px">BULK</div>
+      <div class="ch-row">
+        <button type="button" class="ch-btn" onclick="cheatPurchaseAll()" style="flex:1 1 100%">PURCHASE ALL UPGRADES</button>
+      </div>
+      <div class="s-title" style="margin-top:12px;margin-bottom:4px">PRESTIGE</div>
+      <div class="ch-row">
+        <button type="button" class="ch-btn" onclick="cheatPrestigeStack()">+1 ×2 STACK</button>
+      </div>
+      <div class="s-title" style="margin-top:12px;margin-bottom:4px">UPGRADES</div>
+      <div class="ch-row">
+        <button type="button" class="ch-btn" onclick="cheatBuffPPS(10)">PASSIVE +10</button>
+        <button type="button" class="ch-btn" onclick="cheatBuffPPC(10)">CLICKER +10</button>
+      </div>
+      <div class="ch-row" style="margin-top:5px">
+        <button type="button" class="ch-btn" onclick="cheatUnlockAllOffline()">ALL OFFLINE</button>
+      </div>
+    </div>
     <div class="s-section">
       <div class="s-title">// SAVE DATA</div>
       <div class="s-kv"><span class="s-kv-lbl">LAST SAVED</span><span class="s-kv-val" id="save-lbl">—</span></div>
@@ -599,6 +659,8 @@ let activeTab='pps';
 let buyAmt=1;
 let lastSaved=null;
 let drawerOpen=true;
+let cheatInfiniteCoins=false;
+let cheatFreeBuy=false;
 
 // ═══════════════════════════════════════════
 //  COMPUTED HELPERS
@@ -616,7 +678,9 @@ function costN(u,n){
   for(let i=0;i<n;i++) t+=Math.floor(u.baseCost*Math.pow(1.15,u.owned+i));
   return t;
 }
+function cheatUnlimitedShop(){return cheatFreeBuy||cheatInfiniteCoins;}
 function maxBuy(u){
+  if(cheatUnlimitedShop()) return 5000;
   let n=0,t=0;
   while(true){
     const c=Math.floor(u.baseCost*Math.pow(1.15,u.owned+n));
@@ -805,6 +869,95 @@ function applyTheme(id,save=true){
   if(save) saveGame();
 }
 
+let infernoTapTimes=[];
+const INFERNO_SECRET_MS=10000;
+const INFERNO_TAPS_NEEDED=5;
+
+function tryInfernoDebugToggle(){
+  const now=Date.now();
+  infernoTapTimes=infernoTapTimes.filter(ts=>now-ts<INFERNO_SECRET_MS);
+  infernoTapTimes.push(now);
+  if(infernoTapTimes.length>=INFERNO_TAPS_NEEDED){
+    infernoTapTimes=[];
+    toggleDebugCheat(true);
+  }
+}
+
+function toggleDebugCheat(fromSecret){
+  const el=document.getElementById('debug-cheat-section');
+  if(!el)return;
+  if(fromSecret) el.classList.toggle('vis');
+  else el.classList.remove('vis');
+  if(el.classList.contains('vis')) syncCheatToggles();
+}
+
+function syncCheatToggles(){
+  const a=document.getElementById('tog-cheat-infinite');
+  const b=document.getElementById('tog-cheat-freebuy');
+  if(a) a.classList.toggle('on',cheatInfiniteCoins);
+  if(b) b.classList.toggle('on',cheatFreeBuy);
+}
+
+function cheatSetCoins(){
+  const raw=(document.getElementById('cheat-coins-input')||{}).value||'';
+  const n=parseFloat(String(raw).replace(/,/g,'').trim());
+  if(!isFinite(n)||n<0)return;
+  cheatInfiniteCoins=false;
+  syncCheatToggles();
+  G.coins=n;
+  saveGame();updateUI();
+}
+
+function cheatToggleInfinite(){
+  cheatInfiniteCoins=!cheatInfiniteCoins;
+  if(cheatInfiniteCoins) G.coins=Number.MAX_SAFE_INTEGER;
+  syncCheatToggles();
+  saveGame();updateUI();
+}
+
+function cheatToggleFreeBuy(){
+  cheatFreeBuy=!cheatFreeBuy;
+  syncCheatToggles();
+  updateUI();
+}
+
+function cheatPurchaseAll(){
+  const prevFb=cheatFreeBuy;
+  cheatFreeBuy=true;
+  for(let r=0;r<80;r++){
+    [...PPS,...PPC].forEach(u=>{
+      const n=maxBuy(u);
+      if(n<1)return;
+      u.owned+=n;
+    });
+  }
+  cheatFreeBuy=prevFb;
+  OFFLINE_UPGRADES.forEach(u=>{u.bought=true;});
+  saveGame();updateUI();
+}
+
+function cheatAddCredits(n){
+  if(cheatInfiniteCoins) G.totalCoins+=n;
+  else{G.coins+=n;G.totalCoins+=n;}
+  saveGame();updateUI();
+}
+function cheatPrestigeStack(){
+  G.prestigeMult*=2;G.prestigeCount++;
+  saveGame();updateUI();
+}
+function cheatBuffPPS(n){
+  PPS.forEach(u=>{u.owned+=n;});
+  saveGame();updateUI();
+}
+function cheatBuffPPC(n){
+  PPC.forEach(u=>{u.owned+=n;});
+  saveGame();updateUI();
+}
+function cheatUnlockAllOffline(){
+  OFFLINE_UPGRADES.forEach(u=>{u.bought=true;});
+  saveGame();updateUI();
+}
+
 function buildThemes(){
   const grid=document.getElementById('theme-grid');
   THEMES.forEach(t=>{
@@ -813,7 +966,10 @@ function buildThemes(){
     sw.dataset.theme=t.id;
     sw.style.borderColor=t.acc;
     sw.innerHTML=`<div class="t-dot" style="background:${t.dot};box-shadow:0 0 8px ${t.dot};"></div><div class="t-name">${t.name}</div>`;
-    sw.addEventListener('click',()=>applyTheme(t.id));
+    sw.addEventListener('click',()=>{
+      if(t.id==='inferno') tryInfernoDebugToggle();
+      applyTheme(t.id);
+    });
     grid.appendChild(sw);
   });
 }
@@ -884,7 +1040,7 @@ document.getElementById('ot-ok').addEventListener('click',()=>
 //  UI UPDATE
 // ═══════════════════════════════════════════
 function updateUI(){
-  document.getElementById('credit-count').textContent=fmt(G.coins);
+  document.getElementById('credit-count').textContent=cheatInfiniteCoins?'∞':fmt(G.coins);
   document.getElementById('cps-val').textContent=totalCPS().toFixed(2);
   document.getElementById('cpt-val').textContent=fmt(tapAmt());
   document.getElementById('total-val').textContent=fmt(G.totalCoins);
@@ -969,7 +1125,7 @@ function renderOffline(){
   list.innerHTML='';
   const capH=Math.min(BASE_OFFLINE_HOURS+OFFLINE_UPGRADES.filter(u=>u.bought).reduce((s,u)=>s+u.addHours,0),MAX_OFFLINE_HOURS);
   OFFLINE_UPGRADES.forEach(u=>{
-    const canAfford=!u.bought&&G.coins>=u.cost;
+    const canAfford=!u.bought&&(cheatFreeBuy||cheatInfiniteCoins||G.coins>=u.cost);
     const maxed=u.bought;
     const row=document.createElement('div');
     row.className='off-row'+(maxed?' maxed':canAfford?' can':' cant');
@@ -1000,8 +1156,10 @@ function buyUpg(u,isPPC){
   const actualN=buyAmt===0?affordable:Math.min(requested,affordable);
   if(actualN<=0)return;
   const cost=costN(u,actualN);
-  if(G.coins<cost)return;
-  G.coins-=cost;u.owned+=actualN;
+  if(cheatInfiniteCoins && !cheatFreeBuy && G.coins<cost) G.coins=Number.MAX_SAFE_INTEGER;
+  if(!cheatFreeBuy && G.coins<cost)return;
+  if(!cheatFreeBuy) G.coins-=cost;
+  u.owned+=actualN;
   const r=document.getElementById('tap-zone').getBoundingClientRect();
   const col=isPPC?getComputedStyle(document.body).getPropertyValue('--c6').trim():themeCol();
   spawnSparks(r.left+r.width/2,r.top+r.height/2,col);
@@ -1009,8 +1167,11 @@ function buyUpg(u,isPPC){
 }
 
 function buyOffline(u){
-  if(u.bought||G.coins<u.cost)return;
-  G.coins-=u.cost;u.bought=true;
+  if(u.bought)return;
+  if(cheatInfiniteCoins && !cheatFreeBuy && G.coins<u.cost) G.coins=Number.MAX_SAFE_INTEGER;
+  if(!cheatFreeBuy && G.coins<u.cost)return;
+  if(!cheatFreeBuy) G.coins-=u.cost;
+  u.bought=true;
   spawnSparks(window.innerWidth/2,window.innerHeight*0.6,getComputedStyle(document.body).getPropertyValue('--c5').trim()||'#ffd60a');
   saveGame();updateUI();
 }
@@ -1074,7 +1235,8 @@ let tapLock=false;
 
 function doTap(cx,cy){
   const amt=tapAmt();
-  G.coins+=amt;G.totalCoins+=amt;
+  if(cheatInfiniteCoins) G.totalCoins+=amt;
+  else{G.coins+=amt;G.totalCoins+=amt;}
   spawnSparks(cx,cy);
   spawnFloat(cx,cy,fmt(amt));
   tapZone.classList.add('tapped');
@@ -1095,6 +1257,7 @@ function doPrestige(){
   if(S.pconf&&!confirm('RESET ALL PROGRESS for a permanent ×2 multiplier?'))return;
   G.prestigeCount++;G.prestigeMult*=2;G.coins=0;
   PPS.forEach(u=>u.owned=0);PPC.forEach(u=>u.owned=0);
+  if(cheatInfiniteCoins) G.coins=Number.MAX_SAFE_INTEGER;
   saveGame();updateUI();
 }
 
@@ -1104,7 +1267,8 @@ function doPrestige(){
 let barStep=0;
 setInterval(()=>{
   const cps=totalCPS(),amt=cps/10;
-  G.coins+=amt;G.totalCoins+=amt;
+  if(cheatInfiniteCoins) G.totalCoins+=amt;
+  else{G.coins+=amt;G.totalCoins+=amt;}
   barStep=(barStep+(cps>0?1:0))%10;
   document.getElementById('idle-bar').style.width=(barStep*10)+'%';
   updateUI();
@@ -1128,7 +1292,8 @@ document.addEventListener('visibilitychange',()=>{
     if(sec>10){
       const earned=totalCPS()*sec*0.5;
       if(earned>0){
-        G.coins+=earned;G.totalCoins+=earned;
+        if(cheatInfiniteCoins) G.totalCoins+=earned;
+        else{G.coins+=earned;G.totalCoins+=earned;}
         showOfflineToast(earned,sec,rawSec>capSec);
         saveGame();updateUI();
       }
