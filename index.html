@@ -1,0 +1,1727 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>NEXUS // IDLE</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<link rel="manifest" href="./manifest.json">
+<link rel="icon" type="image/png" href="./icon.png">
+<link rel="apple-touch-icon" href="./icon.png">
+<meta name="theme-color" content="#00f5ff" id="theme-meta">
+<style>
+/* ═══════════════════════════════════════════
+   THEMES — vars on :root, swapped via JS
+   iOS PWA safe: no attribute selectors,
+   all vars hard-coded as fallbacks too.
+═══════════════════════════════════════════ */
+:root {
+  /* NEXUS default (cyan) */
+  --bg:     #020810;
+  --bg2:    #040f1e;
+  --c1:     #00f5ff;
+  --c1dim:  rgba(0,245,255,0.15);
+  --c1glow: rgba(0,245,255,0.30);
+  --c2:     #00bcd4;
+  --c3:     #39ff14;
+  --c4:     #ff006e;
+  --c5:     #ffd60a;
+  --c6:     #ff6b00;
+  --border: rgba(0,245,255,0.28);
+  --border2:rgba(0,245,255,0.12);
+  --txt:    #e8f4ff;
+  --txt2:   #8ab4cc;
+  --txt3:   #4a7a90;
+  --tap-flash: rgba(0,245,255,0.10);
+  --grid-c: rgba(0,245,255,0.05);
+  --ring1:  rgba(0,245,255,0.45);
+  --ring2:  rgba(57,255,20,0.32);
+}
+
+/* ═══════════════════════════════════════════
+RESET & BODY
+═══════════════════════════════════════════ */
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html{height:100%;overflow:hidden;background:#020810;}
+body{
+background:var(--bg);
+font-family:'Share Tech Mono',monospace;
+color:var(--txt);
+position:fixed;width:100%;height:100%;
+}
+
+/* Grid background */
+#grid-bg{
+position:fixed;inset:0;z-index:0;
+background-image:
+linear-gradient(var(--grid-c) 1px, transparent 1px),
+linear-gradient(90deg, var(--grid-c) 1px, transparent 1px);
+background-size:40px 40px;
+animation:gridScroll 22s linear infinite;
+}
+@keyframes gridScroll{from{background-position:0 0;}to{background-position:0 40px;}}
+
+/* Corner brackets */
+.corner{position:fixed;width:44px;height:44px;z-index:3;}
+.corner.tl{top:max(0px, env(safe-area-inset-top, 0px));left:max(0px, env(safe-area-inset-left, 0px));border-top:2px solid var(--c1);border-left:2px solid var(--c1);}
+.corner.tr{top:max(0px, env(safe-area-inset-top, 0px));right:max(0px, env(safe-area-inset-right, 0px));border-top:2px solid var(--c1);border-right:2px solid var(--c1);}
+.corner.bl{bottom:max(0px, env(safe-area-inset-bottom, 0px));left:max(0px, env(safe-area-inset-left, 0px));border-bottom:2px solid var(--c1);border-left:2px solid var(--c1);}
+.corner.br{bottom:max(0px, env(safe-area-inset-bottom, 0px));right:max(0px, env(safe-area-inset-right, 0px));border-bottom:2px solid var(--c1);border-right:2px solid var(--c1);}
+
+/* Canvas overlay */
+#particles{position:fixed;inset:0;pointer-events:none;z-index:5;}
+
+/* ═══════════════════════════════════════════
+APP LAYOUT — flex column, full height
+tap-zone grows/shrinks via flex-grow
+═══════════════════════════════════════════ */
+#app{
+position:relative;z-index:6;
+display:flex;flex-direction:column;
+height:100vh;height:100dvh;min-height:100dvh;
+overflow:hidden;
+}
+
+/* ── HEADER ─────────────────────────────── */
+#header{
+padding-top:calc(20px + env(safe-area-inset-top, 0px));
+padding-left:max(16px, env(safe-area-inset-left, 0px));
+padding-right:max(16px, env(safe-area-inset-right, 0px));
+padding-bottom:10px;
+background:var(--bg2);
+border-bottom:1px solid var(--border);
+flex-shrink:0;
+}
+#sys-label{
+font-family:'Orbitron',monospace;font-size:8px;
+letter-spacing:4px;color:var(--c1);opacity:0.5;margin-bottom:3px;
+}
+#credit-count{
+font-family:'Orbitron',monospace;
+font-size:clamp(28px,7vw,44px);font-weight:900;
+color:var(--c1);letter-spacing:2px;line-height:1;
+text-shadow:0 0 18px var(--c1glow);
+}
+#credit-unit{font-size:9px;letter-spacing:3px;color:var(--txt2);margin-top:2px;}
+.stats-row{display:flex;gap:5px;margin-top:8px;flex-wrap:wrap;}
+.stat-box{
+border:1px solid var(--border2);background:var(--c1dim);
+padding:3px 8px;border-radius:3px;font-size:8px;color:var(--txt2);
+position:relative;overflow:hidden;
+}
+.stat-box::after{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:var(--c1);opacity:0.5;}
+.stat-box .val{font-family:'Orbitron',monospace;font-size:12px;font-weight:700;display:block;color:var(--c1);}
+.stat-box.s-green .val{color:var(--c3);}
+.stat-box.s-green{border-color:rgba(57,255,20,0.15);background:rgba(57,255,20,0.06);}
+.stat-box.s-green::after{background:var(--c3);}
+.stat-box.s-orange .val{color:var(--c6);}
+.stat-box.s-orange{border-color:rgba(255,107,0,0.18);background:rgba(255,107,0,0.06);}
+.stat-box.s-orange::after{background:var(--c6);}
+#prestige-btn{
+display:none;width:100%;margin-top:7px;padding:7px;
+border:1px solid var(--c4);background:rgba(255,0,110,0.08);
+color:var(--c4);font-family:'Orbitron',monospace;
+font-size:9px;font-weight:700;letter-spacing:2px;cursor:pointer;border-radius:3px;
+}
+#prestige-btn:active{background:rgba(255,0,110,0.22);}
+
+/* Top cheat menu — opens downward (unlike bottom drawer) */
+.header-main-row{
+display:flex;flex-direction:row;justify-content:space-between;align-items:flex-start;gap:10px;width:100%;
+position:relative;z-index:20;
+}
+.header-credits-col{min-width:0;flex:1;}
+.header-cheat-wrap{
+position:relative;flex-shrink:0;align-self:flex-start;padding-top:4px;z-index:40;pointer-events:auto;
+}
+.header-cheat-wrap[hidden]{display:none!important;}
+.header-cheat-btn{
+width:42px;height:40px;border-radius:5px;
+border:1px solid rgba(255,0,110,0.5);background:rgba(255,0,110,0.12);
+color:var(--c4);font-size:18px;line-height:1;cursor:pointer;
+display:flex;align-items:center;justify-content:center;
+font-family:'Orbitron',monospace;
+box-shadow:0 0 12px rgba(255,0,110,0.15);
+position:relative;z-index:31;padding:0;touch-action:manipulation;
+}
+.header-cheat-btn:active{opacity:0.85;}
+.header-cheat-btn.open{border-color:var(--c4);background:rgba(255,0,110,0.2);}
+.header-cheat-dd{
+display:none;flex-direction:column;
+position:absolute;top:100%;right:0;margin-top:6px;
+min-width:240px;max-width:min(calc(100vw - 24px), 320px);
+z-index:500;
+background:
+linear-gradient(180deg, rgba(255,255,255,0.03), transparent 28%),
+var(--bg2);
+border:1px solid color-mix(in srgb, var(--c4) 45%, var(--border) 55%);
+border-radius:8px;box-shadow:0 14px 40px rgba(0,0,0,0.5);
+padding:6px 0 8px;max-height:min(70vh, 560px);overflow:auto;
+}
+.header-cheat-dd.open{display:flex;}
+.hcd-title{
+font-family:'Orbitron',monospace;font-size:8px;font-weight:700;letter-spacing:3px;
+color:var(--txt);padding:6px 14px 8px;border-bottom:1px solid var(--border2);
+text-shadow:0 0 12px var(--c1glow);
+}
+.hcd-subtitle{
+font-family:'Orbitron',monospace;font-size:8px;font-weight:700;letter-spacing:2px;
+color:var(--c5);padding:12px 14px 6px;border-top:1px solid var(--border2);
+}
+.hcd-item{
+display:block;width:100%;text-align:left;padding:9px 14px;border:none;background:transparent;
+color:var(--txt);font-family:'Share Tech Mono',monospace;font-size:11px;
+cursor:pointer;border-top:1px solid transparent;
+}
+.hcd-item:first-of-type{border-top:none;}
+.hcd-item:active{background:rgba(255,0,110,0.1);color:#fff;}
+.hcd-item.hcd-danger{color:var(--c4);border-top-color:var(--border2);}
+.hcd-item.hcd-danger:active{background:rgba(255,0,110,0.18);}
+.hcd-row{
+display:flex;align-items:center;justify-content:space-between;gap:10px;
+padding:8px 14px;border-top:1px solid var(--border2);
+font-size:9px;color:var(--txt);font-family:'Orbitron',monospace;
+}
+.hcd-input-row,.hcd-grid{
+display:flex;gap:8px;padding:8px 14px 0;
+}
+.hcd-grid{flex-wrap:wrap;}
+.hcd-grid .hcd-item{
+flex:1 1 calc(50% - 4px);
+border:1px solid var(--border);
+border-radius:6px;
+padding:8px 10px;
+text-align:center;
+background:linear-gradient(180deg, color-mix(in srgb, var(--c1dim) 80%, transparent), rgba(255,255,255,0.02));
+}
+.hcd-grid .hcd-item:active{background:rgba(255,0,110,0.1);}
+.hcd-grid .hcd-item.full{flex-basis:100%;}
+.hcd-input{
+flex:1;min-width:0;
+background:rgba(0,0,0,0.26);
+border:1px solid var(--border);
+border-radius:6px;
+padding:8px 10px;
+color:var(--txt);
+font-family:'Share Tech Mono',monospace;
+font-size:11px;
+outline:none;
+}
+.hcd-input:focus{border-color:rgba(255,0,110,0.4);}
+.hcd-set-btn{
+flex:0 0 auto;
+border:1px solid var(--border);
+border-radius:6px;
+background:var(--c1dim);
+color:var(--txt);
+padding:8px 12px;
+font-family:'Orbitron',monospace;
+font-size:9px;
+letter-spacing:1px;
+cursor:pointer;
+}
+.hcd-set-btn:active{background:rgba(255,0,110,0.16);}
+.hcd-row .toggle{width:34px;height:18px;}
+.hcd-row .toggle::after{width:12px;height:12px;top:2px;left:2px;}
+.hcd-row .toggle.on::after{left:16px;}
+
+/* ── TAP ZONE — grows when menus closed, shrinks when open ─ */
+#tap-zone{
+flex:1 1 0;           /* grows to fill space */
+min-height:115px;      /* always visible even when menus open */
+position:relative;overflow:hidden;
+cursor:pointer;user-select:none;-webkit-user-select:none;
+touch-action:manipulation;
+display:flex;align-items:center;justify-content:center;
+transition:flex-basis 0.3s ease, min-height 0.25s ease, background 0.08s;
+border-bottom:1px solid var(--border2);
+}
+#tap-zone.tap-zone-menus-open{
+min-height:clamp(150px,30vh,260px);
+}
+#tap-zone.tapped{background:var(--tap-flash);}
+
+/* Decorative rings */
+.ring{
+position:absolute;border-radius:50%;
+border:1px solid transparent;
+animation:spin var(--spd) linear infinite;
+pointer-events:none;
+}
+.ring1{width:150px;height:150px;border-top-color:var(--ring1);border-right-color:var(--ring1);--spd:4s;}
+.ring2{width:120px;height:120px;border-bottom-color:var(--ring2);border-left-color:var(--ring2);--spd:6s;animation-direction:reverse;}
+.ring3{width:180px;height:180px;border-top-color:var(--border2);--spd:13s;}
+@keyframes spin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+
+/* Core orb */
+#core-visual{
+width:96px;height:96px;border-radius:50%;
+border:2px solid var(--c1);
+background:radial-gradient(circle at 38% 32%, var(--c1dim), transparent 70%);
+box-shadow:0 0 20px var(--c1glow),0 0 50px var(--c1dim),inset 0 0 20px var(--c1dim);
+position:relative;z-index:2;pointer-events:none;
+display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+transition:transform 0.08s, box-shadow 0.08s;
+}
+#tap-zone.tapped #core-visual{transform:scale(0.87);box-shadow:0 0 8px var(--c1glow),inset 0 0 8px var(--c1dim);}
+#core-icon{font-size:26px;filter:drop-shadow(0 0 6px var(--c1));pointer-events:none;}
+#core-label{font-family:'Orbitron',monospace;font-size:6px;letter-spacing:2px;color:var(--c1);opacity:0.5;pointer-events:none;}
+#tap-hint{
+position:absolute;bottom:6px;left:0;right:0;
+text-align:center;font-size:7px;letter-spacing:3px;
+color:var(--c1);opacity:0.18;pointer-events:none;
+}
+
+/* Idle progress bar inside tap zone */
+#idle-bar-wrap{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);width:140px;text-align:center;pointer-events:none;}
+#idle-lbl{font-size:7px;letter-spacing:2px;color:var(--txt2);margin-bottom:2px;}
+#idle-bar-bg{width:100%;height:2px;background:var(--border2);border-radius:1px;overflow:hidden;}
+#idle-bar{height:100%;width:0%;background:linear-gradient(90deg,var(--c2),var(--c1));box-shadow:0 0 4px var(--c1);border-radius:1px;}
+
+/* Floating tap numbers */
+.float-num{
+position:fixed;pointer-events:none;z-index:999;
+font-family:'Orbitron',monospace;font-size:14px;font-weight:700;
+animation:floatUp 0.9s ease-out forwards;
+transform:translateX(-50%);
+}
+@keyframes floatUp{
+0%  {opacity:1;transform:translateX(-50%) translateY(0);}
+100%{opacity:0;transform:translateX(-50%) translateY(-68px);}
+}
+
+/* ═══════════════════════════════════════════
+BOTTOM DRAWER — collapsible panels
+═══════════════════════════════════════════ */
+#drawer{
+flex-shrink:0;
+display:flex;flex-direction:column;
+max-height:min(52vh, calc(100dvh - 240px));
+transition:max-height 0.3s ease;
+background:var(--bg2);
+border-top:1px solid var(--border);
+}
+#drawer.collapsed{max-height:0;overflow:hidden;border-top:none;}
+
+/* Tab bar — always visible, sits BELOW the drawer */
+#tab-bar{
+flex-shrink:0;
+display:flex;
+background:var(--bg2);
+border-top:1px solid var(--border);
+padding:0 max(0px, env(safe-area-inset-left, 0px)) max(8px, env(safe-area-inset-bottom, 0px)) max(0px, env(safe-area-inset-right, 0px));
+}
+.tab-btn{
+flex:1;padding:10px 2px 8px;
+min-height:48px;
+font-family:'Orbitron',monospace;font-size:7px;letter-spacing:1px;
+color:var(--txt3);background:transparent;border:none;
+border-top:2px solid transparent;
+cursor:pointer;transition:all 0.18s;
+display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+}
+.tab-btn .ti{font-size:14px;}
+.tab-btn.active{color:var(--c1);border-top-color:var(--c1);background:var(--c1dim);}
+.tab-btn.t-clicker.active{color:var(--c6);border-top-color:var(--c6);background:rgba(255,107,0,0.06);}
+.tab-btn.t-settings.active{color:var(--c5);border-top-color:var(--c5);background:rgba(255,214,10,0.05);}
+.tab-badge{
+font-family:'Orbitron',monospace;font-size:6px;
+background:var(--c1dim);border:1px solid var(--border);
+color:var(--c1);padding:1px 4px;border-radius:8px;
+}
+.tab-btn.t-clicker .tab-badge{color:var(--c6);background:rgba(255,107,0,0.1);border-color:rgba(255,107,0,0.3);}
+
+/* Drawer content wrapper */
+#drawer-content{
+flex:1;overflow:hidden;display:flex;flex-direction:column;
+}
+
+/* Buy bar */
+#buy-bar{
+display:flex;align-items:center;gap:4px;
+padding:8px max(10px, env(safe-area-inset-left, 0px)) 8px max(10px, env(safe-area-inset-right, 0px));
+border-bottom:1px solid var(--border2);
+flex-shrink:0;
+}
+#buy-lbl{font-family:'Orbitron',monospace;font-size:7px;letter-spacing:2px;color:var(--txt3);flex-shrink:0;}
+.buy-btn{
+font-family:'Orbitron',monospace;font-size:8px;
+padding:8px 2px;flex:1;min-height:36px;
+border:1px solid var(--border2);background:transparent;
+color:var(--txt3);cursor:pointer;border-radius:2px;transition:all 0.14s;
+}
+.buy-btn.active{border-color:var(--c1);color:var(--c1);background:var(--c1dim);}
+
+/* Upgrade list */
+#upgrades-list{
+overflow-y:auto;-webkit-overflow-scrolling:touch;
+padding:6px max(10px, env(safe-area-inset-left, 0px)) max(12px, env(safe-area-inset-bottom, 0px)) max(10px, env(safe-area-inset-right, 0px));display:flex;flex-direction:column;gap:5px;
+}
+#upgrades-list::-webkit-scrollbar{display:none;}
+
+.upg-row{
+display:flex;align-items:center;gap:10px;
+padding:8px 10px;border-radius:3px;cursor:pointer;
+border:1px solid var(--border2);background:rgba(255,255,255,0.02);
+position:relative;overflow:hidden;transition:all 0.14s;
+touch-action:manipulation;-webkit-user-select:none;user-select:none;
+}
+.upg-row::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--c1);opacity:0;transition:opacity 0.14s;}
+.upg-row.can{border-color:var(--border);background:var(--c1dim);}
+.upg-row.can::before{opacity:1;}
+.upg-row.cant{opacity:0.35;}
+.upg-row.next{
+opacity:0.72;
+border-color:var(--border2);
+background:rgba(255,255,255,0.02);
+}
+.upg-row.next::before{opacity:0.45;}
+.upg-row:active{transform:scale(0.98);}
+.upg-row.ppc-row::before{background:var(--c6);}
+.upg-row.ppc-row.can{border-color:rgba(255,107,0,0.28);background:rgba(255,107,0,0.06);}
+.upg-row.ppc-row.next{border-color:rgba(255,107,0,0.18);background:rgba(255,107,0,0.04);}
+.upg-icon{
+font-size:18px;width:34px;height:34px;flex-shrink:0;
+display:flex;align-items:center;justify-content:center;
+border:1px solid var(--border2);border-radius:3px;background:rgba(255,255,255,0.02);
+}
+.upg-row.can .upg-icon{border-color:var(--border);background:var(--c1dim);}
+.upg-row.ppc-row.can .upg-icon{border-color:rgba(255,107,0,0.28);background:rgba(255,107,0,0.08);}
+.upg-info{flex:1;min-width:0;}
+.upg-top{display:flex;align-items:center;justify-content:space-between;}
+.upg-name{font-family:'Orbitron',monospace;font-size:9px;font-weight:700;color:var(--txt2);}
+.upg-row.can .upg-name{color:var(--txt);}
+.upg-owned{
+font-family:'Orbitron',monospace;font-size:8px;
+color:var(--c1);background:var(--c1dim);border:1px solid var(--border);
+padding:1px 5px;border-radius:2px;display:none;
+}
+.upg-row.ppc-row .upg-owned{color:var(--c6);background:rgba(255,107,0,0.08);border-color:rgba(255,107,0,0.2);}
+.upg-desc{font-size:7px;color:var(--txt3);margin-top:1px;}
+.upg-bottom{display:flex;align-items:flex-start;justify-content:space-between;margin-top:3px;gap:8px;}
+.upg-cost{font-size:10px;color:var(--txt3);flex-shrink:0;max-width:58%;}
+.upg-row.can .upg-cost{color:var(--c5);}
+.upg-prod{
+font-size:8px;color:var(--c3);opacity:0.9;
+display:flex;flex-direction:column;align-items:flex-end;gap:2px;text-align:right;
+min-width:0;
+}
+.upg-row.ppc-row .upg-prod{color:var(--c6);}
+.upg-next{font-size:8px;font-weight:700;letter-spacing:0.25px;color:var(--c3);}
+.upg-row.ppc-row .upg-next{color:var(--c6);}
+.upg-global-hint{
+font-size:8px;letter-spacing:1px;color:var(--c5);text-align:center;
+padding:10px 8px;margin:2px 0 4px;border:1px dashed rgba(255,214,10,0.35);
+border-radius:4px;background:rgba(255,214,10,0.06);font-family:'Orbitron',monospace;
+}
+
+/* ── OFFLINE UPGRADES tab panel ─── */
+#offline-list{
+overflow-y:auto;-webkit-overflow-scrolling:touch;
+padding:6px max(10px, env(safe-area-inset-left, 0px)) max(12px, env(safe-area-inset-bottom, 0px)) max(10px, env(safe-area-inset-right, 0px));display:none;flex-direction:column;gap:5px;
+}
+#offline-list::-webkit-scrollbar{display:none;}
+#offline-list.vis{display:flex;}
+.off-row{
+display:flex;align-items:center;gap:10px;
+padding:8px 10px;border-radius:3px;cursor:pointer;
+border:1px solid var(--border2);background:rgba(255,255,255,0.02);
+position:relative;overflow:hidden;transition:all 0.14s;
+touch-action:manipulation;-webkit-user-select:none;user-select:none;
+}
+.off-row::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--c5);opacity:0;transition:opacity 0.14s;}
+.off-row.can{border-color:rgba(255,214,10,0.3);background:rgba(255,214,10,0.05);}
+.off-row.can::before{opacity:1;}
+.off-row.cant{opacity:0.35;}
+.off-row:active{transform:scale(0.98);}
+.off-row.maxed{opacity:0.5;cursor:default;}
+.off-icon{font-size:18px;width:34px;height:34px;flex-shrink:0;display:flex;align-items:center;justify-content:center;border:1px solid var(--border2);border-radius:3px;background:rgba(255,255,255,0.02);}
+.off-row.can .off-icon{border-color:rgba(255,214,10,0.3);background:rgba(255,214,10,0.07);}
+.off-info{flex:1;min-width:0;}
+.off-name{font-family:'Orbitron',monospace;font-size:9px;font-weight:700;color:var(--txt2);}
+.off-row.can .off-name{color:var(--txt);}
+.off-desc{font-size:7px;color:var(--txt3);margin-top:1px;}
+.off-bot{display:flex;align-items:center;justify-content:space-between;margin-top:3px;}
+.off-cost{font-size:10px;color:var(--txt3);}
+.off-row.can .off-cost{color:var(--c5);}
+.off-stat{font-size:8px;color:var(--c5);opacity:0.8;}
+.off-next{font-size:7px;color:var(--c5);margin-top:4px;letter-spacing:0.3px;opacity:0.95;line-height:1.35;}
+
+/* ── SETTINGS panel ─── */
+#settings-panel{
+overflow-y:auto;-webkit-overflow-scrolling:touch;
+padding:8px max(12px, env(safe-area-inset-left, 0px)) max(16px, env(safe-area-inset-bottom, 0px)) max(12px, env(safe-area-inset-right, 0px));display:none;flex-direction:column;
+}
+#settings-panel.vis{display:flex;}
+#settings-panel::-webkit-scrollbar{display:none;}
+.s-section{margin-bottom:14px;}
+.s-title{
+font-family:'Orbitron',monospace;font-size:8px;letter-spacing:3px;
+color:var(--c5);opacity:0.65;
+margin-bottom:7px;padding-bottom:4px;border-bottom:1px solid var(--border2);
+}
+.theme-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;}
+.t-swatch{
+border-radius:4px;padding:6px 2px 5px;
+border:2px solid var(--border2);cursor:pointer;
+display:flex;flex-direction:column;align-items:center;gap:3px;
+transition:all 0.17s;background:rgba(255,255,255,0.02);
+}
+.t-swatch.active{border-color:var(--c1);background:var(--c1dim);}
+.t-dot{width:20px;height:20px;border-radius:50%;}
+.t-name{font-family:'Orbitron',monospace;font-size:6px;color:var(--txt3);text-align:center;}
+.t-swatch.active .t-name{color:var(--c1);}
+.s-row{
+display:flex;align-items:center;justify-content:space-between;
+padding:8px 0;border-bottom:1px solid var(--border2);
+}
+.s-left{flex:1;}
+.s-lbl{font-size:9px;color:var(--txt2);letter-spacing:1px;}
+.s-sub{font-size:7px;color:var(--txt3);margin-top:2px;}
+.toggle{
+width:36px;height:20px;border-radius:10px;position:relative;
+cursor:pointer;border:1px solid var(--border);
+background:rgba(255,255,255,0.08);transition:background 0.2s;flex-shrink:0;
+}
+.toggle.on{background:var(--c1);}
+.toggle::after{
+content:'';position:absolute;
+width:14px;height:14px;background:#fff;border-radius:50%;
+top:2px;left:2px;transition:left 0.18s;box-shadow:0 1px 3px rgba(0,0,0,0.35);
+}
+.toggle.on::after{left:18px;}
+.s-kv{display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border2);}
+.s-kv-lbl{font-size:9px;color:var(--txt3);}
+.s-kv-val{font-size:9px;color:var(--c1);font-family:'Orbitron',monospace;}
+.sv-btn{
+width:100%;padding:8px;margin-top:5px;
+border:1px solid var(--c1, #00f5ff);background:var(--c1dim, rgba(0,245,255,0.12));
+color:var(--c1, #00f5ff);font-family:'Orbitron',monospace;
+font-size:9px;letter-spacing:2px;cursor:pointer;border-radius:3px;
+display:block;
+}
+.sv-btn:active{opacity:0.7;}
+.sv-btn.warn{border-color:var(--c6, #ff6b00);color:var(--c6, #ff6b00);background:rgba(255,107,0,0.07);}
+.sv-btn.danger{border-color:var(--c4, #ff006e);color:var(--c4, #ff006e);background:rgba(255,0,110,0.07);}
+.info-txt{font-size:8px;color:var(--txt3);line-height:1.7;margin-top:3px;}
+/* Debug / cheat panel (toggled via secret gesture) — inside #settings-panel, below // GAME, above // SAVE DATA */
+.ch-row{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px;}
+.ch-btn{
+flex:1;min-width:72px;padding:6px 4px;
+border:1px solid rgba(255,0,110,0.4);background:rgba(255,0,110,0.08);
+color:var(--c4);font-family:'Orbitron',monospace;font-size:7px;letter-spacing:1px;
+cursor:pointer;border-radius:3px;
+}
+.ch-btn:active{opacity:0.75;}
+.ch-inp{
+flex:1;min-width:0;padding:6px 8px;border-radius:3px;
+border:1px solid rgba(255,0,110,0.35);background:rgba(0,0,0,0.25);
+color:var(--txt);font-family:'Share Tech Mono',monospace;font-size:10px;
+}
+.ch-inp::placeholder{color:var(--txt3);opacity:0.7;}
+
+/* ═══════════════════════════════════════════
+OFFLINE TOAST
+═══════════════════════════════════════════ */
+#offline-toast{
+display:none;position:fixed;
+top:50%;left:50%;transform:translate(-50%,-50%);
+z-index:2000;
+background:var(--bg2);border:1px solid var(--c1);border-radius:6px;
+padding:20px 24px;text-align:center;min-width:250px;
+box-shadow:0 0 40px var(--c1glow);
+}
+#howto-toast{
+display:none;position:fixed;
+top:50%;left:50%;transform:translate(-50%,-50%);
+z-index:2000;
+background:var(--bg2);border:1px solid var(--c1);border-radius:6px;
+padding:20px 24px;text-align:left;min-width:min(320px, calc(100vw - 32px));max-width:min(420px, calc(100vw - 32px));
+box-shadow:0 0 40px var(--c1glow);
+}
+#modal-blocker{
+display:none;position:fixed;inset:0;z-index:1990;
+background:rgba(0,0,0,0.55);
+backdrop-filter:blur(2px);
+}
+#offline-toast h3{font-family:'Orbitron',monospace;font-size:10px;letter-spacing:3px;color:var(--c1);margin-bottom:8px;}
+#howto-toast h3{font-family:'Orbitron',monospace;font-size:10px;letter-spacing:3px;color:var(--c1);margin-bottom:10px;text-align:center;}
+#ot-earned{font-family:'Orbitron',monospace;font-size:28px;font-weight:900;color:var(--c3);text-shadow:0 0 14px currentColor;}
+#ot-sub{font-size:9px;color:var(--txt2);margin-top:5px;letter-spacing:1px;}
+#howto-copy{font-size:10px;color:var(--txt2);line-height:1.7;white-space:pre-line;}
+#howto-ok{
+margin-top:14px;padding:8px;width:100%;
+border:1px solid var(--c1);background:var(--c1dim);
+color:var(--c1);font-family:'Orbitron',monospace;
+font-size:10px;letter-spacing:2px;cursor:pointer;border-radius:3px;
+}
+#ot-ok{
+margin-top:14px;padding:7px;width:100%;
+border:1px solid var(--c1);background:var(--c1dim);
+color:var(--c1);font-family:'Orbitron',monospace;
+font-size:10px;letter-spacing:2px;cursor:pointer;border-radius:3px;
+}
+</style>
+
+</head>
+<body data-theme="nexus">
+<div id="grid-bg"></div>
+<div class="corner tl"></div><div class="corner tr"></div>
+<div class="corner bl"></div><div class="corner br"></div>
+<canvas id="particles"></canvas>
+<div id="modal-blocker"></div>
+
+<!-- OFFLINE TOAST -->
+
+<div id="offline-toast">
+  <h3>// OFFLINE INCOME //</h3>
+  <div id="ot-earned">0</div>
+  <div id="ot-sub"></div>
+  <button id="ot-ok">COLLECT</button>
+</div>
+<div id="howto-toast">
+  <h3>// HOW TO PLAY //</h3>
+  <div id="howto-copy">Tap anywhere to earn credits.
+
+Buy PASSIVE upgrades for credits per second.
+Buy CLICKER upgrades for more credits per tap.
+Buy OFFLINE upgrades to earn while away.
+Prestige at 1M credits for a permanent x2 boost.</div>
+  <button id="howto-ok">START</button>
+</div>
+
+<div id="app">
+
+  <!-- HEADER -->
+
+  <div id="header">
+    <div class="header-main-row">
+      <div class="header-credits-col">
+        <div id="sys-label">NEXUS CREDIT SYSTEM v3.0</div>
+        <div id="credit-count">0</div>
+        <div id="credit-unit">CREDITS</div>
+      </div>
+      <div id="header-cheat-wrap" class="header-cheat-wrap" hidden>
+        <button type="button" id="header-cheat-btn" class="header-cheat-btn" onclick="toggleHeaderCheatMenu(event)" aria-expanded="false" aria-haspopup="true" aria-label="Cheat menu" title="Cheats">⚙</button>
+        <div id="header-cheat-dropdown" class="header-cheat-dd" role="menu">
+          <div class="hcd-title">// CHEATS</div>
+          <div class="hcd-subtitle">CREDITS</div>
+          <div class="hcd-input-row">
+            <input type="text" id="cheat-coins-input" class="hcd-input" placeholder="Amount" inputmode="decimal" autocomplete="off">
+            <button type="button" class="hcd-set-btn" onclick="cheatSetCoins()">SET</button>
+          </div>
+          <div class="hcd-grid">
+            <button type="button" class="hcd-item" onclick="cheatAddCredits(1e3)">+1K</button>
+            <button type="button" class="hcd-item" onclick="cheatAddCredits(1e5)">+100K</button>
+            <button type="button" class="hcd-item" onclick="cheatAddCredits(1e7)">+10M</button>
+            <button type="button" class="hcd-item" onclick="cheatAddCredits(1e9)">+1B</button>
+          </div>
+          <div class="hcd-subtitle">TOGGLES</div>
+          <div class="hcd-row">
+            <span>INFINITE COINS</span>
+            <div class="toggle" id="hcd-tog-inf" onclick="event.stopPropagation();cheatToggleInfinite();syncHeaderCheatMenuToggles();"></div>
+          </div>
+          <div class="hcd-row">
+            <span>FREE BUYS</span>
+            <div class="toggle" id="hcd-tog-free" onclick="event.stopPropagation();cheatToggleFreeBuy();syncHeaderCheatMenuToggles();"></div>
+          </div>
+          <div class="hcd-subtitle">PROGRESSION</div>
+          <div class="hcd-grid">
+            <button type="button" class="hcd-item" onclick="cheatPrestigeStack()">+1 ×2 STACK</button>
+            <button type="button" class="hcd-item" onclick="cheatRemovePrestigeStack()">REMOVE BOOST</button>
+            <button type="button" class="hcd-item" onclick="cheatPurchaseAll()">BUY ALL</button>
+          </div>
+          <div class="hcd-subtitle">BOOSTS</div>
+          <div class="hcd-grid">
+            <button type="button" class="hcd-item" onclick="cheatBuffPPS(10)">PASSIVE +10</button>
+            <button type="button" class="hcd-item" onclick="cheatBuffPPC(10)">CLICKER +10</button>
+          </div>
+          <div class="hcd-subtitle">UNLOCKS</div>
+          <div class="hcd-grid">
+            <button type="button" class="hcd-item full" onclick="cheatUnlockAllOffline()">ALL OFFLINE</button>
+          </div>
+          <div class="hcd-subtitle">RESET</div>
+          <button type="button" class="hcd-item hcd-danger" onclick="disableAllCheats()">Disable all cheats</button>
+        </div>
+      </div>
+    </div>
+    <div class="stats-row">
+      <div class="stat-box s-green"><span class="val" id="cps-val">0.00</span>/SEC</div>
+      <div class="stat-box s-orange"><span class="val" id="cpt-val">1</span>/TAP</div>
+      <div class="stat-box"><span class="val" id="total-val">0</span>TOTAL</div>
+      <div class="stat-box" id="mult-box" style="display:none"><span class="val" id="mult-val">×2</span>BOOST</div>
+    </div>
+    <button id="prestige-btn" onclick="doPrestige()">[ PRESTIGE RESET — +×2 BOOST ]</button>
+    <button id="quantum-btn" onclick="doQuantumReset()" style="display:none">[ QUANTUM RESET — +2 QP ]</button>
+  </div>
+
+  <!-- TAP ZONE — flexes to fill remaining space -->
+
+  <div id="tap-zone">
+    <div class="ring ring3"></div>
+    <div class="ring ring1"></div>
+    <div class="ring ring2"></div>
+    <div id="core-visual">
+      <div id="core-icon">⚡</div>
+      <div id="core-label">TAP</div>
+    </div>
+    <div id="idle-bar-wrap">
+      <div id="idle-lbl">PASSIVE INCOME</div>
+      <div id="idle-bar-bg"><div id="idle-bar"></div></div>
+    </div>
+    <div id="tap-hint">TAP ANYWHERE</div>
+  </div>
+
+  <!-- COLLAPSIBLE DRAWER (panels live here) -->
+
+  <div id="drawer">
+    <div id="drawer-content">
+
+  <!-- BUY BAR (hidden on settings/offline tabs) -->
+  <div id="buy-bar">
+    <span id="buy-lbl">BUY</span>
+    <button class="buy-btn active" onclick="setBuy(1)">×1</button>
+    <button class="buy-btn" onclick="setBuy(10)">×10</button>
+    <button class="buy-btn" onclick="setBuy(25)">×25</button>
+    <button class="buy-btn" onclick="setBuy(100)">×100</button>
+    <button class="buy-btn" onclick="setBuy(0)">MAX</button>
+  </div>
+
+  <!-- PASSIVE UPGRADES -->
+  <div id="upgrades-list"></div>
+
+  <!-- CLICKER UPGRADES (same list div, different data) -->
+
+  <!-- OFFLINE UPGRADES -->
+  <div id="offline-list">
+    <!-- filled by JS -->
+  </div>
+
+  <div id="quantum-list"></div>
+
+  <!-- SETTINGS -->
+  <div id="settings-panel">
+    <div class="s-section">
+      <div class="s-title">// THEME</div>
+      <div class="theme-grid" id="theme-grid"></div>
+    </div>
+    <div class="s-section">
+      <div class="s-title">// DISPLAY</div>
+      <div class="s-row"><div class="s-left"><div class="s-lbl">DARK MODE</div><div class="s-sub">Toggle between dark and light theme variants</div></div><div class="toggle on" id="tog-darkMode" onclick="tog('darkMode')"></div></div>
+      <div class="s-row"><div class="s-left"><div class="s-lbl">PARTICLE EFFECTS</div><div class="s-sub">Sparks on tap &amp; purchase</div></div><div class="toggle on" id="tog-particles" onclick="tog('particles')"></div></div>
+      <div class="s-row"><div class="s-left"><div class="s-lbl">FLOATING NUMBERS</div><div class="s-sub">+Credits popup on tap</div></div><div class="toggle on" id="tog-floats" onclick="tog('floats')"></div></div>
+      <div class="s-row"><div class="s-left"><div class="s-lbl">GRID ANIMATION</div><div class="s-sub">Scrolling background grid</div></div><div class="toggle on" id="tog-grid" onclick="tog('grid')"></div></div>
+      <div class="s-row"><div class="s-left"><div class="s-lbl">RING ANIMATIONS</div><div class="s-sub">Spinning decorative rings</div></div><div class="toggle on" id="tog-rings" onclick="tog('rings')"></div></div>
+    </div>
+    <div class="s-section">
+      <div class="s-title">// GAME</div>
+      <div class="s-row"><div class="s-left"><div class="s-lbl">PRESTIGE CONFIRM</div><div class="s-sub">Ask before resetting</div></div><div class="toggle on" id="tog-pconf" onclick="tog('pconf')"></div></div>
+    </div>
+    <div class="s-section">
+      <div class="s-title">// SAVE DATA</div>
+      <div class="s-kv"><span class="s-kv-lbl">LAST SAVED</span><span class="s-kv-val" id="save-lbl">—</span></div>
+      <div class="s-kv"><span class="s-kv-lbl">TOTAL EARNED</span><span class="s-kv-val" id="stat-total">0</span></div>
+      <div class="s-kv"><span class="s-kv-lbl">PRESTIGES</span><span class="s-kv-val" id="stat-prestige">0</span></div>
+      <div class="s-kv"><span class="s-kv-lbl">OFFLINE LIMIT</span><span class="s-kv-val" id="stat-offline">1h</span></div>
+      <button class="sv-btn" onclick="manualSave()">[ SAVE NOW ]</button>
+      <button class="sv-btn warn" style="margin-top:5px" onclick="exportSave()">[ EXPORT SAVE CODE ]</button>
+      <button class="sv-btn warn" style="margin-top:4px" onclick="importSave()">[ IMPORT SAVE CODE ]</button>
+      <button class="sv-btn danger" style="margin-top:10px" onclick="hardReset()">[ WIPE ALL DATA ]</button>
+    </div>
+    <div class="s-section">
+      <div class="s-title">// ABOUT</div>
+      <div class="info-txt">NEXUS // IDLE v3.0<br>Tap anywhere to earn credits. Buy PASSIVE upgrades for credits/sec. Buy CLICKER upgrades for credits/tap. Buy OFFLINE upgrades to extend how long you earn while away (default 1 hour, up to 5 days). Prestige at 1M credits for a permanent ×2 boost.</div>
+    </div>
+  </div>
+
+  <div id="stats-panel">
+    <div class="s-section">
+      <div class="s-title">// PROGRESSION</div>
+      <div class="s-kv"><span class="s-kv-lbl">CURRENT CREDITS</span><span class="s-kv-val" id="stats-current-coins">0</span></div>
+      <div class="s-kv"><span class="s-kv-lbl">CURRENT CPS</span><span class="s-kv-val" id="stats-current-cps">0</span></div>
+      <div class="s-kv"><span class="s-kv-lbl">CURRENT TAP</span><span class="s-kv-val" id="stats-current-tap">0</span></div>
+      <div class="s-kv"><span class="s-kv-lbl">PRESTIGES</span><span class="s-kv-val" id="stats-prestiges">0</span></div>
+      <div class="s-kv"><span class="s-kv-lbl">QUANTUM RESETS</span><span class="s-kv-val" id="stats-quantums">0</span></div>
+      <div class="s-kv"><span class="s-kv-lbl">QUANTUM POINTS</span><span class="s-kv-val" id="stats-qp">0</span></div>
+      <div class="s-kv"><span class="s-kv-lbl">PRESTIGE BOOST</span><span class="s-kv-val" id="stats-prestige-boost">×1</span></div>
+      <div class="s-kv"><span class="s-kv-lbl">QUANTUM MULTI</span><span class="s-kv-val" id="stats-quantum-multi">×1</span></div>
+      <div class="s-kv"><span class="s-kv-lbl">FASTEST PRESTIGE</span><span class="s-kv-val" id="stats-fastest-prestige">—</span></div>
+      <div class="s-kv"><span class="s-kv-lbl">FASTEST QUANTUM</span><span class="s-kv-val" id="stats-fastest-quantum">—</span></div>
+      <div class="s-kv"><span class="s-kv-lbl">OFFLINE CAP</span><span class="s-kv-val" id="stats-offline-cap">1h</span></div>
+    </div>
+  </div>
+
+</div><!-- /drawer-content -->
+
+  </div><!-- /drawer -->
+
+  <!-- TAB BAR — always visible, controls drawer -->
+
+  <div id="tab-bar">
+    <button class="tab-btn active" id="tab-pps" onclick="switchTab('pps')">
+      <span class="ti">⚙️</span><span>PASSIVE</span>
+      <span class="tab-badge" id="badge-pps">0</span>
+    </button>
+    <button class="tab-btn t-clicker" id="tab-ppc" onclick="switchTab('ppc')">
+      <span class="ti">👆</span><span>CLICKER</span>
+      <span class="tab-badge" id="badge-ppc">0</span>
+    </button>
+    <button class="tab-btn" id="tab-offline" onclick="switchTab('offline')">
+      <span class="ti">⏱</span><span>OFFLINE</span>
+      <span class="tab-badge" id="badge-offline">0</span>
+    </button>
+    <button class="tab-btn" id="tab-quantum" onclick="switchTab('quantum')" style="display:none">
+      <span class="ti">◉</span><span>QUANTUM</span>
+      <span class="tab-badge" id="badge-quantum">0</span>
+    </button>
+    <button class="tab-btn" id="tab-stats" onclick="switchTab('stats')">
+      <span class="ti">≡</span><span>STATS</span>
+      <span class="tab-badge" style="visibility:hidden">·</span>
+    </button>
+    <button class="tab-btn t-settings" id="tab-settings" onclick="switchTab('settings')">
+      <span class="ti">◈</span><span>SETTINGS</span>
+      <span class="tab-badge" style="visibility:hidden">·</span>
+    </button>
+  </div>
+
+</div><!-- /app -->
+
+<script>
+// ═══════════════════════════════════════════
+//  SERVICE WORKER
+// ═══════════════════════════════════════════
+if('serviceWorker' in navigator) navigator.serviceWorker.register(new URL('service-worker.js', document.baseURI).href).catch(()=>{});
+
+// ═══════════════════════════════════════════
+//  THEMES
+// ═══════════════════════════════════════════
+const THEMES=[
+  {id:'nexus',   name:'NEXUS',  dot:'#00f5ff', acc:'rgba(0,245,255,0.45)',   meta:'#00f5ff'},
+  {id:'void',    name:'VOID',   dot:'#c44fff', acc:'rgba(196,79,255,0.45)',  meta:'#c44fff'},
+  {id:'inferno', name:'FIRE',   dot:'#ff5500', acc:'rgba(255,85,0,0.45)',    meta:'#ff5500'},
+  {id:'matrix',  name:'MATRIX', dot:'#39ff14', acc:'rgba(57,255,20,0.45)',   meta:'#39ff14'},
+  {id:'ice',     name:'ICE',    dot:'#7ae8ff', acc:'rgba(122,232,255,0.45)', meta:'#7ae8ff'},
+];
+
+// ═══════════════════════════════════════════
+//  SETTINGS DEFAULTS
+// ═══════════════════════════════════════════
+const SD={theme:'nexus',darkMode:true,particles:true,floats:true,grid:true,rings:true,pconf:true};
+let S={...SD};
+
+// ═══════════════════════════════════════════
+//  UPGRADE DATA
+// ═══════════════════════════════════════════
+const PPS=[
+  {id:'pps0',name:'PROBE',       desc:'Automated micro-collector',      baseCost:10,       baseProd:0.1,   emoji:'🛸',owned:0},
+  {id:'pps1',name:'HARVESTER',   desc:'Energy field extractor',         baseCost:120,      baseProd:0.6,   emoji:'⚙️',owned:0},
+  {id:'pps2',name:'REACTOR',     desc:'Fusion core output',             baseCost:1300,     baseProd:5,     emoji:'⚛️',owned:0},
+  {id:'pps3',name:'NEXUS NODE',  desc:'Grid synchronisation array',     baseCost:14000,    baseProd:35,    emoji:'🔷',owned:0},
+  {id:'pps4',name:'ORBITAL',     desc:'Space-based collection station', baseCost:150000,   baseProd:250,   emoji:'🛰️',owned:0},
+  {id:'pps5',name:'DYSON RING',  desc:'Stellar energy capture',         baseCost:2000000,  baseProd:2000,  emoji:'🌟',owned:0},
+  {id:'pps6',name:'WORMHOLE',    desc:'Cross-dimensional siphon',       baseCost:25000000, baseProd:12000, emoji:'🌀',owned:0},
+  {id:'pps7',name:'SINGULARITY', desc:'Reality-bending accumulator',    baseCost:400000000,baseProd:80000, emoji:'🕳️',owned:0},
+];
+const PPC=[
+  {id:'ppc0',name:'NEURAL TAP',    desc:'Finger-to-credit neural link',  baseCost:50,      baseProd:2,    emoji:'🧠',owned:0},
+  {id:'ppc1',name:'CYBER GLOVE',   desc:'Haptic amplifier mk.I',         baseCost:500,     baseProd:5,    emoji:'🦾',owned:0},
+  {id:'ppc2',name:'PULSE DRIVER',  desc:'Electromagnetic tap boost',     baseCost:5000,    baseProd:25,   emoji:'⚡',owned:0},
+  {id:'ppc3',name:'QUANTUM FINGER',desc:'Probability click collapse',    baseCost:60000,   baseProd:150,  emoji:'🌐',owned:0},
+  {id:'ppc4',name:'DARK TOUCH',    desc:'Dark matter interaction layer', baseCost:750000,  baseProd:1000, emoji:'🖤',owned:0},
+  {id:'ppc5',name:'GOD CLICK',     desc:'Omnipotent tap force',          baseCost:10000000,baseProd:8000, emoji:'✨',owned:0},
+];
+
+// Offline time upgrades — each adds offlineHours to the cap
+// Default cap starts at 1 hour. Max possible = 5 days.
+const OFFLINE_UPGRADES=[
+  {id:'off0',name:'COLD STORAGE',  desc:'Basic offline buffer expansion',    cost:5000,     addHours:4,  emoji:'📦',bought:false},
+  {id:'off1',name:'DEEP CACHE',    desc:'Extended memory retention system',  cost:50000,    addHours:8,  emoji:'💾',bought:false},
+  {id:'off2',name:'ARCHIVE NODE',  desc:'Distributed offline data storage',  cost:500000,   addHours:12, emoji:'🗄️',bought:false},
+  {id:'off3',name:'GHOST PROCESS', desc:'Background thread injection',       cost:5000000,  addHours:18, emoji:'👻',bought:false},
+  {id:'off4',name:'SHADOW SYNC',   desc:'Parallel universe credit mirroring',cost:50000000, addHours:30, emoji:'🌑',bought:false},
+  {id:'off5',name:'TIME DILATION', desc:'Temporal credit accumulation field',cost:500000000,addHours:47, emoji:'⏳',bought:false},
+];
+const BASE_OFFLINE_HOURS=1;   // default 1 hour cap
+const MAX_OFFLINE_HOURS=120;
+
+// ═══════════════════════════════════════════
+//  GAME STATE
+// ═══════════════════════════════════════════
+let G={coins:0,totalCoins:0,prestigeMult:1,prestigeCount:0,lastSeen:Date.now()};
+let activeTab='pps';
+let buyAmt=1;
+let lastSaved=null;
+let drawerOpen=true;
+let cheatInfiniteCoins=false;
+let cheatFreeBuy=false;
+let cheatHudUnlocked=false;
+let interactionLocked=false;
+
+// ═══════════════════════════════════════════
+//  COMPUTED HELPERS
+// ═══════════════════════════════════════════
+function totalCPS(){return PPS.reduce((s,u)=>s+u.baseProd*u.owned,0)*G.prestigeMult;}
+function tapAmt()  {return(PPC.reduce((s,u)=>s+u.baseProd*u.owned,0)||1)*G.prestigeMult;}
+function presThresh(){return 1000000*Math.pow(10,G.prestigeCount);}
+function offlineCapSecs(){
+  const bought=OFFLINE_UPGRADES.filter(u=>u.bought).reduce((s,u)=>s+u.addHours,0);
+  return Math.min(BASE_OFFLINE_HOURS+bought, MAX_OFFLINE_HOURS)*3600;
+}
+
+function costN(u,n){
+  let t=0;
+  for(let i=0;i<n;i++) t+=Math.floor(u.baseCost*Math.pow(1.15,u.owned+i));
+  return t;
+}
+function cheatUnlimitedShop(){return cheatFreeBuy||cheatInfiniteCoins;}
+function bindPress(el,handler){
+  let touchFired=false;
+  el.addEventListener('touchend',e=>{
+    e.preventDefault();
+    e.stopPropagation();
+    touchFired=true;
+    handler(e);
+    setTimeout(()=>{touchFired=false;},50);
+  },{passive:false});
+  el.addEventListener('click',e=>{
+    if(touchFired){
+      touchFired=false;
+      return;
+    }
+    handler(e);
+  });
+}
+function maxBuy(u){
+  if(cheatUnlimitedShop()) return 5000;
+  let n=0,t=0;
+  while(true){
+    const c=Math.floor(u.baseCost*Math.pow(1.15,u.owned+n));
+    if(t+c>G.coins) break;
+    t+=c; n++;
+    if(n>5000) break;
+  }
+  return n;
+}
+function effectiveN(u){return buyAmt===0?maxBuy(u):buyAmt;}
+
+function fmt(n){
+  if(isNaN(n)||!isFinite(n)) return '0';
+  const sign=n<0?'-':'';
+  n=Math.abs(n);
+  const t=['','K','M','B','T','Qa','Qi','Sx','Sp','Oc'];
+  if(n<1000) return sign+n.toFixed(2);
+  let i=0; while(n>=1000&&i<t.length-1){n/=1000;i++;}
+  return sign+(n>=100?n.toFixed(1):n.toFixed(2))+t[i];
+}
+
+function fmtUpgradeGain(u,isPPC){
+  const gain=u.baseProd*G.prestigeMult;
+  return isPPC?('NEXT +'+fmt(gain)+'/TAP'):('NEXT +'+fmt(gain)+'/SEC');
+}
+
+function fmtUpgradeDelta(u,isPPC){
+  const gain=u.baseProd*G.prestigeMult;
+  return isPPC?('+'+fmt(gain)+'/TAP'):('+'+fmt(gain)+'/SEC');
+}
+
+function fmtHours(h){
+  if(h<1) return Math.round(h*60)+'m';
+  if(h<24) return h+'h';
+  const d=Math.floor(h/24), rem=h%24;
+  if(rem===0) return d+'d';
+  return d+'d '+rem+'h';
+}
+
+// ═══════════════════════════════════════════
+//  SAVE / LOAD
+// ═══════════════════════════════════════════
+function saveGame(){
+  const d={
+    ...G, lastSeen:Date.now(),
+    pps:PPS.map(u=>({id:u.id,owned:u.owned})),
+    ppc:PPC.map(u=>({id:u.id,owned:u.owned})),
+    offUpgrades:OFFLINE_UPGRADES.map(u=>({id:u.id,bought:u.bought})),
+    settings:S,
+  };
+  try{localStorage.setItem('nexus_v4',JSON.stringify(d));}catch(e){}
+  lastSaved=Date.now();
+  updSaveLbl();
+}
+
+function resetGameState(){
+  G={coins:0,totalCoins:0,prestigeMult:1,prestigeCount:0,lastSeen:Date.now()};
+  PPS.forEach(u=>{u.owned=0;});
+  PPC.forEach(u=>{u.owned=0;});
+  OFFLINE_UPGRADES.forEach(u=>{u.bought=false;});
+  S={...SD};
+  activeTab='pps';
+  buyAmt=1;
+  lastSaved=null;
+  drawerOpen=true;
+  cheatInfiniteCoins=false;
+  cheatFreeBuy=false;
+  cheatHudUnlocked=false;
+  interactionLocked=false;
+  closeHeaderCheatMenu();
+  setInteractionLocked(false);
+}
+
+function loadGame(){
+  try{
+    // support loading from previous save keys too
+    const raw=localStorage.getItem('nexus_v4')
+           ||localStorage.getItem('nexus_v3')
+           ||localStorage.getItem('nexus_save');
+    if(!raw) return;
+    const d=JSON.parse(raw);
+    G.coins        =d.coins||0;
+    G.totalCoins   =d.totalCoins||0;
+    G.prestigeMult =d.prestigeMult||1;
+    G.prestigeCount=d.prestigeCount||0;
+    G.lastSeen     =d.lastSeen||Date.now();
+    (d.pps||d.ppsUpgrades||[]).forEach(s=>{const u=PPS.find(x=>x.id===s.id);if(u)u.owned=s.owned||0;});
+    (d.ppc||d.ppcUpgrades||[]).forEach(s=>{const u=PPC.find(x=>x.id===s.id);if(u)u.owned=s.owned||0;});
+    (d.offUpgrades||[]).forEach(s=>{const u=OFFLINE_UPGRADES.find(x=>x.id===s.id);if(u)u.bought=!!s.bought;});
+    if(d.settings) S={...SD,...d.settings};
+
+    // Offline earnings — capped by upgrade level
+    const capSec=offlineCapSecs();
+    const rawSec=Math.max(0,(Date.now()-G.lastSeen)/1000);
+    const sec=Math.min(rawSec, capSec);
+    if(sec>10){
+      const earned=totalCPS()*sec*0.5;
+      if(earned>0){G.coins+=earned;G.totalCoins+=earned;showOfflineToast(earned,sec,rawSec>capSec);}
+    }
+  }catch(e){console.warn('Load failed',e);}
+}
+
+function manualSave(){
+  saveGame();
+  const b=document.querySelector('#settings-panel .sv-btn');
+  const o=b.textContent;b.textContent='[ SAVED ✓ ]';
+  setTimeout(()=>b.textContent=o,1300);
+}
+
+function exportSave(){
+  const raw=localStorage.getItem('nexus_v4')||'{}';
+  try{
+    const ta=document.createElement('textarea');
+    ta.value=btoa(unescape(encodeURIComponent(raw)));
+    document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);
+    alert('Save code copied to clipboard!\nUse IMPORT SAVE CODE to restore.');
+  }catch(e){alert('Save code:\n'+btoa(unescape(encodeURIComponent(raw))));}
+}
+
+function importSave(){
+  const code=prompt('Paste your save code:');
+  if(!code) return;
+  try{
+    const raw=decodeURIComponent(escape(atob(code.trim())));
+    JSON.parse(raw);
+    localStorage.setItem('nexus_v4',raw);
+    location.reload();
+  }catch(e){alert('Invalid save code.');}
+}
+
+function hardReset(){
+  if(!confirm('DELETE ALL DATA? This cannot be undone.')) return;
+  try{ localStorage.clear(); }catch(e){}
+  try{ sessionStorage.clear(); }catch(e){}
+  resetGameState();
+  buildThemes();
+  applySettings();
+  switchTab('pps');
+  updateUI();
+  renderUpgrades();
+  renderOffline();
+  showHowToToast();
+}
+
+function updSaveLbl(){
+  const el=document.getElementById('save-lbl');
+  if(!lastSaved){el.textContent='—';return;}
+  const s=Math.floor((Date.now()-lastSaved)/1000);
+  el.textContent=s<5?'JUST NOW':s+'S AGO';
+}
+
+// ═══════════════════════════════════════════
+//  SETTINGS
+// ═══════════════════════════════════════════
+function tog(key){S[key]=!S[key];applySettings();saveGame();}
+
+function applySettings(){
+  ['darkMode','particles','floats','grid','rings','pconf'].forEach(k=>{
+    const el=document.getElementById('tog-'+k);
+    if(el) el.classList.toggle('on',!!S[k]);
+  });
+  document.getElementById('grid-bg').style.animationPlayState=S.grid?'running':'paused';
+  document.querySelectorAll('.ring').forEach(r=>r.style.animationPlayState=S.rings?'running':'paused');
+  applyTheme(S.theme,false);
+}
+
+function getThemeVars(id){
+  const base={...(THEME_VARS[id]||THEME_VARS.nexus)};
+  if(S.darkMode!==false) return base;
+  return {
+    ...base,
+    '--bg':'color-mix(in srgb, '+base['--c1']+' 9%, white 91%)',
+    '--bg2':'color-mix(in srgb, '+base['--c1']+' 4%, white 96%)',
+    '--txt':'#0f1728',
+    '--txt2':'#24324a',
+    '--txt3':'#4c5d7b',
+    '--border':'color-mix(in srgb, '+base['--c1']+' 46%, rgba(15,23,40,0.24) 54%)',
+    '--border2':'color-mix(in srgb, '+base['--c1']+' 18%, rgba(15,23,40,0.10) 82%)',
+    '--c1dim':'color-mix(in srgb, '+base['--c1']+' 22%, white 78%)',
+    '--c1glow':'color-mix(in srgb, '+base['--c1']+' 30%, transparent)',
+    '--tap-flash':'color-mix(in srgb, '+base['--c1']+' 18%, transparent)',
+    '--grid-c':'color-mix(in srgb, '+base['--c1']+' 15%, rgba(15,23,40,0.06) 85%)',
+    '--ring1':'color-mix(in srgb, '+base['--c1']+' 46%, transparent)',
+    '--ring2':'color-mix(in srgb, '+base['--c3']+' 36%, transparent)',
+  };
+}
+
+const THEME_VARS = {
+  nexus:{
+    '--bg':'#020810','--bg2':'#040f1e',
+    '--c1':'#00f5ff','--c1dim':'rgba(0,245,255,0.15)','--c1glow':'rgba(0,245,255,0.30)',
+    '--c2':'#00bcd4','--c3':'#39ff14','--c4':'#ff006e','--c5':'#ffd60a','--c6':'#ff6b00',
+    '--border':'rgba(0,245,255,0.28)','--border2':'rgba(0,245,255,0.12)',
+    '--txt':'#e8f4ff','--txt2':'#8ab4cc','--txt3':'#4a7a90',
+    '--tap-flash':'rgba(0,245,255,0.10)','--grid-c':'rgba(0,245,255,0.05)',
+    '--ring1':'rgba(0,245,255,0.45)','--ring2':'rgba(57,255,20,0.32)',
+  },
+  void:{
+    '--bg':'#080213','--bg2':'#10042a',
+    '--c1':'#c44fff','--c1dim':'rgba(196,79,255,0.15)','--c1glow':'rgba(196,79,255,0.30)',
+    '--c2':'#8a2be2','--c3':'#ff44dd','--c4':'#ff006e','--c5':'#ffd60a','--c6':'#dd44ff',
+    '--border':'rgba(196,79,255,0.30)','--border2':'rgba(196,79,255,0.12)',
+    '--txt':'#f0e8ff','--txt2':'#b090cc','--txt3':'#6a4a80',
+    '--tap-flash':'rgba(196,79,255,0.10)','--grid-c':'rgba(196,79,255,0.05)',
+    '--ring1':'rgba(196,79,255,0.45)','--ring2':'rgba(255,68,221,0.32)',
+  },
+  inferno:{
+    '--bg':'#120200','--bg2':'#220500',
+    '--c1':'#ff6a00','--c1dim':'rgba(255,106,0,0.18)','--c1glow':'rgba(255,106,0,0.38)',
+    '--c2':'#ff3200','--c3':'#ffd24a','--c4':'#ff4d6d','--c5':'#ffd60a','--c6':'#ff9a1f',
+    '--border':'rgba(255,106,0,0.42)','--border2':'rgba(255,145,64,0.20)',
+    '--txt':'#fff7f0','--txt2':'#ffcfb0','--txt3':'#c27b53',
+    '--tap-flash':'rgba(255,106,0,0.14)','--grid-c':'rgba(255,106,0,0.07)',
+    '--ring1':'rgba(255,106,0,0.58)','--ring2':'rgba(255,210,74,0.42)',
+  },
+  matrix:{
+    '--bg':'#000a00','--bg2':'#001400',
+    '--c1':'#39ff14','--c1dim':'rgba(57,255,20,0.13)','--c1glow':'rgba(57,255,20,0.26)',
+    '--c2':'#00cc00','--c3':'#00ffaa','--c4':'#ffff00','--c5':'#ffd60a','--c6':'#00ff44',
+    '--border':'rgba(57,255,20,0.28)','--border2':'rgba(57,255,20,0.11)',
+    '--txt':'#e8ffe8','--txt2':'#80cc80','--txt3':'#407840',
+    '--tap-flash':'rgba(57,255,20,0.09)','--grid-c':'rgba(57,255,20,0.05)',
+    '--ring1':'rgba(57,255,20,0.45)','--ring2':'rgba(0,255,170,0.32)',
+  },
+  ice:{
+    '--bg':'#010c14','--bg2':'#031828',
+    '--c1':'#7ae8ff','--c1dim':'rgba(122,232,255,0.13)','--c1glow':'rgba(122,232,255,0.26)',
+    '--c2':'#44bbdd','--c3':'#ccf0ff','--c4':'#aaddff','--c5':'#ffd60a','--c6':'#66bbff',
+    '--border':'rgba(122,232,255,0.28)','--border2':'rgba(122,232,255,0.11)',
+    '--txt':'#e8f8ff','--txt2':'#88bbcc','--txt3':'#446677',
+    '--tap-flash':'rgba(122,232,255,0.09)','--grid-c':'rgba(122,232,255,0.05)',
+    '--ring1':'rgba(122,232,255,0.42)','--ring2':'rgba(204,240,255,0.26)',
+  },
+};
+
+function applyTheme(id,save=true){
+  S.theme=id;
+  const vars=getThemeVars(id);
+  const root=document.documentElement;
+  // Inject every CSS var directly onto :root — reliable on iOS PWA / WebKit
+  Object.entries(vars).forEach(([k,v])=>root.style.setProperty(k,v));
+  // Also set background directly so no flash or inheritance issue
+  root.style.background=vars['--bg'];
+  document.body.style.background=vars['--bg'];
+  const t=THEMES.find(x=>x.id===id);
+  if(t) document.getElementById('theme-meta').setAttribute('content',t.meta);
+  document.querySelectorAll('.t-swatch').forEach(s=>s.classList.toggle('active',s.dataset.theme===id));
+  if(save) saveGame();
+}
+
+let infernoTapTimes=[];
+const INFERNO_SECRET_MS=10000;
+const INFERNO_TAPS_NEEDED=5;
+
+function tryInfernoDebugToggle(){
+  const now=Date.now();
+  infernoTapTimes=infernoTapTimes.filter(ts=>now-ts<INFERNO_SECRET_MS);
+  infernoTapTimes.push(now);
+  if(infernoTapTimes.length>=INFERNO_TAPS_NEEDED){
+    infernoTapTimes=[];
+    toggleDebugCheat(true);
+  }
+}
+
+function toggleDebugCheat(fromSecret){
+  if(!fromSecret) return;
+  setDevMode(!cheatHudUnlocked);
+  saveGame();
+  updateUI();
+}
+
+function cheatsAreActive(){
+  return cheatHudUnlocked;
+}
+
+function setDevMode(enabled){
+  cheatHudUnlocked=!!enabled;
+  if(!cheatHudUnlocked){
+    cheatInfiniteCoins=false;
+    cheatFreeBuy=false;
+    closeHeaderCheatMenu();
+  }
+  syncCheatToggles();
+  syncHeaderCheatMenuToggles();
+  syncHeaderCheatVisibility();
+}
+
+function disableAllCheats(){
+  setDevMode(false);
+  saveGame();
+  updateUI();
+}
+
+function syncHeaderCheatVisibility(){
+  const wrap=document.getElementById('header-cheat-wrap');
+  if(!wrap)return;
+  wrap.hidden=!cheatsAreActive();
+  if(wrap.hidden) closeHeaderCheatMenu();
+}
+
+function syncHeaderCheatMenuToggles(){
+  const a=document.getElementById('hcd-tog-inf');
+  const b=document.getElementById('hcd-tog-free');
+  if(a) a.classList.toggle('on',cheatInfiniteCoins);
+  if(b) b.classList.toggle('on',cheatFreeBuy);
+}
+
+function toggleHeaderCheatMenu(e){
+  if(e) e.stopPropagation();
+  const dd=document.getElementById('header-cheat-dropdown');
+  const btn=document.getElementById('header-cheat-btn');
+  if(!dd||!btn)return;
+  const open=!dd.classList.contains('open');
+  dd.classList.toggle('open',open);
+  btn.classList.toggle('open',open);
+  btn.setAttribute('aria-expanded',open?'true':'false');
+  if(open) syncHeaderCheatMenuToggles();
+}
+
+function closeHeaderCheatMenu(){
+  const dd=document.getElementById('header-cheat-dropdown');
+  const btn=document.getElementById('header-cheat-btn');
+  if(dd) dd.classList.remove('open');
+  if(btn){
+    btn.classList.remove('open');
+    btn.setAttribute('aria-expanded','false');
+  }
+}
+
+function syncCheatToggles(){
+  const a=document.getElementById('hcd-tog-inf');
+  const b=document.getElementById('hcd-tog-free');
+  if(a) a.classList.toggle('on',cheatInfiniteCoins);
+  if(b) b.classList.toggle('on',cheatFreeBuy);
+}
+
+function cheatSetCoins(){
+  const raw=(document.getElementById('cheat-coins-input')||{}).value||'';
+  const n=parseFloat(String(raw).replace(/,/g,'').trim());
+  if(!isFinite(n)||n<0)return;
+  cheatInfiniteCoins=false;
+  syncCheatToggles();
+  G.coins=n;
+  saveGame();updateUI();
+}
+
+function cheatToggleInfinite(){
+  cheatInfiniteCoins=!cheatInfiniteCoins;
+  if(cheatInfiniteCoins){
+    setDevMode(true);
+    G.coins=Number.MAX_SAFE_INTEGER;
+  }
+  syncCheatToggles();
+  saveGame();updateUI();
+}
+
+function cheatToggleFreeBuy(){
+  cheatFreeBuy=!cheatFreeBuy;
+  if(cheatFreeBuy) setDevMode(true);
+  syncCheatToggles();
+  updateUI();
+}
+
+function cheatPurchaseAll(){
+  const prevFb=cheatFreeBuy;
+  cheatFreeBuy=true;
+  for(let r=0;r<80;r++){
+    [...PPS,...PPC].forEach(u=>{
+      const n=maxBuy(u);
+      if(n<1)return;
+      u.owned+=n;
+    });
+  }
+  cheatFreeBuy=prevFb;
+  OFFLINE_UPGRADES.forEach(u=>{u.bought=true;});
+  saveGame();updateUI();
+}
+
+function cheatAddCredits(n){
+  if(cheatInfiniteCoins) G.totalCoins+=n;
+  else{G.coins+=n;G.totalCoins+=n;}
+  saveGame();updateUI();
+}
+function cheatPrestigeStack(){
+  G.prestigeMult*=2;G.prestigeCount++;
+  saveGame();updateUI();
+}
+function cheatRemovePrestigeStack(){
+  if(G.prestigeCount<=0||G.prestigeMult<=1) return;
+  G.prestigeCount--;
+  G.prestigeMult=Math.max(1,G.prestigeMult/2);
+  saveGame();updateUI();
+}
+function cheatBuffPPS(n){
+  PPS.forEach(u=>{u.owned+=n;});
+  saveGame();updateUI();
+}
+function cheatBuffPPC(n){
+  PPC.forEach(u=>{u.owned+=n;});
+  saveGame();updateUI();
+}
+function cheatUnlockAllOffline(){
+  OFFLINE_UPGRADES.forEach(u=>{u.bought=true;});
+  saveGame();updateUI();
+}
+
+function buildThemes(){
+  const grid=document.getElementById('theme-grid');
+  grid.innerHTML='';
+  THEMES.forEach(t=>{
+    const sw=document.createElement('div');
+    sw.className='t-swatch'+(t.id===S.theme?' active':'');
+    sw.dataset.theme=t.id;
+    sw.style.borderColor=t.acc;
+    sw.innerHTML=`<div class="t-dot" style="background:${t.dot};box-shadow:0 0 8px ${t.dot};"></div><div class="t-name">${t.name}</div>`;
+    sw.addEventListener('click',()=>{
+      if(t.id==='inferno') tryInfernoDebugToggle();
+      applyTheme(t.id);
+    });
+    grid.appendChild(sw);
+  });
+}
+
+// ═══════════════════════════════════════════
+//  PARTICLES
+// ═══════════════════════════════════════════
+const cvs=document.getElementById('particles'),ctx=cvs.getContext('2d');
+let sparks=[];
+function resizeCvs(){cvs.width=window.innerWidth;cvs.height=window.innerHeight;}
+resizeCvs();window.addEventListener('resize',resizeCvs);
+
+function themeCol(){
+  return getComputedStyle(document.body).getPropertyValue('--c1').trim()||'#00f5ff';
+}
+function spawnSparks(x,y,col){
+  if(!S.particles)return;
+  col=col||themeCol();
+  for(let i=0;i<18;i++){
+    const a=Math.random()*Math.PI*2,sp=2+Math.random()*5;
+    sparks.push({x,y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp-2.5,
+      life:1,decay:0.022+Math.random()*0.026,r:1.4+Math.random()*2.6,col});
+  }
+}
+(function loop(){
+  ctx.clearRect(0,0,cvs.width,cvs.height);
+  sparks=sparks.filter(s=>s.life>0);
+  for(const s of sparks){
+    ctx.globalAlpha=s.life*0.85;
+    ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+    ctx.fillStyle=s.col;ctx.fill();
+    s.x+=s.vx;s.y+=s.vy;s.vy+=0.12;s.life-=s.decay;
+  }
+  ctx.globalAlpha=1;
+  requestAnimationFrame(loop);
+})();
+
+// Floating numbers
+function spawnFloat(x,y,text){
+  if(!S.floats)return;
+  const el=document.createElement('div');
+  el.className='float-num';
+  el.textContent='+'+text;
+  el.style.left=x+'px';
+  el.style.top=(y-10)+'px';
+  const col=themeCol();
+  el.style.color=col;
+  el.style.textShadow='0 0 8px '+col;
+  document.body.appendChild(el);
+  el.addEventListener('animationend',()=>el.remove());
+}
+
+// ═══════════════════════════════════════════
+//  OFFLINE TOAST
+// ═══════════════════════════════════════════
+function setInteractionLocked(locked){
+  interactionLocked=!!locked;
+  document.getElementById('modal-blocker').style.display=locked?'block':'none';
+}
+
+function showOfflineToast(earned,sec,wasCapped){
+  const m=Math.floor(sec/60),h=Math.floor(m/60);
+  const ts=sec<60?Math.floor(sec)+'s':m<60?m+'m':h+'h '+(m%60)+'m';
+  document.getElementById('ot-earned').textContent=fmt(earned);
+  document.getElementById('ot-sub').textContent=
+    'COLLECTED OVER '+ts+(wasCapped?' (CAPPED - BUY OFFLINE UPGRADES)':' AWAY')+'\n50% PASSIVE RATE';
+  setInteractionLocked(true);
+  document.getElementById('offline-toast').style.display='block';
+}
+
+function showHowToToast(){
+  setInteractionLocked(true);
+  document.getElementById('howto-toast').style.display='block';
+}
+
+document.getElementById('ot-ok').addEventListener('click',()=>{
+  document.getElementById('offline-toast').style.display='none';
+  if(document.getElementById('howto-toast').style.display!=='block') setInteractionLocked(false);
+});
+document.getElementById('howto-ok').addEventListener('click',()=>{
+  localStorage.setItem('nexus_seen_howto','1');
+  document.getElementById('howto-toast').style.display='none';
+  if(document.getElementById('offline-toast').style.display!=='block') setInteractionLocked(false);
+});
+// ═══════════════════════════════════════════
+//  UI UPDATE
+// ═══════════════════════════════════════════
+function updateUI(){
+  document.getElementById('credit-count').textContent=cheatInfiniteCoins?'∞':fmt(G.coins);
+  document.getElementById('cps-val').textContent=fmt(totalCPS());
+  document.getElementById('cpt-val').textContent=fmt(tapAmt());
+  document.getElementById('total-val').textContent=fmt(G.totalCoins);
+  const mb=document.getElementById('mult-box');
+  if(G.prestigeMult>1){
+    mb.style.display='inline-block';
+    document.getElementById('mult-val').textContent='×'+G.prestigeMult;
+  } else {
+    mb.style.display='none';
+    document.getElementById('mult-val').textContent='×1';
+  }
+  document.getElementById('prestige-btn').style.display=G.coins>=presThresh()?'block':'none';
+  document.getElementById('badge-pps').textContent=PPS.reduce((s,u)=>s+u.owned,0);
+  document.getElementById('badge-ppc').textContent=PPC.reduce((s,u)=>s+u.owned,0);
+  document.getElementById('badge-offline').textContent=OFFLINE_UPGRADES.filter(u=>u.bought).length;
+  // settings panel stats
+  document.getElementById('stat-total').textContent=fmt(G.totalCoins);
+  document.getElementById('stat-prestige').textContent=G.prestigeCount;
+  const capH=offlineCapSecs()/3600;
+  document.getElementById('stat-offline').textContent=fmtHours(Math.min(capH,MAX_OFFLINE_HOURS));
+  updSaveLbl();
+  syncHeaderCheatVisibility();
+  syncHeaderCheatMenuToggles();
+}
+
+// ═══════════════════════════════════════════
+//  RENDER UPGRADE LISTS
+// ═══════════════════════════════════════════
+function renderUpgrades(){
+  const list=document.getElementById('upgrades-list');
+  list.innerHTML='';
+  const upgs=activeTab==='pps'?PPS:PPC;
+  const isPPC=activeTab==='ppc';
+  let anyAffordable=false;
+  let cheapestNext=null;
+  let cheapestCost=Infinity;
+  upgs.forEach(u=>{
+    const requested=buyAmt===0?maxBuy(u):buyAmt;
+    const affordable=maxBuy(u);
+    const actualN=buyAmt===0?affordable:Math.min(requested,affordable);
+    const cost=costN(u,actualN);
+    const canAfford=affordable>0;
+    const showNextOnly=buyAmt===0&&!canAfford;
+    const next1Cost=Math.floor(u.baseCost*Math.pow(1.15,u.owned));
+    const nextDelta=fmtUpgradeDelta(u,isPPC);
+    if(canAfford) anyAffordable=true;
+    if(next1Cost<cheapestCost){ cheapestCost=next1Cost; cheapestNext=u; }
+
+    const row=document.createElement('div');
+    row.className='upg-row '+(isPPC?'ppc-row ':' ')+(canAfford?'can':showNextOnly?'next':'cant');
+    bindPress(row,()=>buyUpg(u,isPPC));
+
+    const icon=document.createElement('div');icon.className='upg-icon';icon.textContent=u.emoji;
+    const info=document.createElement('div');info.className='upg-info';
+    const top=document.createElement('div');top.className='upg-top';
+    const nm=document.createElement('div');nm.className='upg-name';nm.textContent=u.name;
+    const ow=document.createElement('div');ow.className='upg-owned';ow.textContent=u.owned;ow.style.display=u.owned>0?'inline-block':'none';
+    const dc=document.createElement('div');dc.className='upg-desc';dc.textContent=u.desc;
+    const bot=document.createElement('div');bot.className='upg-bottom';
+    const ct=document.createElement('div');ct.className='upg-cost';
+
+    if(buyAmt===0){
+      if(affordable>0) ct.textContent='COST '+fmt(cost)+' (x'+affordable+') | '+nextDelta;
+      else ct.textContent='NEXT x1 | COST '+fmt(next1Cost)+' | '+nextDelta;
+    } else {
+      if(affordable>=requested){
+        ct.textContent='COST '+fmt(cost)+(requested>1?' (x'+requested+')':'')+' | '+nextDelta;
+      } else if(affordable>0){
+        ct.innerHTML='COST '+fmt(cost)+' <span style="color:var(--c1);opacity:0.9">(x'+affordable+'</span><span style="opacity:0.35">/x'+requested+')</span> <span style="opacity:0.7">| '+nextDelta+'</span>';
+      } else {
+        ct.textContent='NEXT x1 | COST '+fmt(next1Cost)+' | '+nextDelta;
+      }
+    }
+
+    const pr=document.createElement('div');pr.className='upg-prod';
+    const nx=document.createElement('span');
+    nx.className='upg-next';
+    nx.textContent=fmtUpgradeGain(u,isPPC);
+    pr.appendChild(nx);
+
+    top.appendChild(nm);top.appendChild(ow);bot.appendChild(ct);bot.appendChild(pr);
+    info.appendChild(top);info.appendChild(dc);info.appendChild(bot);
+    row.appendChild(icon);row.appendChild(info);list.appendChild(row);
+  });
+  if(buyAmt===0&&!anyAffordable&&cheapestNext){
+    const hint=document.createElement('div');
+    hint.className='upg-global-hint';
+    hint.textContent='NEXT AVAILABLE: '+cheapestNext.name+' x1 - COST '+fmt(cheapestCost);
+    list.appendChild(hint);
+  }
+}
+function renderOffline(){
+  const list=document.getElementById('offline-list');
+  list.innerHTML='';
+  const capH=Math.min(BASE_OFFLINE_HOURS+OFFLINE_UPGRADES.filter(u=>u.bought).reduce((s,u)=>s+u.addHours,0),MAX_OFFLINE_HOURS);
+  OFFLINE_UPGRADES.forEach(u=>{
+    const canAfford=!u.bought&&(cheatFreeBuy||cheatInfiniteCoins||G.coins>=u.cost);
+    const maxed=u.bought;
+    const row=document.createElement('div');
+    row.className='off-row'+(maxed?' maxed':canAfford?' can':' cant');
+    if(!maxed) bindPress(row,()=>buyOffline(u));
+    const icon=document.createElement('div');icon.className='off-icon';icon.textContent=u.emoji;
+    const info=document.createElement('div');info.className='off-info';
+    const nm=document.createElement('div');nm.className='off-name';nm.textContent=u.name+(maxed?' ✓':'');
+    const dc=document.createElement('div');dc.className='off-desc';dc.textContent=u.desc;
+    const bot=document.createElement('div');bot.className='off-bot';
+    const ct=document.createElement('div');ct.className='off-cost';
+    ct.textContent=maxed?'OWNED':'⬡ '+fmt(u.cost);
+    const st=document.createElement('div');st.className='off-stat';
+    st.textContent='+'+u.addHours+'h offline';
+    bot.appendChild(ct);bot.appendChild(st);
+    info.appendChild(nm);info.appendChild(dc);info.appendChild(bot);
+    if(!maxed){
+      const onx=document.createElement('div');
+      onx.className='off-next';
+      onx.textContent='NEXT +'+u.addHours+'h offline cap · passive income while away lasts longer';
+      info.appendChild(onx);
+    }
+    row.appendChild(icon);row.appendChild(info);list.appendChild(row);
+  });
+  // Show current cap
+  const capEl=document.createElement('div');
+  capEl.style.cssText='text-align:center;padding:8px 0 2px;font-size:8px;letter-spacing:2px;color:var(--txt2);font-family:Orbitron,monospace;';
+  capEl.textContent='CURRENT CAP: '+fmtHours(capH)+' / MAX '+fmtHours(MAX_OFFLINE_HOURS);
+  list.appendChild(capEl);
+}
+
+function buyUpg(u,isPPC){
+  const requested=buyAmt===0?maxBuy(u):buyAmt;
+  const affordable=maxBuy(u);
+  const actualN=buyAmt===0?affordable:Math.min(requested,affordable);
+  if(actualN<=0)return;
+  const cost=costN(u,actualN);
+  if(cheatInfiniteCoins && !cheatFreeBuy && G.coins<cost) G.coins=Number.MAX_SAFE_INTEGER;
+  if(!cheatFreeBuy && G.coins<cost)return;
+  if(!cheatFreeBuy) G.coins-=cost;
+  u.owned+=actualN;
+  const r=document.getElementById('tap-zone').getBoundingClientRect();
+  const col=isPPC?getComputedStyle(document.body).getPropertyValue('--c6').trim():themeCol();
+  spawnSparks(r.left+r.width/2,r.top+r.height/2,col);
+  saveGame();updateUI();
+  renderUpgrades();
+}
+
+function buyOffline(u){
+  if(u.bought)return;
+  if(cheatInfiniteCoins && !cheatFreeBuy && G.coins<u.cost) G.coins=Number.MAX_SAFE_INTEGER;
+  if(!cheatFreeBuy && G.coins<u.cost)return;
+  if(!cheatFreeBuy) G.coins-=u.cost;
+  u.bought=true;
+  spawnSparks(window.innerWidth/2,window.innerHeight*0.6,getComputedStyle(document.body).getPropertyValue('--c5').trim()||'#ffd60a');
+  saveGame();updateUI();
+  renderOffline();
+}
+
+// ═══════════════════════════════════════════
+//  TAB / DRAWER
+// ═══════════════════════════════════════════
+function syncTapDrawerLayout(){
+  const dr=document.getElementById('drawer');
+  const tz=document.getElementById('tap-zone');
+  if(!dr||!tz)return;
+  const open=!dr.classList.contains('collapsed');
+  tz.classList.toggle('tap-zone-menus-open',open);
+}
+
+function switchTab(tab){
+  // If clicking the already-active tab, toggle drawer open/close
+  if(tab===activeTab){
+    drawerOpen=!drawerOpen;
+    document.getElementById('drawer').classList.toggle('collapsed',!drawerOpen);
+    syncTapDrawerLayout();
+    return;
+  }
+  activeTab=tab;
+  drawerOpen=true;
+  document.getElementById('drawer').classList.remove('collapsed');
+
+  ['pps','ppc','offline','settings'].forEach(t=>{
+    const btn=document.getElementById('tab-'+t);
+    if(btn) btn.classList.toggle('active',t===tab);
+  });
+
+  const ul=document.getElementById('upgrades-list');
+  const ol=document.getElementById('offline-list');
+  const sp=document.getElementById('settings-panel');
+  const bb=document.getElementById('buy-bar');
+
+  ul.style.display='none';
+  ol.classList.remove('vis');
+  sp.classList.remove('vis');
+  bb.style.display='none';
+
+  if(tab==='pps'||tab==='ppc'){
+    ul.style.display='flex';
+    bb.style.display='flex';
+    renderUpgrades();
+  } else if(tab==='offline'){
+    ol.classList.add('vis');
+    renderOffline();
+  } else if(tab==='settings'){
+    sp.classList.add('vis');
+  }
+  syncTapDrawerLayout();
+}
+
+// ═══════════════════════════════════════════
+//  BUY AMOUNT
+// ═══════════════════════════════════════════
+function setBuy(n){
+  buyAmt=n;
+  const vals=[1,10,25,100,0];
+  document.querySelectorAll('.buy-btn').forEach((b,i)=>b.classList.toggle('active',vals[i]===n));
+  renderUpgrades();
+}
+
+// ═══════════════════════════════════════════
+//  TAP ZONE
+// ═══════════════════════════════════════════
+const tapZone=document.getElementById('tap-zone');
+let tapLock=false;
+
+function doTap(cx,cy){
+  if(interactionLocked) return;
+  const amt=tapAmt();
+  if(cheatInfiniteCoins) G.totalCoins+=amt;
+  else{G.coins+=amt;G.totalCoins+=amt;}
+  spawnSparks(cx,cy);
+  spawnFloat(cx,cy,fmt(amt));
+  tapZone.classList.add('tapped');
+  if(!tapLock){tapLock=true;setTimeout(()=>{tapZone.classList.remove('tapped');tapLock=false;},110);}
+  updateUI();
+}
+
+tapZone.addEventListener('click',e=>doTap(e.clientX,e.clientY));
+tapZone.addEventListener('touchstart',e=>{
+  if(interactionLocked){ e.preventDefault(); return; }
+  e.preventDefault();
+  Array.from(e.changedTouches).forEach(t=>doTap(t.clientX,t.clientY));
+},{passive:false});
+
+// ═══════════════════════════════════════════
+//  PRESTIGE
+// ═══════════════════════════════════════════
+function doPrestige(){
+  if(S.pconf&&!confirm('RESET ALL PROGRESS for a permanent ×2 multiplier?'))return;
+  G.prestigeCount++;G.prestigeMult*=2;G.coins=0;
+  PPS.forEach(u=>u.owned=0);PPC.forEach(u=>u.owned=0);
+  if(cheatInfiniteCoins) G.coins=Number.MAX_SAFE_INTEGER;
+  saveGame();updateUI();
+  if(activeTab==='pps'||activeTab==='ppc') renderUpgrades();
+  else if(activeTab==='offline') renderOffline();
+}
+
+// ═══════════════════════════════════════════
+//  GAME TICK
+// ═══════════════════════════════════════════
+let barStep=0;
+setInterval(()=>{
+  const cps=totalCPS(),amt=cps/10;
+  if(cheatInfiniteCoins) G.totalCoins+=amt;
+  else{G.coins+=amt;G.totalCoins+=amt;}
+  barStep=(barStep+(cps>0?1:0))%10;
+  document.getElementById('idle-bar').style.width=(barStep*10)+'%';
+  updateUI();
+},100);
+
+// Auto-save every 15s
+setInterval(saveGame,15000);
+
+// ═══════════════════════════════════════════
+//  VISIBILITY CHANGE (background → foreground)
+// ═══════════════════════════════════════════
+document.addEventListener('visibilitychange',()=>{
+  if(document.hidden){saveGame();return;}
+  try{
+    const raw=localStorage.getItem('nexus_v4');
+    if(!raw)return;
+    const d=JSON.parse(raw);
+    const capSec=offlineCapSecs();
+    const rawSec=Math.max(0,(Date.now()-(d.lastSeen||Date.now()))/1000);
+    const sec=Math.min(rawSec,capSec);
+    if(sec>10){
+      const earned=totalCPS()*sec*0.5;
+      if(earned>0){
+        if(cheatInfiniteCoins) G.totalCoins+=earned;
+        else{G.coins+=earned;G.totalCoins+=earned;}
+        showOfflineToast(earned,sec,rawSec>capSec);
+        saveGame();updateUI();
+      }
+    }
+  }catch(e){}
+});
+
+// ═══════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════
+// Apply dark bg and default theme vars immediately — before loadGame
+// so there's zero white flash on any platform
+applyTheme('nexus', false);
+loadGame();           // may override theme from saved settings
+buildThemes();
+applySettings();      // calls applyTheme(S.theme) with saved theme
+switchTab('pps');
+updateUI();
+if(!localStorage.getItem('nexus_seen_howto')) showHowToToast();
+
+setInterval(()=>{
+  if(activeTab==='pps'||activeTab==='ppc') renderUpgrades();
+  else if(activeTab==='offline') renderOffline();
+},400);
+
+document.addEventListener('click', (e)=>{
+  const wrap=document.getElementById('header-cheat-wrap');
+  if(!wrap||wrap.hidden)return;
+  if(wrap.contains(e.target))return;
+  closeHeaderCheatMenu();
+});
+</script>
+
+
+</body>
+</html>
