@@ -125,6 +125,13 @@ color:var(--c4);font-family:'Orbitron',monospace;
 font-size:9px;font-weight:700;letter-spacing:2px;cursor:pointer;border-radius:3px;
 }
 #prestige-btn:active{background:rgba(255,0,110,0.22);}
+#quantum-btn{
+display:none;width:100%;margin-top:7px;padding:7px;
+border:1px solid var(--c5);background:rgba(255,214,10,0.08);
+color:var(--c5);font-family:'Orbitron',monospace;
+font-size:9px;font-weight:700;letter-spacing:2px;cursor:pointer;border-radius:3px;
+}
+#quantum-btn:active{background:rgba(255,214,10,0.2);}
 
 /* Top cheat menu — opens downward (unlike bottom drawer) */
 .header-main-row{
@@ -423,6 +430,14 @@ padding:6px max(10px, env(safe-area-inset-left, 0px)) max(12px, env(safe-area-in
 }
 #offline-list::-webkit-scrollbar{display:none;}
 #offline-list.vis{display:flex;}
+#quantum-list,#stats-panel{
+overflow-y:auto;-webkit-overflow-scrolling:touch;
+padding:8px max(12px, env(safe-area-inset-left, 0px)) max(16px, env(safe-area-inset-bottom, 0px)) max(12px, env(safe-area-inset-right, 0px));display:none;flex-direction:column;gap:8px;
+}
+#quantum-list.vis,#stats-panel.vis{display:flex;}
+#quantum-list::-webkit-scrollbar,#stats-panel::-webkit-scrollbar{display:none;}
+.quantum-summary{font-size:9px;line-height:1.6;color:var(--txt2);padding:10px;border:1px solid var(--border2);border-radius:6px;background:rgba(255,255,255,0.03);}
+.stats-panel .s-section{margin-bottom:12px;}
 .off-row{
 display:flex;align-items:center;gap:10px;
 padding:8px 10px;border-radius:3px;cursor:pointer;
@@ -639,7 +654,8 @@ Prestige at 1M credits for a permanent x2 boost.</div>
           </div>
           <div class="hcd-subtitle">UNLOCKS</div>
           <div class="hcd-grid">
-            <button type="button" class="hcd-item full" onclick="cheatUnlockAllOffline()">ALL OFFLINE</button>
+            <button type="button" class="hcd-item" onclick="cheatUnlockAllOffline()">ALL OFFLINE</button>
+            <button type="button" class="hcd-item" onclick="cheatUnlockQuantum()">UNLOCK QUANTUM</button>
           </div>
           <div class="hcd-subtitle">RESET</div>
           <button type="button" class="hcd-item hcd-danger" onclick="disableAllCheats()">Disable all cheats</button>
@@ -814,41 +830,61 @@ let S={...SD};
 //  UPGRADE DATA
 // ═══════════════════════════════════════════
 const PPS=[
-  {id:'pps0',name:'PROBE',       desc:'Automated micro-collector',      baseCost:10,       baseProd:0.1,   emoji:'🛸',owned:0},
-  {id:'pps1',name:'HARVESTER',   desc:'Energy field extractor',         baseCost:120,      baseProd:0.6,   emoji:'⚙️',owned:0},
-  {id:'pps2',name:'REACTOR',     desc:'Fusion core output',             baseCost:1300,     baseProd:5,     emoji:'⚛️',owned:0},
-  {id:'pps3',name:'NEXUS NODE',  desc:'Grid synchronisation array',     baseCost:14000,    baseProd:35,    emoji:'🔷',owned:0},
-  {id:'pps4',name:'ORBITAL',     desc:'Space-based collection station', baseCost:150000,   baseProd:250,   emoji:'🛰️',owned:0},
-  {id:'pps5',name:'DYSON RING',  desc:'Stellar energy capture',         baseCost:2000000,  baseProd:2000,  emoji:'🌟',owned:0},
-  {id:'pps6',name:'WORMHOLE',    desc:'Cross-dimensional siphon',       baseCost:25000000, baseProd:12000, emoji:'🌀',owned:0},
-  {id:'pps7',name:'SINGULARITY', desc:'Reality-bending accumulator',    baseCost:400000000,baseProd:80000, emoji:'🕳️',owned:0},
+  {id:'pps0',name:'PROBE',desc:'Automated micro-collector',baseCost:10,baseProd:0.1,emoji:'??',owned:0},
+  {id:'pps1',name:'HARVESTER',desc:'Energy field extractor',baseCost:120,baseProd:0.6,emoji:'??',owned:0},
+  {id:'pps2',name:'REACTOR',desc:'Fusion core output',baseCost:1300,baseProd:5,emoji:'??',owned:0},
+  {id:'pps3',name:'NEXUS NODE',desc:'Grid synchronisation array',baseCost:14000,baseProd:35,emoji:'??',owned:0},
+  {id:'pps4',name:'ORBITAL',desc:'Space-based collection station',baseCost:150000,baseProd:250,emoji:'???',owned:0},
+  {id:'pps5',name:'DYSON RING',desc:'Stellar energy capture',baseCost:2000000,baseProd:2000,emoji:'??',owned:0},
+  {id:'pps6',name:'WORMHOLE',desc:'Cross-dimensional siphon',baseCost:25000000,baseProd:12000,emoji:'??',owned:0},
+  {id:'pps7',name:'SINGULARITY',desc:'Reality-bending accumulator',baseCost:400000000,baseProd:80000,emoji:'???',owned:0},
+  {id:'pps8',name:'GALAXY FORGE',desc:'Cluster-scale synthesis engine',baseCost:6000000000,baseProd:400000,emoji:'??',owned:0},
+  {id:'pps9',name:'VOID ARRAY',desc:'Vacuum-energy harvesting grid',baseCost:80000000000,baseProd:2500000,emoji:'?',owned:0},
+  {id:'pps10',name:'TIME ENGINE',desc:'Chrono-loop production drive',baseCost:1000000000000,baseProd:16000000,emoji:'?',owned:0},
+  {id:'pps11',name:'MULTIVERSE HUB',desc:'Cross-reality income router',baseCost:20000000000000,baseProd:110000000,emoji:'??',owned:0},
+  {id:'pps12',name:'OMEGA HEART',desc:'Endgame compression reactor',baseCost:500000000000000,baseProd:800000000,emoji:'?',owned:0},
 ];
 const PPC=[
-  {id:'ppc0',name:'NEURAL TAP',    desc:'Finger-to-credit neural link',  baseCost:50,      baseProd:2,    emoji:'🧠',owned:0},
-  {id:'ppc1',name:'CYBER GLOVE',   desc:'Haptic amplifier mk.I',         baseCost:500,     baseProd:5,    emoji:'🦾',owned:0},
-  {id:'ppc2',name:'PULSE DRIVER',  desc:'Electromagnetic tap boost',     baseCost:5000,    baseProd:25,   emoji:'⚡',owned:0},
-  {id:'ppc3',name:'QUANTUM FINGER',desc:'Probability click collapse',    baseCost:60000,   baseProd:150,  emoji:'🌐',owned:0},
-  {id:'ppc4',name:'DARK TOUCH',    desc:'Dark matter interaction layer', baseCost:750000,  baseProd:1000, emoji:'🖤',owned:0},
-  {id:'ppc5',name:'GOD CLICK',     desc:'Omnipotent tap force',          baseCost:10000000,baseProd:8000, emoji:'✨',owned:0},
+  {id:'ppc0',name:'NEURAL TAP',desc:'Finger-to-credit neural link',baseCost:50,baseProd:2,emoji:'??',owned:0},
+  {id:'ppc1',name:'CYBER GLOVE',desc:'Haptic amplifier mk.I',baseCost:500,baseProd:5,emoji:'??',owned:0},
+  {id:'ppc2',name:'PULSE DRIVER',desc:'Electromagnetic tap boost',baseCost:5000,baseProd:25,emoji:'?',owned:0},
+  {id:'ppc3',name:'QUANTUM FINGER',desc:'Probability click collapse',baseCost:60000,baseProd:150,emoji:'??',owned:0},
+  {id:'ppc4',name:'DARK TOUCH',desc:'Dark matter interaction layer',baseCost:750000,baseProd:1000,emoji:'??',owned:0},
+  {id:'ppc5',name:'GOD CLICK',desc:'Omnipotent tap force',baseCost:10000000,baseProd:8000,emoji:'?',owned:0},
+  {id:'ppc6',name:'STAR STRIKE',desc:'Meteor-grade impact clicks',baseCost:120000000,baseProd:50000,emoji:'?',owned:0},
+  {id:'ppc7',name:'GRAVITY SNAP',desc:'Mass-lensed tap pressure',baseCost:1800000000,baseProd:300000,emoji:'??',owned:0},
+  {id:'ppc8',name:'PHOTON CRUSH',desc:'Light-speed tap burst',baseCost:35000000000,baseProd:2000000,emoji:'??',owned:0},
+  {id:'ppc9',name:'REALITY FLICK',desc:'Timeline-bending finger whip',baseCost:700000000000,baseProd:15000000,emoji:'??',owned:0},
+  {id:'ppc10',name:'COSMIC COMMAND',desc:'Universal authority tap',baseCost:15000000000000,baseProd:100000000,emoji:'??',owned:0},
+];
+const QUANTUM_UPGRADES=[
+  {id:'q0',name:'Q-AMPLIFIER',desc:'Permanent passive multiplier',baseCost:1,costScale:2,effect:0.5,emoji:'?',owned:0},
+  {id:'q1',name:'PLANCK TAP',desc:'Permanent click multiplier',baseCost:1,costScale:2,effect:0.5,emoji:'?',owned:0},
+  {id:'q2',name:'ENTANGLED BOOST',desc:'Prestige boosts get stronger',baseCost:2,costScale:3,effect:0.25,emoji:'?',owned:0},
+  {id:'q3',name:'TEMPORAL VEIN',desc:'Offline earnings scale harder',baseCost:3,costScale:3,effect:0.25,emoji:'?',owned:0},
+  {id:'q4',name:'QUANTUM CACHE',desc:'Gain more QP on reset',baseCost:4,costScale:4,effect:1,emoji:'??',owned:0},
 ];
 
-// Offline time upgrades — each adds offlineHours to the cap
+// Offline time upgrades ? each adds offlineHours to the cap
 // Default cap starts at 1 hour. Max possible = 5 days.
 const OFFLINE_UPGRADES=[
-  {id:'off0',name:'COLD STORAGE',  desc:'Basic offline buffer expansion',    cost:5000,     addHours:4,  emoji:'📦',bought:false},
-  {id:'off1',name:'DEEP CACHE',    desc:'Extended memory retention system',  cost:50000,    addHours:8,  emoji:'💾',bought:false},
-  {id:'off2',name:'ARCHIVE NODE',  desc:'Distributed offline data storage',  cost:500000,   addHours:12, emoji:'🗄️',bought:false},
-  {id:'off3',name:'GHOST PROCESS', desc:'Background thread injection',       cost:5000000,  addHours:18, emoji:'👻',bought:false},
-  {id:'off4',name:'SHADOW SYNC',   desc:'Parallel universe credit mirroring',cost:50000000, addHours:30, emoji:'🌑',bought:false},
-  {id:'off5',name:'TIME DILATION', desc:'Temporal credit accumulation field',cost:500000000,addHours:47, emoji:'⏳',bought:false},
+  {id:'off0',name:'COLD STORAGE',desc:'Basic offline buffer expansion',cost:5000,addHours:4,emoji:'??',bought:false},
+  {id:'off1',name:'DEEP CACHE',desc:'Extended memory retention system',cost:50000,addHours:8,emoji:'??',bought:false},
+  {id:'off2',name:'ARCHIVE NODE',desc:'Distributed offline data storage',cost:500000,addHours:12,emoji:'???',bought:false},
+  {id:'off3',name:'GHOST PROCESS',desc:'Background thread injection',cost:5000000,addHours:18,emoji:'??',bought:false},
+  {id:'off4',name:'SHADOW SYNC',desc:'Parallel universe credit mirroring',cost:50000000,addHours:30,emoji:'??',bought:false},
+  {id:'off5',name:'TIME DILATION',desc:'Temporal credit accumulation field',cost:500000000,addHours:47,emoji:'?',bought:false},
 ];
-const BASE_OFFLINE_HOURS=1;   // default 1 hour cap
+const BASE_OFFLINE_HOURS=1;
 const MAX_OFFLINE_HOURS=120;
+const BASE_PRESTIGE_THRESHOLD=100000000;
+const BASE_QUANTUM_THRESHOLD=1e18;
 
-// ═══════════════════════════════════════════
-//  GAME STATE
-// ═══════════════════════════════════════════
-let G={coins:0,totalCoins:0,prestigeMult:1,prestigeCount:0,lastSeen:Date.now()};
+let G={
+  coins:0,totalCoins:0,prestigeMult:1,prestigeCount:0,lastSeen:Date.now(),
+  quantumPoints:0,totalQuantumPoints:0,quantumCount:0,quantumUnlocked:false,
+  fastestPrestigeMs:null,fastestQuantumMs:null,prestigeRunStart:Date.now(),quantumRunStart:Date.now()
+};
 let activeTab='pps';
 let buyAmt=1;
 let lastSaved=null;
@@ -858,12 +894,18 @@ let cheatFreeBuy=false;
 let cheatHudUnlocked=false;
 let interactionLocked=false;
 
-// ═══════════════════════════════════════════
-//  COMPUTED HELPERS
-// ═══════════════════════════════════════════
-function totalCPS(){return PPS.reduce((s,u)=>s+u.baseProd*u.owned,0)*G.prestigeMult;}
-function tapAmt()  {return(PPC.reduce((s,u)=>s+u.baseProd*u.owned,0)||1)*G.prestigeMult;}
-function presThresh(){return 1000000*Math.pow(10,G.prestigeCount);}
+function qUpgradeLevel(id){const u=QUANTUM_UPGRADES.find(x=>x.id===id);return u?u.owned:0;}
+function qUpgradeCost(u){return Math.floor(u.baseCost*Math.pow(u.costScale,u.owned));}
+function quantumGlobalMult(){return Math.pow(1.5,G.quantumCount)*(1+G.totalQuantumPoints*0.05);}
+function prestigeBoostMult(){return G.prestigeMult*(1+qUpgradeLevel('q2')*0.25)*quantumGlobalMult();}
+function quantumPassiveMult(){return 1+qUpgradeLevel('q0')*0.5;}
+function quantumTapMult(){return 1+qUpgradeLevel('q1')*0.5;}
+function offlineRateMult(){return 0.5*(1+qUpgradeLevel('q3')*0.25);}
+function quantumReward(){return 2+qUpgradeLevel('q4');}
+function totalCPS(){return PPS.reduce((s,u)=>s+u.baseProd*u.owned,0)*prestigeBoostMult()*quantumPassiveMult();}
+function tapAmt(){return (PPC.reduce((s,u)=>s+u.baseProd*u.owned,0)||1)*prestigeBoostMult()*quantumTapMult();}
+function presThresh(){return BASE_PRESTIGE_THRESHOLD;}
+function quantumThresh(){return BASE_QUANTUM_THRESHOLD;}
 function offlineCapSecs(){
   const bought=OFFLINE_UPGRADES.filter(u=>u.bought).reduce((s,u)=>s+u.addHours,0);
   return Math.min(BASE_OFFLINE_HOURS+bought, MAX_OFFLINE_HOURS)*3600;
@@ -909,7 +951,7 @@ function fmt(n){
   if(isNaN(n)||!isFinite(n)) return '0';
   const sign=n<0?'-':'';
   n=Math.abs(n);
-  const t=['','K','M','B','T','Qa','Qi','Sx','Sp','Oc'];
+  const t=['','K','M','B','T','Qa','Qi','Sx','Sp','Oc','No','Dc','Ud','Dd','Td','Qad','Qid','Sxd','Spd','Ocd'];
   if(n<1000) return sign+n.toFixed(2);
   let i=0; while(n>=1000&&i<t.length-1){n/=1000;i++;}
   return sign+(n>=100?n.toFixed(1):n.toFixed(2))+t[i];
@@ -938,10 +980,11 @@ function fmtHours(h){
 // ═══════════════════════════════════════════
 function saveGame(){
   const d={
-    ...G, lastSeen:Date.now(),
+    ...G,lastSeen:Date.now(),
     pps:PPS.map(u=>({id:u.id,owned:u.owned})),
     ppc:PPC.map(u=>({id:u.id,owned:u.owned})),
     offUpgrades:OFFLINE_UPGRADES.map(u=>({id:u.id,bought:u.bought})),
+    qUpgrades:QUANTUM_UPGRADES.map(u=>({id:u.id,owned:u.owned})),
     settings:S,
   };
   try{localStorage.setItem('nexus_v4',JSON.stringify(d));}catch(e){}
@@ -949,11 +992,27 @@ function saveGame(){
   updSaveLbl();
 }
 
-function resetGameState(){
-  G={coins:0,totalCoins:0,prestigeMult:1,prestigeCount:0,lastSeen:Date.now()};
+function resetEconomyProgress(){
+  G.coins=0;
+  G.prestigeMult=1;
+  G.prestigeCount=0;
   PPS.forEach(u=>{u.owned=0;});
   PPC.forEach(u=>{u.owned=0;});
   OFFLINE_UPGRADES.forEach(u=>{u.bought=false;});
+  buyAmt=1;
+  G.prestigeRunStart=Date.now();
+}
+
+function resetGameState(){
+  G={
+    coins:0,totalCoins:0,prestigeMult:1,prestigeCount:0,lastSeen:Date.now(),
+    quantumPoints:0,totalQuantumPoints:0,quantumCount:0,quantumUnlocked:false,
+    fastestPrestigeMs:null,fastestQuantumMs:null,prestigeRunStart:Date.now(),quantumRunStart:Date.now()
+  };
+  PPS.forEach(u=>{u.owned=0;});
+  PPC.forEach(u=>{u.owned=0;});
+  OFFLINE_UPGRADES.forEach(u=>{u.bought=false;});
+  QUANTUM_UPGRADES.forEach(u=>{u.owned=0;});
   S={...SD};
   activeTab='pps';
   buyAmt=1;
@@ -969,28 +1028,37 @@ function resetGameState(){
 
 function loadGame(){
   try{
-    // support loading from previous save keys too
-    const raw=localStorage.getItem('nexus_v4')
-           ||localStorage.getItem('nexus_v3')
-           ||localStorage.getItem('nexus_save');
+    const raw=localStorage.getItem('nexus_v4')||localStorage.getItem('nexus_v3')||localStorage.getItem('nexus_save');
     if(!raw) return;
     const d=JSON.parse(raw);
-    G.coins        =d.coins||0;
-    G.totalCoins   =d.totalCoins||0;
-    G.prestigeMult =d.prestigeMult||1;
-    G.prestigeCount=d.prestigeCount||0;
-    G.lastSeen     =d.lastSeen||Date.now();
+    G={
+      ...G,
+      ...d,
+      coins:d.coins||0,
+      totalCoins:d.totalCoins||0,
+      prestigeMult:d.prestigeMult||1,
+      prestigeCount:d.prestigeCount||0,
+      quantumPoints:d.quantumPoints||0,
+      totalQuantumPoints:d.totalQuantumPoints||0,
+      quantumCount:d.quantumCount||0,
+      quantumUnlocked:!!d.quantumUnlocked,
+      fastestPrestigeMs:d.fastestPrestigeMs||null,
+      fastestQuantumMs:d.fastestQuantumMs||null,
+      prestigeRunStart:d.prestigeRunStart||Date.now(),
+      quantumRunStart:d.quantumRunStart||Date.now(),
+      lastSeen:d.lastSeen||Date.now(),
+    };
     (d.pps||d.ppsUpgrades||[]).forEach(s=>{const u=PPS.find(x=>x.id===s.id);if(u)u.owned=s.owned||0;});
     (d.ppc||d.ppcUpgrades||[]).forEach(s=>{const u=PPC.find(x=>x.id===s.id);if(u)u.owned=s.owned||0;});
     (d.offUpgrades||[]).forEach(s=>{const u=OFFLINE_UPGRADES.find(x=>x.id===s.id);if(u)u.bought=!!s.bought;});
+    (d.qUpgrades||[]).forEach(s=>{const u=QUANTUM_UPGRADES.find(x=>x.id===s.id);if(u)u.owned=s.owned||0;});
     if(d.settings) S={...SD,...d.settings};
 
-    // Offline earnings — capped by upgrade level
     const capSec=offlineCapSecs();
     const rawSec=Math.max(0,(Date.now()-G.lastSeen)/1000);
-    const sec=Math.min(rawSec, capSec);
+    const sec=Math.min(rawSec,capSec);
     if(sec>10){
-      const earned=totalCPS()*sec*0.5;
+      const earned=totalCPS()*sec*offlineRateMult();
       if(earned>0){G.coins+=earned;G.totalCoins+=earned;showOfflineToast(earned,sec,rawSec>capSec);}
     }
   }catch(e){console.warn('Load failed',e);}
@@ -1067,9 +1135,7 @@ function getThemeVars(id){
     ...base,
     '--bg':'color-mix(in srgb, '+base['--c1']+' 9%, white 91%)',
     '--bg2':'color-mix(in srgb, '+base['--c1']+' 4%, white 96%)',
-    '--txt':'#0f1728',
-    '--txt2':'#24324a',
-    '--txt3':'#4c5d7b',
+    '--txt':'#0f1728','--txt2':'#24324a','--txt3':'#4c5d7b',
     '--border':'color-mix(in srgb, '+base['--c1']+' 46%, rgba(15,23,40,0.24) 54%)',
     '--border2':'color-mix(in srgb, '+base['--c1']+' 18%, rgba(15,23,40,0.10) 82%)',
     '--c1dim':'color-mix(in srgb, '+base['--c1']+' 22%, white 78%)',
@@ -1299,6 +1365,12 @@ function cheatUnlockAllOffline(){
   OFFLINE_UPGRADES.forEach(u=>{u.bought=true;});
   saveGame();updateUI();
 }
+function cheatUnlockQuantum(){
+  G.quantumUnlocked=true;
+  G.quantumPoints+=2;
+  G.totalQuantumPoints+=2;
+  saveGame();updateUI();
+}
 
 function buildThemes(){
   const grid=document.getElementById('theme-grid');
@@ -1400,36 +1472,57 @@ document.getElementById('howto-ok').addEventListener('click',()=>{
 // ═══════════════════════════════════════════
 //  UI UPDATE
 // ═══════════════════════════════════════════
+function fmtDuration(ms){
+  if(!ms) return '?';
+  const sec=Math.floor(ms/1000);
+  const h=Math.floor(sec/3600), m=Math.floor((sec%3600)/60), s=sec%60;
+  if(h>0) return h+'h '+m+'m '+s+'s';
+  if(m>0) return m+'m '+s+'s';
+  return s+'s';
+}
+
 function updateUI(){
-  document.getElementById('credit-count').textContent=cheatInfiniteCoins?'∞':fmt(G.coins);
+  document.getElementById('credit-count').textContent=cheatInfiniteCoins?'?':fmt(G.coins);
   document.getElementById('cps-val').textContent=fmt(totalCPS());
   document.getElementById('cpt-val').textContent=fmt(tapAmt());
   document.getElementById('total-val').textContent=fmt(G.totalCoins);
   const mb=document.getElementById('mult-box');
-  if(G.prestigeMult>1){
+  if(prestigeBoostMult()>1){
     mb.style.display='inline-block';
-    document.getElementById('mult-val').textContent='×'+G.prestigeMult;
-  } else {
+    document.getElementById('mult-val').textContent='?'+prestigeBoostMult().toFixed(2);
+  }else{
     mb.style.display='none';
-    document.getElementById('mult-val').textContent='×1';
+    document.getElementById('mult-val').textContent='?1';
   }
   document.getElementById('prestige-btn').style.display=G.coins>=presThresh()?'block':'none';
+  document.getElementById('quantum-btn').style.display=G.coins>=quantumThresh()?'block':'none';
   document.getElementById('badge-pps').textContent=PPS.reduce((s,u)=>s+u.owned,0);
   document.getElementById('badge-ppc').textContent=PPC.reduce((s,u)=>s+u.owned,0);
   document.getElementById('badge-offline').textContent=OFFLINE_UPGRADES.filter(u=>u.bought).length;
-  // settings panel stats
+  const qTab=document.getElementById('tab-quantum');
+  if(qTab) qTab.style.display=G.quantumUnlocked?'flex':'none';
+  const qBadge=document.getElementById('badge-quantum');
+  if(qBadge) qBadge.textContent=fmt(G.quantumPoints);
   document.getElementById('stat-total').textContent=fmt(G.totalCoins);
   document.getElementById('stat-prestige').textContent=G.prestigeCount;
   const capH=offlineCapSecs()/3600;
   document.getElementById('stat-offline').textContent=fmtHours(Math.min(capH,MAX_OFFLINE_HOURS));
+  document.getElementById('stats-current-coins').textContent=fmt(G.coins);
+  document.getElementById('stats-current-cps').textContent=fmt(totalCPS());
+  document.getElementById('stats-current-tap').textContent=fmt(tapAmt());
+  document.getElementById('stats-prestiges').textContent=G.prestigeCount;
+  document.getElementById('stats-quantums').textContent=G.quantumCount;
+  document.getElementById('stats-qp').textContent=fmt(G.quantumPoints)+' (earned '+fmt(G.totalQuantumPoints)+')';
+  document.getElementById('stats-prestige-boost').textContent='?'+prestigeBoostMult().toFixed(2);
+  document.getElementById('stats-quantum-multi').textContent='?'+quantumGlobalMult().toFixed(2);
+  document.getElementById('stats-fastest-prestige').textContent=fmtDuration(G.fastestPrestigeMs);
+  document.getElementById('stats-fastest-quantum').textContent=fmtDuration(G.fastestQuantumMs);
+  document.getElementById('stats-offline-cap').textContent=fmtHours(capH);
   updSaveLbl();
   syncHeaderCheatVisibility();
   syncHeaderCheatMenuToggles();
 }
 
-// ═══════════════════════════════════════════
-//  RENDER UPGRADE LISTS
-// ═══════════════════════════════════════════
 function renderUpgrades(){
   const list=document.getElementById('upgrades-list');
   list.innerHTML='';
@@ -1529,6 +1622,43 @@ function renderOffline(){
   list.appendChild(capEl);
 }
 
+
+function renderQuantum(){
+  const list=document.getElementById('quantum-list');
+  list.innerHTML='';
+  const summary=document.createElement('div');
+  summary.className='quantum-summary';
+  summary.textContent='QP: '+fmt(G.quantumPoints)+' | Total earned: '+fmt(G.totalQuantumPoints)+' | Global multi: ?'+quantumGlobalMult().toFixed(2)+' | Next reset reward: +'+quantumReward()+' QP';
+  list.appendChild(summary);
+  QUANTUM_UPGRADES.forEach(u=>{
+    const cost=qUpgradeCost(u);
+    const canAfford=G.quantumPoints>=cost;
+    const row=document.createElement('div');
+    row.className='off-row'+(canAfford?' can':' cant');
+    bindPress(row,()=>buyQuantumUpgrade(u));
+    const icon=document.createElement('div');icon.className='off-icon';icon.textContent=u.emoji;
+    const info=document.createElement('div');info.className='off-info';
+    const nm=document.createElement('div');nm.className='off-name';nm.textContent=u.name+' Lv.'+u.owned;
+    const dc=document.createElement('div');dc.className='off-desc';dc.textContent=u.desc;
+    const bot=document.createElement('div');bot.className='off-bot';
+    const ct=document.createElement('div');ct.className='off-cost';ct.textContent='QP '+fmt(cost);
+    const st=document.createElement('div');st.className='off-stat';st.textContent='+'+(u.effect*u.owned).toFixed(2);
+    bot.appendChild(ct);bot.appendChild(st);
+    const nx=document.createElement('div');nx.className='off-next';
+    nx.textContent='NEXT: +'+u.effect+(u.id==='q4'?' QP per reset':' multiplier / bonus');
+    info.appendChild(nm);info.appendChild(dc);info.appendChild(bot);info.appendChild(nx);
+    row.appendChild(icon);row.appendChild(info);list.appendChild(row);
+  });
+}
+
+function buyQuantumUpgrade(u){
+  const cost=qUpgradeCost(u);
+  if(G.quantumPoints<cost) return;
+  G.quantumPoints-=cost;
+  u.owned++;
+  saveGame();updateUI();renderQuantum();
+}
+
 function buyUpg(u,isPPC){
   const requested=buyAmt===0?maxBuy(u):buyAmt;
   const affordable=maxBuy(u);
@@ -1569,30 +1699,34 @@ function syncTapDrawerLayout(){
 }
 
 function switchTab(tab){
-  // If clicking the already-active tab, toggle drawer open/close
   if(tab===activeTab){
     drawerOpen=!drawerOpen;
     document.getElementById('drawer').classList.toggle('collapsed',!drawerOpen);
     syncTapDrawerLayout();
     return;
   }
+  if(tab==='quantum' && !G.quantumUnlocked) return;
   activeTab=tab;
   drawerOpen=true;
   document.getElementById('drawer').classList.remove('collapsed');
 
-  ['pps','ppc','offline','settings'].forEach(t=>{
+  ['pps','ppc','offline','quantum','stats','settings'].forEach(t=>{
     const btn=document.getElementById('tab-'+t);
     if(btn) btn.classList.toggle('active',t===tab);
   });
 
   const ul=document.getElementById('upgrades-list');
   const ol=document.getElementById('offline-list');
+  const ql=document.getElementById('quantum-list');
   const sp=document.getElementById('settings-panel');
+  const st=document.getElementById('stats-panel');
   const bb=document.getElementById('buy-bar');
 
   ul.style.display='none';
   ol.classList.remove('vis');
+  ql.classList.remove('vis');
   sp.classList.remove('vis');
+  st.classList.remove('vis');
   bb.style.display='none';
 
   if(tab==='pps'||tab==='ppc'){
@@ -1602,15 +1736,17 @@ function switchTab(tab){
   } else if(tab==='offline'){
     ol.classList.add('vis');
     renderOffline();
+  } else if(tab==='quantum'){
+    ql.classList.add('vis');
+    renderQuantum();
+  } else if(tab==='stats'){
+    st.classList.add('vis');
   } else if(tab==='settings'){
     sp.classList.add('vis');
   }
   syncTapDrawerLayout();
 }
 
-// ═══════════════════════════════════════════
-//  BUY AMOUNT
-// ═══════════════════════════════════════════
 function setBuy(n){
   buyAmt=n;
   const vals=[1,10,25,100,0];
@@ -1647,16 +1783,45 @@ tapZone.addEventListener('touchstart',e=>{
 //  PRESTIGE
 // ═══════════════════════════════════════════
 function doPrestige(){
-  if(S.pconf&&!confirm('RESET ALL PROGRESS for a permanent ×2 multiplier?'))return;
-  G.prestigeCount++;G.prestigeMult*=2;G.coins=0;
-  PPS.forEach(u=>u.owned=0);PPC.forEach(u=>u.owned=0);
+  if(G.coins<presThresh()) return;
+  if(S.pconf&&!confirm('PRESTIGE RESET? You will lose regular progress for a permanent ?2 boost.'))return;
+  const run=Date.now()-G.prestigeRunStart;
+  if(run>0) G.fastestPrestigeMs=G.fastestPrestigeMs?Math.min(G.fastestPrestigeMs,run):run;
+  G.prestigeCount++;
+  G.prestigeMult*=2;
+  G.coins=0;
+  PPS.forEach(u=>u.owned=0);PPC.forEach(u=>u.owned=0);OFFLINE_UPGRADES.forEach(u=>u.bought=false);
+  G.prestigeRunStart=Date.now();
   if(cheatInfiniteCoins) G.coins=Number.MAX_SAFE_INTEGER;
   saveGame();updateUI();
   if(activeTab==='pps'||activeTab==='ppc') renderUpgrades();
   else if(activeTab==='offline') renderOffline();
+  else if(activeTab==='quantum') renderQuantum();
 }
 
-// ═══════════════════════════════════════════
+function doQuantumReset(){
+  if(G.coins<quantumThresh()) return;
+  if(!confirm('QUANTUM RESET? This will wipe credits, upgrades, and prestige progress for Quantum Points.')) return;
+  const run=Date.now()-G.quantumRunStart;
+  if(run>0) G.fastestQuantumMs=G.fastestQuantumMs?Math.min(G.fastestQuantumMs,run):run;
+  const reward=quantumReward();
+  G.quantumCount++;
+  G.quantumUnlocked=true
+  G.quantumUnlocked=true;
+  G.quantumPoints+=reward;
+  G.totalQuantumPoints+=reward;
+  G.prestigeMult=1;
+  G.prestigeCount=0;
+  G.coins=0;
+  PPS.forEach(u=>u.owned=0);PPC.forEach(u=>u.owned=0);OFFLINE_UPGRADES.forEach(u=>u.bought=false);
+  G.prestigeRunStart=Date.now();
+  G.quantumRunStart=Date.now();
+  saveGame();updateUI();
+  switchTab('quantum');
+  renderQuantum();
+}
+
+//  GAME TICK
 //  GAME TICK
 // ═══════════════════════════════════════════
 let barStep=0;
@@ -1685,7 +1850,7 @@ document.addEventListener('visibilitychange',()=>{
     const rawSec=Math.max(0,(Date.now()-(d.lastSeen||Date.now()))/1000);
     const sec=Math.min(rawSec,capSec);
     if(sec>10){
-      const earned=totalCPS()*sec*0.5;
+      const earned=totalCPS()*sec*offlineRateMult();
       if(earned>0){
         if(cheatInfiniteCoins) G.totalCoins+=earned;
         else{G.coins+=earned;G.totalCoins+=earned;}
@@ -1707,11 +1872,14 @@ buildThemes();
 applySettings();      // calls applyTheme(S.theme) with saved theme
 switchTab('pps');
 updateUI();
+renderOffline();
 if(!localStorage.getItem('nexus_seen_howto')) showHowToToast();
 
 setInterval(()=>{
   if(activeTab==='pps'||activeTab==='ppc') renderUpgrades();
   else if(activeTab==='offline') renderOffline();
+  else if(activeTab==='quantum') renderQuantum();
+  else if(activeTab==='stats') updateUI();
 },400);
 
 document.addEventListener('click', (e)=>{
