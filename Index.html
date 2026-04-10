@@ -1,0 +1,1734 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>NEXUS // IDLE</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<link rel="manifest" href="./manifest.json">
+<link rel="icon" type="image/png" href="./icon.png">
+<link rel="apple-touch-icon" href="./icon.png">
+<meta name="theme-color" content="#00f5ff" id="theme-meta">
+<style>
+/* ═══════════════════════════════════════════
+   THEMES — vars on :root, swapped via JS
+   iOS PWA safe: no attribute selectors,
+   all vars hard-coded as fallbacks too.
+═══════════════════════════════════════════ */
+:root {
+  /* NEXUS default (cyan) */
+  --bg:     #020810;
+  --bg2:    #040f1e;
+  --c1:     #00f5ff;
+  --c1dim:  rgba(0,245,255,0.15);
+  --c1glow: rgba(0,245,255,0.30);
+  --c2:     #00bcd4;
+  --c3:     #39ff14;
+  --c4:     #ff006e;
+  --c5:     #ffd60a;
+  --c6:     #ff6b00;
+  --border: rgba(0,245,255,0.28);
+  --border2:rgba(0,245,255,0.12);
+  --txt:    #e8f4ff;
+  --txt2:   #8ab4cc;
+  --txt3:   #4a7a90;
+  --tap-flash: rgba(0,245,255,0.10);
+  --grid-c: rgba(0,245,255,0.05);
+  --ring1:  rgba(0,245,255,0.45);
+  --ring2:  rgba(57,255,20,0.32);
+}
+
+/* ═══════════════════════════════════════════
+RESET & BODY
+═══════════════════════════════════════════ */
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html{height:100%;overflow:hidden;background:#020810;}
+body{
+background:var(–bg);
+font-family:‘Share Tech Mono’,monospace;
+color:var(–txt);
+position:fixed;width:100%;height:100%;
+}
+
+/* Grid background */
+#grid-bg{
+position:fixed;inset:0;z-index:0;
+background-image:
+linear-gradient(var(–grid-c) 1px, transparent 1px),
+linear-gradient(90deg, var(–grid-c) 1px, transparent 1px);
+background-size:40px 40px;
+animation:gridScroll 22s linear infinite;
+}
+@keyframes gridScroll{from{background-position:0 0;}to{background-position:0 40px;}}
+
+/* Corner brackets */
+.corner{position:fixed;width:44px;height:44px;z-index:3;}
+.corner.tl{top:max(0px, env(safe-area-inset-top, 0px));left:max(0px, env(safe-area-inset-left, 0px));border-top:2px solid var(–c1);border-left:2px solid var(–c1);}
+.corner.tr{top:max(0px, env(safe-area-inset-top, 0px));right:max(0px, env(safe-area-inset-right, 0px));border-top:2px solid var(–c1);border-right:2px solid var(–c1);}
+.corner.bl{bottom:max(0px, env(safe-area-inset-bottom, 0px));left:max(0px, env(safe-area-inset-left, 0px));border-bottom:2px solid var(–c1);border-left:2px solid var(–c1);}
+.corner.br{bottom:max(0px, env(safe-area-inset-bottom, 0px));right:max(0px, env(safe-area-inset-right, 0px));border-bottom:2px solid var(–c1);border-right:2px solid var(–c1);}
+
+/* Canvas overlay */
+#particles{position:fixed;inset:0;pointer-events:none;z-index:5;}
+
+/* ═══════════════════════════════════════════
+APP LAYOUT — flex column, full height
+tap-zone grows/shrinks via flex-grow
+═══════════════════════════════════════════ */
+#app{
+position:relative;z-index:6;
+display:flex;flex-direction:column;
+height:100vh;height:100dvh;min-height:100dvh;
+overflow:hidden;
+padding-bottom:max(56px, calc(48px + env(safe-area-inset-bottom, 0px)));
+box-sizing:border-box;
+}
+
+/* ── HEADER ─────────────────────────────── */
+#header{
+padding-top:calc(20px + env(safe-area-inset-top, 0px));
+padding-left:max(16px, env(safe-area-inset-left, 0px));
+padding-right:max(16px, env(safe-area-inset-right, 0px));
+padding-bottom:10px;
+background:var(–bg2);
+border-bottom:1px solid var(–border);
+flex-shrink:0;
+}
+#sys-label{
+font-family:‘Orbitron’,monospace;font-size:8px;
+letter-spacing:4px;color:var(–c1);opacity:0.5;margin-bottom:3px;
+}
+#credit-count{
+font-family:‘Orbitron’,monospace;
+font-size:clamp(28px,7vw,44px);font-weight:900;
+color:var(–c1);letter-spacing:2px;line-height:1;
+text-shadow:0 0 18px var(–c1glow);
+}
+#credit-unit{font-size:9px;letter-spacing:3px;color:var(–txt2);margin-top:2px;}
+.stats-row{display:flex;gap:5px;margin-top:8px;flex-wrap:wrap;}
+.stat-box{
+border:1px solid var(–border2);background:var(–c1dim);
+padding:3px 8px;border-radius:3px;font-size:8px;color:var(–txt2);
+position:relative;overflow:hidden;
+}
+.stat-box::after{content:’’;position:absolute;top:0;left:0;right:0;height:1px;background:var(–c1);opacity:0.5;}
+.stat-box .val{font-family:‘Orbitron’,monospace;font-size:12px;font-weight:700;display:block;color:var(–c1);}
+.stat-box.s-green .val{color:var(–c3);}
+.stat-box.s-green{border-color:rgba(57,255,20,0.15);background:rgba(57,255,20,0.06);}
+.stat-box.s-green::after{background:var(–c3);}
+.stat-box.s-orange .val{color:var(–c6);}
+.stat-box.s-orange{border-color:rgba(255,107,0,0.18);background:rgba(255,107,0,0.06);}
+.stat-box.s-orange::after{background:var(–c6);}
+#prestige-btn{
+display:none;width:100%;margin-top:7px;padding:7px;
+border:1px solid var(–c4);background:rgba(255,0,110,0.08);
+color:var(–c4);font-family:‘Orbitron’,monospace;
+font-size:9px;font-weight:700;letter-spacing:2px;cursor:pointer;border-radius:3px;
+}
+#prestige-btn:active{background:rgba(255,0,110,0.22);}
+#quantum-btn{
+display:none;width:100%;margin-top:7px;padding:7px;
+border:1px solid var(–c5);background:rgba(255,214,10,0.08);
+color:var(–c5);font-family:‘Orbitron’,monospace;
+font-size:9px;font-weight:700;letter-spacing:2px;cursor:pointer;border-radius:3px;
+}
+#quantum-btn:active{background:rgba(255,214,10,0.2);}
+
+/* Top cheat menu — opens downward (unlike bottom drawer) */
+.header-main-row{
+display:flex;flex-direction:row;justify-content:space-between;align-items:flex-start;gap:10px;width:100%;
+position:relative;z-index:20;
+}
+.header-credits-col{min-width:0;flex:1;}
+.header-cheat-wrap{
+position:relative;flex-shrink:0;align-self:flex-start;padding-top:4px;z-index:40;pointer-events:auto;
+}
+.header-cheat-wrap[hidden]{display:none!important;}
+.header-cheat-btn{
+width:42px;height:40px;border-radius:5px;
+border:1px solid rgba(255,0,110,0.5);background:rgba(255,0,110,0.12);
+color:var(–c4);font-size:18px;line-height:1;cursor:pointer;
+display:flex;align-items:center;justify-content:center;
+font-family:‘Orbitron’,monospace;
+box-shadow:0 0 12px rgba(255,0,110,0.15);
+position:relative;z-index:31;padding:0;touch-action:manipulation;
+}
+.header-cheat-btn:active{opacity:0.85;}
+.header-cheat-btn.open{border-color:var(–c4);background:rgba(255,0,110,0.2);}
+.header-cheat-dd{
+display:none;flex-direction:column;
+position:absolute;top:100%;right:0;margin-top:6px;
+min-width:240px;max-width:min(calc(100vw - 24px), 320px);
+z-index:500;
+background:
+linear-gradient(180deg, rgba(255,255,255,0.03), transparent 28%),
+var(–bg2);
+border:1px solid color-mix(in srgb, var(–c4) 45%, var(–border) 55%);
+border-radius:8px;box-shadow:0 14px 40px rgba(0,0,0,0.5);
+padding:6px 0 8px;max-height:min(70vh, 560px);overflow:auto;
+}
+.header-cheat-dd.open{display:flex;}
+.hcd-title{
+font-family:‘Orbitron’,monospace;font-size:8px;font-weight:700;letter-spacing:3px;
+color:var(–txt);padding:6px 14px 8px;border-bottom:1px solid var(–border2);
+text-shadow:0 0 12px var(–c1glow);
+}
+.hcd-subtitle{
+font-family:‘Orbitron’,monospace;font-size:8px;font-weight:700;letter-spacing:2px;
+color:var(–c5);padding:12px 14px 6px;border-top:1px solid var(–border2);
+}
+.hcd-item{
+display:block;width:100%;text-align:left;padding:9px 14px;border:none;background:transparent;
+color:var(–txt);font-family:‘Share Tech Mono’,monospace;font-size:11px;
+cursor:pointer;border-top:1px solid transparent;
+}
+.hcd-item:first-of-type{border-top:none;}
+.hcd-item:active{background:rgba(255,0,110,0.1);color:#fff;}
+.hcd-item.hcd-danger{color:var(–c4);border-top-color:var(–border2);}
+.hcd-item.hcd-danger:active{background:rgba(255,0,110,0.18);}
+.hcd-row{
+display:flex;align-items:center;justify-content:space-between;gap:10px;
+padding:8px 14px;border-top:1px solid var(–border2);
+font-size:9px;color:var(–txt);font-family:‘Orbitron’,monospace;
+}
+.hcd-input-row,.hcd-grid{
+display:flex;gap:8px;padding:8px 14px 0;
+}
+.hcd-grid{flex-wrap:wrap;}
+.hcd-grid .hcd-item{
+flex:1 1 calc(50% - 4px);
+border:1px solid var(–border);
+border-radius:6px;
+padding:8px 10px;
+text-align:center;
+background:linear-gradient(180deg, color-mix(in srgb, var(–c1dim) 80%, transparent), rgba(255,255,255,0.02));
+}
+.hcd-grid .hcd-item:active{background:rgba(255,0,110,0.1);}
+.hcd-grid .hcd-item.full{flex-basis:100%;}
+.hcd-input{
+flex:1;min-width:0;
+background:rgba(0,0,0,0.26);
+border:1px solid var(–border);
+border-radius:6px;
+padding:8px 10px;
+color:var(–txt);
+font-family:‘Share Tech Mono’,monospace;
+font-size:11px;
+outline:none;
+}
+.hcd-input:focus{border-color:rgba(255,0,110,0.4);}
+.hcd-set-btn{
+flex-shrink:0;
+padding:8px 16px;
+background:linear-gradient(180deg, rgba(255,0,110,0.22), rgba(255,0,110,0.12));
+border:1px solid rgba(255,0,110,0.4);
+border-radius:6px;
+color:var(–c4);
+font-family:‘Orbitron’,monospace;
+font-size:9px;
+font-weight:700;
+letter-spacing:1px;
+cursor:pointer;
+}
+.hcd-set-btn:active{background:rgba(255,0,110,0.3);}
+
+/* ── TAP-ZONE ──────────────────────────── */
+/* Dynamic sizing when drawer is collapsed */
+#tap-zone{
+position:relative;z-index:10;
+flex:1 1 auto;
+display:flex;align-items:center;justify-content:center;
+overflow:hidden;
+transition:flex-grow 0.3s cubic-bezier(0.4,0,0.2,1);
+}
+#tap-zone.tap-zone-menus-open{
+flex-grow:0.5;
+}
+#tap-zone.tap-zone-menus-closed{
+flex-grow:2;
+}
+#tap-zone::before{
+content:’’;position:absolute;inset:0;z-index:1;
+background:radial-gradient(ellipse at center,rgba(0,245,255,0.04),transparent 66%);
+pointer-events:none;opacity:0.6;
+}
+#tap-zone::after{
+content:’’;position:absolute;inset:0;z-index:2;
+background:radial-gradient(circle at center, transparent 30%, var(–tap-flash) 72%, transparent);
+pointer-events:none;opacity:0;transition:opacity 0.12s ease-out;
+}
+#tap-zone.tapped::after{opacity:1;}
+#tap-pulse{
+position:absolute;z-index:0;
+width:min(300px,60vw);height:min(300px,60vw);
+border-radius:50%;
+background:radial-gradient(circle, rgba(0,245,255,0.1), transparent 60%);
+border:1px solid var(–ring1);
+animation:pulseIdle 3.2s ease-in-out infinite;
+pointer-events:none;
+}
+@keyframes pulseIdle{
+0%,100%{transform:scale(1);opacity:0.6;}
+50%{transform:scale(1.08);opacity:0.85;}
+}
+#tap-pulse::after{
+content:’’;position:absolute;inset:10%;border-radius:50%;
+border:1px dashed var(–ring2);opacity:0.4;
+animation:pulseIdle 3.2s ease-in-out infinite reverse;
+}
+#tap-label{
+position:relative;z-index:3;
+font-family:‘Orbitron’,monospace;font-size:clamp(15px,4vw,22px);
+font-weight:900;letter-spacing:3px;color:var(–c1);
+text-shadow:0 0 20px var(–c1glow);
+user-select:none;pointer-events:none;
+opacity:0.75;
+}
+
+/* ── DRAWER (BOTTOM) ─────────────────────── */
+#drawer{
+position:fixed;
+left:0;right:0;
+bottom:0;
+z-index:20;
+background:linear-gradient(0deg, var(–bg2) 70%, transparent);
+border-top:1px solid var(–border);
+box-shadow:0 -4px 30px rgba(0,0,0,0.4);
+max-height:65vh;
+display:flex;flex-direction:column;
+transition:transform 0.3s cubic-bezier(0.4,0,0.2,1);
+overflow:hidden;
+}
+#drawer.collapsed{
+transform:translateY(calc(100% - 56px));
+}
+
+/* Drag handle for swipe-to-close */
+#drawer-handle{
+display:flex;
+align-items:center;
+justify-content:center;
+padding:8px 0;
+cursor:grab;
+touch-action:none;
+user-select:none;
+}
+#drawer-handle:active{
+cursor:grabbing;
+}
+#drawer-handle-bar{
+width:48px;
+height:4px;
+background:var(–border);
+border-radius:2px;
+opacity:0.6;
+}
+
+/* Tab bar */
+#tabs{
+display:flex;justify-content:space-around;align-items:center;
+padding:8px max(8px, env(safe-area-inset-left, 0px)) 8px max(8px, env(safe-area-inset-right, 0px));
+border-bottom:1px solid var(–border2);
+flex-shrink:0;
+}
+.tab-btn{
+flex:1;text-align:center;padding:8px 4px;
+font-family:‘Orbitron’,monospace;font-size:8px;font-weight:700;
+letter-spacing:1.5px;color:var(–txt3);text-transform:uppercase;
+background:transparent;border:none;cursor:pointer;
+position:relative;border-radius:4px;
+transition:color 0.15s, background 0.15s;
+}
+.tab-btn:active{background:rgba(255,255,255,0.04);}
+.tab-btn.active{color:var(–c1);}
+.tab-btn.active::after{
+content:’’;position:absolute;bottom:0;left:20%;right:20%;height:2px;
+background:linear-gradient(90deg, transparent, var(–c1), transparent);
+}
+
+/* Buy bar */
+#buy-bar{
+display:none;padding:6px max(8px, env(safe-area-inset-left, 0px)) 6px max(8px, env(safe-area-inset-right, 0px));
+border-bottom:1px solid var(–border2);
+gap:4px;flex-shrink:0;
+}
+#buy-bar{display:flex;}
+.buy-btn{
+flex:1;padding:6px 4px;
+font-family:‘Orbitron’,monospace;font-size:9px;font-weight:700;
+letter-spacing:1px;color:var(–txt2);background:rgba(0,0,0,0.2);
+border:1px solid var(–border2);border-radius:4px;cursor:pointer;
+}
+.buy-btn:active{background:rgba(255,255,255,0.06);}
+.buy-btn.active{background:var(–c1dim);border-color:var(–c1);color:var(–c1);}
+
+/* Idle progress bar */
+#idle-bar-wrap{
+position:relative;width:100%;height:2px;background:rgba(0,0,0,0.3);
+flex-shrink:0;overflow:hidden;
+}
+#idle-bar{
+height:100%;width:0;background:linear-gradient(90deg, var(–c3), var(–c1));
+transition:width 0.1s linear;
+}
+
+/* Content area */
+#drawer-content{
+flex:1 1 auto;
+overflow-y:auto;overflow-x:hidden;
+padding:10px max(10px, env(safe-area-inset-left, 0px)) max(10px, env(safe-area-inset-bottom, 0px)) max(10px, env(safe-area-inset-right, 0px));
+}
+
+/* ── UPGRADES LIST ────────────────────── */
+#upgrades-list{
+display:none;flex-direction:column;gap:8px;
+}
+.upg-card{
+background:linear-gradient(135deg, rgba(0,245,255,0.06), rgba(0,245,255,0.02));
+border:1px solid var(–border);border-radius:6px;
+padding:10px 12px;cursor:pointer;
+position:relative;overflow:hidden;
+}
+.upg-card::before{
+content:’’;position:absolute;top:0;left:0;right:0;height:1px;
+background:linear-gradient(90deg, transparent, var(–c1), transparent);
+opacity:0.4;
+}
+.upg-card:active{background:rgba(0,245,255,0.12);}
+.upg-card.maxed{opacity:0.5;cursor:not-allowed;border-color:var(–border2);}
+.upg-card.maxed:active{background:linear-gradient(135deg, rgba(0,245,255,0.06), rgba(0,245,255,0.02));}
+.upg-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;gap:8px;}
+.upg-icon{
+font-size:24px;
+line-height:1;
+flex-shrink:0;
+}
+.upg-name-wrap{flex:1;min-width:0;}
+.upg-name{
+font-family:‘Orbitron’,monospace;font-size:12px;font-weight:700;
+color:var(–c1);margin-bottom:2px;
+}
+.upg-desc{font-size:9px;color:var(–txt2);line-height:1.3;}
+.upg-info{
+display:flex;justify-content:space-between;align-items:center;
+font-size:9px;color:var(–txt3);margin-top:5px;
+}
+.upg-owned{font-family:‘Orbitron’,monospace;font-weight:700;}
+.upg-cost{
+font-family:‘Orbitron’,monospace;font-weight:700;
+color:var(–c3);
+}
+.upg-card.cant-afford .upg-cost{color:var(–c4);}
+
+/* ── OFFLINE UPGRADES ──────────────────── */
+#offline-list{
+display:none;flex-direction:column;gap:8px;
+}
+#offline-list.vis{display:flex;}
+.off-card{
+background:linear-gradient(135deg, rgba(255,214,10,0.08), rgba(255,214,10,0.03));
+border:1px solid rgba(255,214,10,0.25);border-radius:6px;
+padding:10px 12px;cursor:pointer;position:relative;overflow:hidden;
+}
+.off-card::before{
+content:’’;position:absolute;top:0;left:0;right:0;height:1px;
+background:linear-gradient(90deg, transparent, var(–c5), transparent);
+opacity:0.5;
+}
+.off-card:active{background:rgba(255,214,10,0.14);}
+.off-card.bought{opacity:0.4;cursor:not-allowed;background:rgba(0,0,0,0.2);border-color:var(–border2);}
+.off-card.bought .off-cost{text-decoration:line-through;}
+.off-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;gap:8px;}
+.off-icon{
+font-size:24px;
+line-height:1;
+flex-shrink:0;
+}
+.off-name-wrap{flex:1;min-width:0;}
+.off-name{
+font-family:‘Orbitron’,monospace;font-size:12px;font-weight:700;
+color:var(–c5);margin-bottom:2px;
+}
+.off-desc{font-size:9px;color:var(–txt2);line-height:1.3;}
+.off-cost-wrap{text-align:right;font-size:9px;margin-top:4px;}
+.off-cost{
+font-family:‘Orbitron’,monospace;font-weight:700;color:var(–c3);
+}
+.off-card.cant-afford .off-cost{color:var(–c4);}
+
+/* ── QUANTUM UPGRADES ──────────────────── */
+#quantum-list{
+display:none;flex-direction:column;gap:8px;
+}
+#quantum-list.vis{display:flex;}
+.qup-card{
+background:linear-gradient(135deg, rgba(255,214,10,0.1), rgba(255,107,0,0.06));
+border:1px solid rgba(255,214,10,0.3);border-radius:6px;
+padding:10px 12px;cursor:pointer;position:relative;overflow:hidden;
+}
+.qup-card::before{
+content:’’;position:absolute;top:0;left:0;right:0;height:1px;
+background:linear-gradient(90deg, transparent, var(–c5), var(–c6), transparent);
+opacity:0.6;
+}
+.qup-card:active{background:rgba(255,214,10,0.18);}
+.qup-card.maxed{opacity:0.5;cursor:not-allowed;}
+.qup-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;gap:8px;}
+.qup-icon{
+font-size:24px;
+line-height:1;
+flex-shrink:0;
+}
+.qup-name-wrap{flex:1;min-width:0;}
+.qup-name{
+font-family:‘Orbitron’,monospace;font-size:12px;font-weight:700;
+color:var(–c5);margin-bottom:2px;
+}
+.qup-desc{font-size:9px;color:var(–txt2);line-height:1.3;}
+.qup-info{
+display:flex;justify-content:space-between;align-items:center;
+font-size:9px;color:var(–txt3);margin-top:5px;
+}
+.qup-owned{font-family:‘Orbitron’,monospace;font-weight:700;}
+.qup-cost{font-family:‘Orbitron’,monospace;font-weight:700;color:var(–c6);}
+.qup-card.cant-afford .qup-cost{color:var(–c4);}
+
+/* ── STATS & SETTINGS PANELS ────────────── */
+#stats-panel,#settings-panel{
+display:none;flex-direction:column;gap:10px;
+}
+#stats-panel.vis,#settings-panel.vis{display:flex;}
+.panel-section{
+background:rgba(0,0,0,0.2);border:1px solid var(–border2);
+border-radius:6px;padding:10px;
+}
+.panel-section h3{
+font-family:‘Orbitron’,monospace;font-size:10px;font-weight:700;
+letter-spacing:2px;color:var(–c1);margin-bottom:8px;
+text-transform:uppercase;
+}
+.panel-row{
+display:flex;justify-content:space-between;align-items:center;
+padding:5px 0;border-bottom:1px solid var(–border2);
+font-size:10px;
+}
+.panel-row:last-child{border-bottom:none;}
+.panel-label{color:var(–txt2);}
+.panel-val{
+font-family:‘Orbitron’,monospace;font-weight:700;color:var(–c1);
+}
+.panel-val.hl{color:var(–c3);}
+.panel-btn{
+width:100%;padding:10px;margin-top:6px;
+background:linear-gradient(135deg, rgba(0,245,255,0.1), rgba(0,245,255,0.05));
+border:1px solid var(–c1);border-radius:6px;
+color:var(–c1);font-family:‘Orbitron’,monospace;
+font-size:10px;font-weight:700;letter-spacing:2px;
+cursor:pointer;
+}
+.panel-btn:active{background:rgba(0,245,255,0.2);}
+.panel-btn.danger{
+background:linear-gradient(135deg, rgba(255,0,110,0.12), rgba(255,0,110,0.06));
+border-color:var(–c4);color:var(–c4);
+}
+.panel-btn.danger:active{background:rgba(255,0,110,0.22);}
+
+/* Settings toggles */
+.sett-toggle{
+display:flex;justify-content:space-between;align-items:center;
+padding:8px 0;border-bottom:1px solid var(–border2);
+font-size:10px;
+}
+.sett-toggle:last-child{border-bottom:none;}
+.sett-label{color:var(–txt2);}
+.toggle-switch{
+position:relative;width:40px;height:22px;
+background:rgba(0,0,0,0.4);border:1px solid var(–border2);
+border-radius:11px;cursor:pointer;
+transition:background 0.2s, border-color 0.2s;
+}
+.toggle-switch.on{background:var(–c1dim);border-color:var(–c1);}
+.toggle-switch::after{
+content:’’;position:absolute;top:2px;left:2px;
+width:16px;height:16px;border-radius:50%;
+background:var(–txt3);
+transition:left 0.2s, background 0.2s;
+}
+.toggle-switch.on::after{left:20px;background:var(–c1);}
+
+/* Theme picker */
+.theme-grid{
+display:grid;grid-template-columns:repeat(auto-fill,minmax(70px,1fr));
+gap:8px;margin-top:8px;
+}
+.theme-card{
+aspect-ratio:1;border-radius:6px;cursor:pointer;
+border:2px solid var(–border2);
+background:linear-gradient(135deg, var(–bg2), var(–bg));
+display:flex;align-items:center;justify-content:center;
+font-family:‘Orbitron’,monospace;font-size:8px;font-weight:700;
+letter-spacing:1px;color:var(–txt2);
+position:relative;overflow:hidden;
+}
+.theme-card::before{
+content:’’;position:absolute;inset:0;
+background:radial-gradient(circle at 30% 30%, var(–c1) 0%, transparent 60%);
+opacity:0.15;
+}
+.theme-card.active{border-color:var(–c1);color:var(–c1);}
+.theme-card:active{opacity:0.8;}
+
+/* ═══════════════════════════════════════════
+TOAST NOTIFICATIONS
+═══════════════════════════════════════════ */
+#toast-container{
+position:fixed;top:calc(20px + env(safe-area-inset-top, 0px));
+left:50%;transform:translateX(-50%);
+z-index:1000;pointer-events:none;
+display:flex;flex-direction:column;gap:8px;align-items:center;
+max-width:min(90vw, 400px);
+}
+.toast{
+background:linear-gradient(135deg, var(–bg2), rgba(0,0,0,0.85));
+border:1px solid var(–c1);border-radius:8px;
+padding:12px 16px;
+font-family:‘Share Tech Mono’,monospace;font-size:11px;
+color:var(–txt);
+box-shadow:0 8px 30px rgba(0,0,0,0.6), 0 0 20px var(–c1glow);
+opacity:0;
+transform:translateY(-20px);
+animation:toastIn 0.3s ease-out forwards, toastOut 0.3s ease-in 2.7s forwards;
+pointer-events:auto;
+}
+@keyframes toastIn{to{opacity:1;transform:translateY(0);}}
+@keyframes toastOut{to{opacity:0;transform:translateY(-20px);}}
+.toast-title{
+font-family:‘Orbitron’,monospace;font-size:9px;font-weight:700;
+letter-spacing:2px;color:var(–c1);margin-bottom:4px;
+}
+.toast-msg{font-size:10px;color:var(–txt2);line-height:1.4;}
+.toast-hl{color:var(–c3);font-family:‘Orbitron’,monospace;font-weight:700;}
+
+/* ═══════════════════════════════════════════
+FLOATING NUMBERS & PARTICLES
+═══════════════════════════════════════════ */
+.float-num{
+position:fixed;z-index:100;pointer-events:none;
+font-family:‘Orbitron’,monospace;font-size:18px;font-weight:900;
+color:var(–c1);
+text-shadow:0 0 12px var(–c1glow);
+animation:floatUp 1s ease-out forwards;
+}
+@keyframes floatUp{
+0%{opacity:1;transform:translateY(0) scale(1);}
+100%{opacity:0;transform:translateY(-80px) scale(1.3);}
+}
+</style>
+
+</head>
+<body>
+
+<div id="grid-bg"></div>
+<div class="corner tl"></div>
+<div class="corner tr"></div>
+<div class="corner bl"></div>
+<div class="corner br"></div>
+<canvas id="particles"></canvas>
+<div id="toast-container"></div>
+
+<div id="app">
+<!-- ── HEADER ────────────────────────────── -->
+<div id="header">
+<div class="header-main-row">
+<div class="header-credits-col">
+<div id="sys-label">SYSTEM CREDITS</div>
+<div id="credit-count">0</div>
+<div id="credit-unit">ℂ // NEXUS</div>
+<div class="stats-row">
+<div class="stat-box">
+<span class="val" id="cps-val">0.0</span>
+<span>ℂ/s</span>
+</div>
+<div class="stat-box s-green">
+<span class="val" id="tap-val">+1</span>
+<span>TAP</span>
+</div>
+<div class="stat-box s-orange">
+<span class="val" id="mult-val">×1</span>
+<span>MULT</span>
+</div>
+</div>
+<button id="prestige-btn" onclick="doPrestige()">⬆ PRESTIGE RESET</button>
+<button id="quantum-btn" onclick="doQuantumReset()">⚛ QUANTUM RESET</button>
+</div>
+
+<!-- Cheat menu -->
+
+<div class="header-cheat-wrap" id="header-cheat-wrap" hidden>
+<button class="header-cheat-btn" id="header-cheat-btn" onclick="toggleHeaderCheatMenu()">
+⚙
+</button>
+<div class="header-cheat-dd" id="header-cheat-dd">
+<div class="hcd-title">DEV TOOLS</div>
+<button class="hcd-item" onclick="grantCoins(1e6)">+ 1M Credits</button>
+<button class="hcd-item" onclick="grantCoins(1e9)">+ 1B Credits</button>
+<button class="hcd-item" onclick="grantCoins(1e12)">+ 1T Credits</button>
+<div class="hcd-subtitle">QUANTUM POINTS</div>
+<button class="hcd-item" onclick="grantQP(100)">+ 100 QP</button>
+<button class="hcd-item" onclick="grantQP(1000)">+ 1K QP</button>
+<div class="hcd-input-row">
+<input type="number" class="hcd-input" id="cheat-coins-input" placeholder="Amount">
+<button class="hcd-set-btn" onclick="setCoinsFromInput()">SET</button>
+</div>
+<div class="hcd-subtitle">TOGGLES</div>
+<div class="hcd-row">
+<span>Infinite Credits</span>
+<div class="toggle-switch" id="cheat-infinite-toggle" onclick="toggleCheatInfinite()"></div>
+</div>
+<div class="hcd-row">
+<span>Free Purchases</span>
+<div class="toggle-switch" id="cheat-free-toggle" onclick="toggleCheatFree()"></div>
+</div>
+<div class="hcd-subtitle">ACTIONS</div>
+<div class="hcd-grid">
+<button class="hcd-item" onclick="maxAllUpgrades()">Max All Upgrades</button>
+<button class="hcd-item" onclick="unlockQuantum()">Unlock Quantum</button>
+<button class="hcd-item full" onclick="exportSave()">Export Save</button>
+<button class="hcd-item full" onclick="importSave()">Import Save</button>
+</div>
+<button class="hcd-item hcd-danger" onclick="hardReset()">HARD RESET</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ── TAP ZONE ──────────────────────────── -->
+
+<div id="tap-zone" class="tap-zone-menus-open">
+<div id="tap-pulse"></div>
+<div id="tap-label">TAP</div>
+</div>
+
+<!-- ── DRAWER (BOTTOM) ────────────────────── -->
+
+<div id="drawer">
+<!-- Drag handle -->
+<div id="drawer-handle">
+<div id="drawer-handle-bar"></div>
+</div>
+
+<!-- Tabs -->
+
+<div id="tabs">
+<button class="tab-btn active" id="tab-pps" onclick="switchTab('pps')">PASSIVE</button>
+<button class="tab-btn" id="tab-ppc" onclick="switchTab('ppc')">CLICKER</button>
+<button class="tab-btn" id="tab-offline" onclick="switchTab('offline')">OFFLINE</button>
+<button class="tab-btn" id="tab-quantum" onclick="switchTab('quantum')">QUANTUM</button>
+<button class="tab-btn" id="tab-stats" onclick="switchTab('stats')">STATS</button>
+<button class="tab-btn" id="tab-settings" onclick="switchTab('settings')">SETTINGS</button>
+</div>
+
+<!-- Buy amount buttons -->
+
+<div id="buy-bar">
+<button class="buy-btn active" onclick="setBuy(1)">×1</button>
+<button class="buy-btn" onclick="setBuy(10)">×10</button>
+<button class="buy-btn" onclick="setBuy(25)">×25</button>
+<button class="buy-btn" onclick="setBuy(100)">×100</button>
+<button class="buy-btn" onclick="setBuy(0)">MAX</button>
+</div>
+
+<!-- Idle bar -->
+
+<div id="idle-bar-wrap"><div id="idle-bar"></div></div>
+
+<!-- Content -->
+
+<div id="drawer-content">
+<!-- Upgrades (PPS/PPC) -->
+<div id="upgrades-list"></div>
+
+<!-- Offline upgrades -->
+
+<div id="offline-list"></div>
+
+<!-- Quantum upgrades -->
+
+<div id="quantum-list"></div>
+
+<!-- Stats panel -->
+
+<div id="stats-panel">
+<div class="panel-section">
+<h3>SESSION</h3>
+<div class="panel-row">
+<span class="panel-label">Total Earned</span>
+<span class="panel-val" id="stat-total">0</span>
+</div>
+<div class="panel-row">
+<span class="panel-label">All-Time Taps</span>
+<span class="panel-val hl" id="stat-taps">0</span>
+</div>
+<div class="panel-row">
+<span class="panel-label">Session Time</span>
+<span class="panel-val" id="stat-time">0s</span>
+</div>
+</div>
+<div class="panel-section">
+<h3>PRESTIGE</h3>
+<div class="panel-row">
+<span class="panel-label">Prestige Count</span>
+<span class="panel-val" id="stat-pcount">0</span>
+</div>
+<div class="panel-row">
+<span class="panel-label">Multiplier</span>
+<span class="panel-val hl" id="stat-pmult">×1</span>
+</div>
+<div class="panel-row">
+<span class="panel-label">Fastest Run</span>
+<span class="panel-val" id="stat-pfast">—</span>
+</div>
+</div>
+<div class="panel-section">
+<h3>QUANTUM</h3>
+<div class="panel-row">
+<span class="panel-label">QP Balance</span>
+<span class="panel-val" id="stat-qp">0</span>
+</div>
+<div class="panel-row">
+<span class="panel-label">Total QP Earned</span>
+<span class="panel-val hl" id="stat-qptotal">0</span>
+</div>
+<div class="panel-row">
+<span class="panel-label">Resets</span>
+<span class="panel-val" id="stat-qcount">0</span>
+</div>
+<div class="panel-row">
+<span class="panel-label">Fastest Run</span>
+<span class="panel-val" id="stat-qfast">—</span>
+</div>
+</div>
+</div>
+
+<!-- Settings panel -->
+
+<div id="settings-panel">
+<div class="panel-section">
+<h3>PREFERENCES</h3>
+<div class="sett-toggle">
+<span class="sett-label">Particles</span>
+<div class="toggle-switch on" id="toggle-particles" onclick="toggleSetting('particles')"></div>
+</div>
+<div class="sett-toggle">
+<span class="sett-label">Floating Numbers</span>
+<div class="toggle-switch on" id="toggle-floats" onclick="toggleSetting('floats')"></div>
+</div>
+<div class="sett-toggle">
+<span class="sett-label">Prestige Confirm</span>
+<div class="toggle-switch on" id="toggle-pconf" onclick="toggleSetting('pconf')"></div>
+</div>
+<div class="sett-toggle">
+<span class="sett-label">Auto-Save</span>
+<div class="toggle-switch on" id="toggle-autosave" onclick="toggleSetting('autosave')"></div>
+</div>
+</div>
+
+<div class="panel-section">
+<h3>THEME</h3>
+<div class="theme-grid" id="theme-grid"></div>
+</div>
+
+<div class="panel-section">
+<h3>DATA</h3>
+<button class="panel-btn" onclick="exportSave()">EXPORT SAVE</button>
+<button class="panel-btn" onclick="importSave()">IMPORT SAVE</button>
+<button class="panel-btn danger" onclick="hardReset()">HARD RESET</button>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+
+<script>
+'use strict';
+// ═══════════════════════════════════════════
+//  GAME DATA
+// ═══════════════════════════════════════════
+const PPS=[
+  {id:'pps1',name:'Data Node',icon:'💾',desc:'Passive credit stream',base:15,growth:1.15,output:0.1,owned:0,max:1e15},
+  {id:'pps2',name:'Network Relay',icon:'📡',desc:'Multiplies throughput',base:100,growth:1.15,output:1,owned:0,max:5e14},
+  {id:'pps3',name:'Quantum Server',icon:'🖥️',desc:'High-speed computation',base:1100,growth:1.15,output:8,owned:0,max:2e14},
+  {id:'pps4',name:'AI Core',icon:'🤖',desc:'Autonomous processing',base:12000,growth:1.15,output:47,owned:0,max:1e14},
+  {id:'pps5',name:'Neural Matrix',icon:'🧠',desc:'Advanced intelligence',base:130000,growth:1.15,output:260,owned:0,max:5e13},
+  {id:'pps6',name:'Fusion Reactor',icon:'⚡',desc:'Unlimited power',base:1400000,growth:1.15,output:1400,owned:0,max:2e13},
+  {id:'pps7',name:'Wormhole Gate',icon:'🌀',desc:'Dimensional routing',base:20000000,growth:1.15,output:7800,owned:0,max:1e13},
+  {id:'pps8',name:'Star Forge',icon:'⭐',desc:'Stellar manufacturing',base:330000000,growth:1.15,output:44000,owned:0,max:5e12},
+  {id:'pps9',name:'Dyson Sphere',icon:'🌞',desc:'Solar harvesting',base:5100000000,growth:1.15,output:260000,owned:0,max:2e12},
+  {id:'pps10',name:'Reality Engine',icon:'🔮',desc:'Bends spacetime',base:75000000000,growth:1.15,output:1600000,owned:0,max:1e12},
+  {id:'pps11',name:'Time Crystal',icon:'💎',desc:'Temporal acceleration',base:1000000000000,growth:1.15,output:10000000,owned:0,max:5e11},
+  {id:'pps12',name:'Dark Matter Siphon',icon:'🌑',desc:'Extracts void energy',base:14000000000000,growth:1.15,output:65000000,owned:0,max:2e11},
+  {id:'pps13',name:'Singularity Core',icon:'⚫',desc:'Infinite density power',base:170000000000000,growth:1.15,output:430000000,owned:0,max:1e11},
+  {id:'pps14',name:'Multiverse Gateway',icon:'🌌',desc:'Cross-dimensional access',base:2100000000000000,growth:1.15,output:2900000000,owned:0,max:5e10},
+  {id:'pps15',name:'Cosmic Throne',icon:'👑',desc:'Ultimate dominion',base:26000000000000000,growth:1.15,output:21000000000,owned:0,max:2e10},
+];
+
+const PPC=[
+  {id:'ppc1',name:'Nano Cursor',icon:'👆',desc:'Enhances tap power',base:10,growth:1.15,output:0.1,owned:0,max:1e15},
+  {id:'ppc2',name:'Tactile Glove',icon:'🧤',desc:'Precision tapping',base:110,growth:1.15,output:1,owned:0,max:5e14},
+  {id:'ppc3',name:'Haptic Gauntlet',icon:'🥊',desc:'Force amplification',base:1200,growth:1.15,output:8,owned:0,max:2e14},
+  {id:'ppc4',name:'Neural Interface',icon:'🔌',desc:'Mind-to-tap sync',base:13000,growth:1.15,output:47,owned:0,max:1e14},
+  {id:'ppc5',name:'Cyber Implant',icon:'🦾',desc:'Enhanced reflexes',base:140000,growth:1.15,output:260,owned:0,max:5e13},
+  {id:'ppc6',name:'Quantum Finger',icon:'☝️',desc:'Superposition taps',base:1500000,growth:1.15,output:1400,owned:0,max:2e13},
+  {id:'ppc7',name:'Gravity Well',icon:'🌐',desc:'Attracts credits',base:21000000,growth:1.15,output:7800,owned:0,max:1e13},
+  {id:'ppc8',name:'Plasma Stylus',icon:'✍️',desc:'Ionized touches',base:340000000,growth:1.15,output:44000,owned:0,max:5e12},
+  {id:'ppc9',name:'Phase Shifter',icon:'🔄',desc:'Multidimensional taps',base:5200000000,growth:1.15,output:260000,owned:0,max:2e12},
+  {id:'ppc10',name:'Void Pointer',icon:'🕳️',desc:'Taps from nowhere',base:76000000000,growth:1.15,output:1600000,owned:0,max:1e12},
+  {id:'ppc11',name:'Temporal Echo',icon:'⏱️',desc:'Duplicate taps in time',base:1100000000000,growth:1.15,output:10000000,owned:0,max:5e11},
+  {id:'ppc12',name:'Antimatter Touch',icon:'💥',desc:'Explosive tap power',base:15000000000000,growth:1.15,output:65000000,owned:0,max:2e11},
+  {id:'ppc13',name:'Entropy Finger',icon:'🌪️',desc:'Chaos-fueled clicks',base:180000000000000,growth:1.15,output:430000000,owned:0,max:1e11},
+  {id:'ppc14',name:'Omnipresent Hand',icon:'🖐️',desc:'Tap everywhere at once',base:2200000000000000,growth:1.15,output:2900000000,owned:0,max:5e10},
+  {id:'ppc15',name:'Divine Touch',icon:'✨',desc:'Godlike tapping',base:27000000000000000,growth:1.15,output:21000000000,owned:0,max:2e10},
+];
+
+const OFFLINE_UPGRADES=[
+  {id:'off1',name:'Offline Cache',icon:'💾',desc:'Gain 50% credits while offline (10min cap)',cost:5000,bought:false},
+  {id:'off2',name:'Extended Cache',icon:'📦',desc:'Offline cap → 30min',cost:50000,bought:false},
+  {id:'off3',name:'Persistent Storage',icon:'🗄️',desc:'Offline cap → 1hr',cost:500000,bought:false},
+  {id:'off4',name:'Cloud Sync',icon:'☁️',desc:'Offline cap → 4hr',cost:5000000,bought:false},
+  {id:'off5',name:'Neural Backup',icon:'🧠',desc:'Offline cap → 12hr',cost:50000000,bought:false},
+  {id:'off6',name:'Quantum Archive',icon:'⚛️',desc:'Offline cap → 24hr',cost:500000000,bought:false},
+  {id:'off7',name:'Temporal Vault',icon:'⏰',desc:'Offline cap → 48hr',cost:5000000000,bought:false},
+  {id:'off8',name:'Efficiency I',icon:'⚙️',desc:'Offline rate → 75%',cost:10000000,bought:false},
+  {id:'off9',name:'Efficiency II',icon:'🔧',desc:'Offline rate → 100%',cost:100000000,bought:false},
+  {id:'off10',name:'Deep Sleep Mode',icon:'😴',desc:'Offline rate → 125%',cost:1000000000,bought:false},
+];
+
+const QUANTUM_UPGRADES=[
+  {id:'q1',name:'Quantum Overclock',icon:'💠',desc:'×2 to all passive production',cost:10,costMult:2.5,output:2,owned:0,max:100},
+  {id:'q2',name:'Entangled Boost',icon:'🔗',desc:'×2 to all tap power',cost:10,costMult:2.5,output:2,owned:0,max:100},
+  {id:'q3',name:'Wave Collapse',icon:'🌊',desc:'×1.5 to prestige multiplier',cost:50,costMult:3,output:1.5,owned:0,max:50},
+  {id:'q4',name:'Superposition',icon:'⚡',desc:'×2 to all credit gain',cost:100,costMult:4,output:2,owned:0,max:30},
+  {id:'q5',name:'Quantum Tunneling',icon:'🕳️',desc:'×3 to offline production',cost:250,costMult:5,output:3,owned:0,max:20},
+];
+
+// ═══════════════════════════════════════════
+//  GAME STATE
+// ═══════════════════════════════════════════
+const G={
+  coins:0,
+  totalCoins:0,
+  prestigeCount:0,
+  prestigeMult:1,
+  prestigeRunStart:Date.now(),
+  fastestPrestigeMs:0,
+  quantumUnlocked:false,
+  quantumPoints:0,
+  totalQuantumPoints:0,
+  quantumCount:0,
+  quantumRunStart:Date.now(),
+  fastestQuantumMs:0,
+  sessionStart:Date.now(),
+  lastSeen:Date.now(),
+};
+
+const S={
+  particles:true,
+  floats:true,
+  pconf:true,
+  autosave:true,
+  theme:'nexus',
+};
+
+// UI state
+let activeTab='pps';
+let drawerOpen=true;
+let buyAmt=1;
+let interactionLocked=false;
+
+// Cheats
+let cheatInfiniteCoins=false;
+let cheatFreeBuy=false;
+
+// ═══════════════════════════════════════════
+//  FORMULAS
+// ═══════════════════════════════════════════
+function upgradeCost(u,amt=1){
+  if(u.owned>=u.max)return Infinity;
+  if(amt===0){
+    let sum=0,lv=u.owned;
+    while(lv<u.max){sum+=u.base*Math.pow(u.growth,lv);lv++;}
+    return sum;
+  }
+  const end=Math.min(u.owned+amt,u.max);
+  let sum=0;
+  for(let i=u.owned;i<end;i++)sum+=u.base*Math.pow(u.growth,i);
+  return sum;
+}
+function totalCPS(){
+  let sum=0;
+  PPS.forEach(u=>sum+=u.output*u.owned);
+  sum*=G.prestigeMult;
+  QUANTUM_UPGRADES.forEach(q=>{
+    if(q.id==='q1')sum*=Math.pow(q.output,q.owned);
+    if(q.id==='q4')sum*=Math.pow(q.output,q.owned);
+  });
+  return sum;
+}
+function tapAmt(){
+  let sum=1;
+  PPC.forEach(u=>sum+=u.output*u.owned);
+  sum*=G.prestigeMult;
+  QUANTUM_UPGRADES.forEach(q=>{
+    if(q.id==='q2')sum*=Math.pow(q.output,q.owned);
+    if(q.id==='q4')sum*=Math.pow(q.output,q.owned);
+  });
+  let pMult=1;
+  QUANTUM_UPGRADES.forEach(q=>{if(q.id==='q3')pMult*=Math.pow(q.output,q.owned);});
+  sum*=pMult;
+  return sum;
+}
+function totalMult(){
+  let m=G.prestigeMult;
+  QUANTUM_UPGRADES.forEach(q=>{if(q.id==='q3')m*=Math.pow(q.output,q.owned);});
+  return m;
+}
+function presThresh(){return 1e6*Math.pow(10,G.prestigeCount);}
+function quantumThresh(){return 1e15*Math.pow(100,G.quantumCount);}
+function quantumReward(){
+  const over=G.coins/quantumThresh();
+  return Math.floor(100*Math.log10(Math.max(1,over))+100);
+}
+function offlineCapSecs(){
+  let cap=0;
+  if(OFFLINE_UPGRADES[0].bought)cap=600;
+  if(OFFLINE_UPGRADES[1].bought)cap=1800;
+  if(OFFLINE_UPGRADES[2].bought)cap=3600;
+  if(OFFLINE_UPGRADES[3].bought)cap=14400;
+  if(OFFLINE_UPGRADES[4].bought)cap=43200;
+  if(OFFLINE_UPGRADES[5].bought)cap=86400;
+  if(OFFLINE_UPGRADES[6].bought)cap=172800;
+  return cap;
+}
+function offlineRateMult(){
+  let m=0.5;
+  if(OFFLINE_UPGRADES[7].bought)m=0.75;
+  if(OFFLINE_UPGRADES[8].bought)m=1;
+  if(OFFLINE_UPGRADES[9].bought)m=1.25;
+  QUANTUM_UPGRADES.forEach(q=>{if(q.id==='q5')m*=Math.pow(q.output,q.owned);});
+  return m;
+}
+
+// ═══════════════════════════════════════════
+//  FORMATTING
+// ═══════════════════════════════════════════
+function fmt(n){
+  if(n<1e3)return Math.floor(n).toLocaleString();
+  if(n<1e6)return(n/1e3).toFixed(1)+'K';
+  if(n<1e9)return(n/1e6).toFixed(2)+'M';
+  if(n<1e12)return(n/1e9).toFixed(2)+'B';
+  if(n<1e15)return(n/1e12).toFixed(2)+'T';
+  if(n<1e18)return(n/1e15).toFixed(2)+'Qa';
+  if(n<1e21)return(n/1e18).toFixed(2)+'Qi';
+  if(n<1e24)return(n/1e21).toFixed(2)+'Sx';
+  if(n<1e27)return(n/1e24).toFixed(2)+'Sp';
+  if(n<1e30)return(n/1e27).toFixed(2)+'Oc';
+  return(n/1e30).toFixed(2)+'No';
+}
+function fmtTime(ms){
+  const s=Math.floor(ms/1000);
+  if(s<60)return s+'s';
+  const m=Math.floor(s/60),sec=s%60;
+  if(m<60)return m+'m '+sec+'s';
+  const h=Math.floor(m/60),min=m%60;
+  return h+'h '+min+'m';
+}
+
+// ═══════════════════════════════════════════
+//  UI UPDATE
+// ═══════════════════════════════════════════
+function updateUI(){
+  document.getElementById('credit-count').textContent=fmt(G.coins);
+  document.getElementById('cps-val').textContent=fmt(totalCPS());
+  document.getElementById('tap-val').textContent='+'+fmt(tapAmt());
+  document.getElementById('mult-val').textContent='×'+fmt(totalMult());
+
+  const pb=document.getElementById('prestige-btn');
+  const qb=document.getElementById('quantum-btn');
+  if(G.coins>=presThresh()){
+    pb.style.display='block';
+    pb.textContent='⬆ PRESTIGE (×2 MULT)';
+  }else{
+    pb.style.display='none';
+  }
+  if(G.coins>=quantumThresh()){
+    qb.style.display='block';
+    qb.textContent=`⚛ QUANTUM (+${quantumReward()} QP)`;
+  }else if(G.quantumUnlocked){
+    qb.style.display='block';
+    qb.textContent=`⚛ QUANTUM (${fmt(quantumThresh())} ℂ)`;
+  }else{
+    qb.style.display='none';
+  }
+
+  // Stats panel
+  document.getElementById('stat-total').textContent=fmt(G.totalCoins);
+  document.getElementById('stat-taps').textContent='—';
+  document.getElementById('stat-time').textContent=fmtTime(Date.now()-G.sessionStart);
+  document.getElementById('stat-pcount').textContent=G.prestigeCount;
+  document.getElementById('stat-pmult').textContent='×'+fmt(G.prestigeMult);
+  document.getElementById('stat-pfast').textContent=G.fastestPrestigeMs?fmtTime(G.fastestPrestigeMs):'—';
+  document.getElementById('stat-qp').textContent=G.quantumPoints;
+  document.getElementById('stat-qptotal').textContent=G.totalQuantumPoints;
+  document.getElementById('stat-qcount').textContent=G.quantumCount;
+  document.getElementById('stat-qfast').textContent=G.fastestQuantumMs?fmtTime(G.fastestQuantumMs):'—';
+
+  // Quantum tab visibility
+  const qtab=document.getElementById('tab-quantum');
+  if(G.quantumUnlocked) qtab.style.display='block';
+  else qtab.style.display='none';
+}
+
+// ═══════════════════════════════════════════
+//  RENDER UPGRADES
+// ═══════════════════════════════════════════
+function renderUpgrades(){
+  const list=document.getElementById('upgrades-list');
+  const arr=activeTab==='pps'?PPS:PPC;
+  list.innerHTML='';
+  arr.forEach(u=>{
+    const cost=upgradeCost(u,buyAmt===0?0:buyAmt);
+    const canAfford=cheatFreeBuy||G.coins>=cost;
+    const maxed=u.owned>=u.max;
+    const card=document.createElement('div');
+    card.className='upg-card'+(maxed?' maxed':'')+(canAfford?'':' cant-afford');
+    card.innerHTML=`
+      <div class="upg-top">
+        <div class="upg-icon">${u.icon}</div>
+        <div class="upg-name-wrap">
+          <div class="upg-name">${u.name}</div>
+          <div class="upg-desc">${u.desc}</div>
+        </div>
+      </div>
+      <div class="upg-info">
+        <span class="upg-owned">Owned: ${fmt(u.owned)}/${fmt(u.max)}</span>
+        <span class="upg-cost">${maxed?'MAX':fmt(cost)+' ℂ'}</span>
+      </div>
+    `;
+    if(!maxed)card.onclick=()=>buyUpgrade(u);
+    list.appendChild(card);
+  });
+}
+
+function renderOffline(){
+  const list=document.getElementById('offline-list');
+  list.innerHTML='';
+  OFFLINE_UPGRADES.forEach(u=>{
+    const canAfford=cheatFreeBuy||G.coins>=u.cost;
+    const card=document.createElement('div');
+    card.className='off-card'+(u.bought?' bought':'')+(canAfford?'':' cant-afford');
+    card.innerHTML=`
+      <div class="off-top">
+        <div class="off-icon">${u.icon}</div>
+        <div class="off-name-wrap">
+          <div class="off-name">${u.name}</div>
+          <div class="off-desc">${u.desc}</div>
+        </div>
+      </div>
+      <div class="off-cost-wrap">
+        <span class="off-cost">${u.bought?'OWNED':fmt(u.cost)+' ℂ'}</span>
+      </div>
+    `;
+    if(!u.bought)card.onclick=()=>buyOffline(u);
+    list.appendChild(card);
+  });
+}
+
+function renderQuantum(){
+  const list=document.getElementById('quantum-list');
+  list.innerHTML='';
+  QUANTUM_UPGRADES.forEach(u=>{
+    const cost=u.cost*Math.pow(u.costMult,u.owned);
+    const canAfford=G.quantumPoints>=cost;
+    const maxed=u.owned>=u.max;
+    const card=document.createElement('div');
+    card.className='qup-card'+(maxed?' maxed':'')+(canAfford?'':' cant-afford');
+    card.innerHTML=`
+      <div class="qup-top">
+        <div class="qup-icon">${u.icon}</div>
+        <div class="qup-name-wrap">
+          <div class="qup-name">${u.name}</div>
+          <div class="qup-desc">${u.desc}</div>
+        </div>
+      </div>
+      <div class="qup-info">
+        <span class="qup-owned">Owned: ${u.owned}/${u.max}</span>
+        <span class="qup-cost">${maxed?'MAX':Math.floor(cost)+' QP'}</span>
+      </div>
+    `;
+    if(!maxed)card.onclick=()=>buyQuantum(u);
+    list.appendChild(card);
+  });
+}
+
+// ═══════════════════════════════════════════
+//  PARTICLES & FLOATS
+// ═══════════════════════════════════════════
+const canvas=document.getElementById('particles');
+const ctx=canvas.getContext('2d');
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+const particles=[];
+
+function spawnSparks(x,y,col='#00f5ff'){
+  if(!S.particles)return;
+  for(let i=0;i<8;i++){
+    const angle=Math.random()*Math.PI*2;
+    const speed=2+Math.random()*4;
+    particles.push({x,y,vx:Math.cos(angle)*speed,vy:Math.sin(angle)*speed,life:1,col});
+  }
+}
+function spawnFloat(x,y,txt){
+  if(!S.floats)return;
+  const div=document.createElement('div');
+  div.className='float-num';
+  div.textContent=txt;
+  div.style.left=x+'px';
+  div.style.top=y+'px';
+  document.body.appendChild(div);
+  setTimeout(()=>div.remove(),1000);
+}
+
+function animParticles(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  for(let i=particles.length-1;i>=0;i--){
+    const p=particles[i];
+    p.x+=p.vx;p.y+=p.vy;p.vy+=0.15;p.life-=0.02;
+    if(p.life<=0){particles.splice(i,1);continue;}
+    ctx.globalAlpha=p.life;
+    ctx.fillStyle=p.col;
+    ctx.fillRect(p.x,p.y,3,3);
+  }
+  ctx.globalAlpha=1;
+  requestAnimationFrame(animParticles);
+}
+animParticles();
+
+window.addEventListener('resize',()=>{
+  canvas.width=window.innerWidth;
+  canvas.height=window.innerHeight;
+});
+
+// ═══════════════════════════════════════════
+//  SAVE / LOAD
+// ═══════════════════════════════════════════
+function saveGame(){
+  if(!S.autosave)return;
+  G.lastSeen=Date.now();
+  const data={
+    G,
+    PPS:PPS.map(u=>({id:u.id,owned:u.owned})),
+    PPC:PPC.map(u=>({id:u.id,owned:u.owned})),
+    OFFLINE:OFFLINE_UPGRADES.map(u=>({id:u.id,bought:u.bought})),
+    QUANTUM:QUANTUM_UPGRADES.map(u=>({id:u.id,owned:u.owned})),
+    S,
+  };
+  localStorage.setItem('nexus_v4',JSON.stringify(data));
+}
+
+function loadGame(){
+  const raw=localStorage.getItem('nexus_v4');
+  if(!raw)return;
+  try{
+    const data=JSON.parse(raw);
+    Object.assign(G,data.G);
+    data.PPS.forEach(d=>{const u=PPS.find(x=>x.id===d.id);if(u)u.owned=d.owned;});
+    data.PPC.forEach(d=>{const u=PPC.find(x=>x.id===d.id);if(u)u.owned=d.owned;});
+    data.OFFLINE.forEach(d=>{const u=OFFLINE_UPGRADES.find(x=>x.id===d.id);if(u)u.bought=d.bought;});
+    if(data.QUANTUM)data.QUANTUM.forEach(d=>{const u=QUANTUM_UPGRADES.find(x=>x.id===d.id);if(u)u.owned=d.owned;});
+    if(data.S)Object.assign(S,data.S);
+  }catch(e){console.error('Load failed',e);}
+}
+
+function exportSave(){
+  saveGame();
+  const raw=localStorage.getItem('nexus_v4');
+  if(!raw)return alert('No save data');
+  const blob=new Blob([raw],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download='nexus_save.json';
+  a.click();
+  showToast('EXPORT','Save exported successfully');
+}
+
+function importSave(){
+  const input=document.createElement('input');
+  input.type='file';
+  input.accept='application/json';
+  input.onchange=e=>{
+    const file=e.target.files[0];
+    if(!file)return;
+    const reader=new FileReader();
+    reader.onload=ev=>{
+      try{
+        localStorage.setItem('nexus_v4',ev.target.result);
+        location.reload();
+      }catch(err){alert('Import failed');}
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+}
+
+function hardReset(){
+  if(!confirm('HARD RESET? All progress will be PERMANENTLY DELETED.'))return;
+  localStorage.removeItem('nexus_v4');
+  location.reload();
+}
+
+// ═══════════════════════════════════════════
+//  TOASTS
+// ═══════════════════════════════════════════
+function showToast(title,msg){
+  const container=document.getElementById('toast-container');
+  const toast=document.createElement('div');
+  toast.className='toast';
+  toast.innerHTML=`<div class="toast-title">${title}</div><div class="toast-msg">${msg}</div>`;
+  container.appendChild(toast);
+  setTimeout(()=>toast.remove(),3000);
+}
+
+function showOfflineToast(earned,sec,capped){
+  const msg=`Earned <span class="toast-hl">${fmt(earned)} ℂ</span> while offline (${fmtTime(sec*1000)})${capped?' [CAPPED]':''}`;
+  showToast('OFFLINE GAINS',msg);
+}
+
+function showHowToToast(){
+  showToast('WELCOME','Tap the center to earn credits. Buy upgrades to automate and boost production!');
+  localStorage.setItem('nexus_seen_howto','1');
+}
+
+// ═══════════════════════════════════════════
+//  THEMES
+// ═══════════════════════════════════════════
+const THEMES={
+  nexus:{name:'NEXUS',c1:'#00f5ff',bg:'#020810'},
+  ember:{name:'EMBER',c1:'#ff6b00',bg:'#1a0a00'},
+  verdant:{name:'VERDANT',c1:'#39ff14',bg:'#001a00'},
+  royal:{name:'ROYAL',c1:'#a855f7',bg:'#0f0520'},
+  noir:{name:'NOIR',c1:'#ffffff',bg:'#000000'},
+  sunset:{name:'SUNSET',c1:'#ff006e',bg:'#1a0010'},
+};
+
+function applyTheme(key,save=true){
+  const t=THEMES[key];
+  if(!t)return;
+  const root=document.documentElement;
+  root.style.setProperty('--c1',t.c1);
+  root.style.setProperty('--bg',t.bg);
+  root.style.setProperty('--bg2',`color-mix(in srgb, ${t.bg} 60%, #000)`);
+  root.style.setProperty('--c1dim',`color-mix(in srgb, ${t.c1} 15%, transparent)`);
+  root.style.setProperty('--c1glow',`color-mix(in srgb, ${t.c1} 30%, transparent)`);
+  root.style.setProperty('--border',`color-mix(in srgb, ${t.c1} 28%, transparent)`);
+  root.style.setProperty('--border2',`color-mix(in srgb, ${t.c1} 12%, transparent)`);
+  root.style.setProperty('--ring1',`color-mix(in srgb, ${t.c1} 45%, transparent)`);
+  root.style.setProperty('--grid-c',`color-mix(in srgb, ${t.c1} 5%, transparent)`);
+  document.getElementById('theme-meta').setAttribute('content',t.c1);
+  if(save){S.theme=key;saveGame();}
+}
+
+function buildThemes(){
+  const grid=document.getElementById('theme-grid');
+  Object.keys(THEMES).forEach(k=>{
+    const card=document.createElement('div');
+    card.className='theme-card'+(S.theme===k?' active':'');
+    card.textContent=THEMES[k].name;
+    card.onclick=()=>{
+      applyTheme(k);
+      document.querySelectorAll('.theme-card').forEach(c=>c.classList.remove('active'));
+      card.classList.add('active');
+    };
+    grid.appendChild(card);
+  });
+}
+
+function applySettings(){
+  ['particles','floats','pconf','autosave'].forEach(k=>{
+    const el=document.getElementById('toggle-'+k);
+    if(el)el.classList.toggle('on',S[k]);
+  });
+  applyTheme(S.theme,false);
+}
+
+function toggleSetting(key){
+  S[key]=!S[key];
+  document.getElementById('toggle-'+key).classList.toggle('on',S[key]);
+  saveGame();
+}
+
+// ═══════════════════════════════════════════
+//  CHEAT MENU
+// ═══════════════════════════════════════════
+function toggleHeaderCheatMenu(){
+  const btn=document.getElementById('header-cheat-btn');
+  const dd=document.getElementById('header-cheat-dd');
+  const open=dd.classList.toggle('open');
+  btn.classList.toggle('open',open);
+  if(open)interactionLocked=true;
+  else interactionLocked=false;
+}
+
+function closeHeaderCheatMenu(){
+  document.getElementById('header-cheat-dd').classList.remove('open');
+  document.getElementById('header-cheat-btn').classList.remove('open');
+  interactionLocked=false;
+}
+
+function grantCoins(amt){G.coins+=amt;updateUI();saveGame();}
+function grantQP(amt){G.quantumPoints+=amt;G.totalQuantumPoints+=amt;updateUI();saveGame();}
+function setCoinsFromInput(){
+  const val=parseFloat(document.getElementById('cheat-coins-input').value);
+  if(!isNaN(val)){G.coins=val;updateUI();saveGame();}
+}
+
+function toggleCheatInfinite(){
+  cheatInfiniteCoins=!cheatInfiniteCoins;
+  document.getElementById('cheat-infinite-toggle').classList.toggle('on',cheatInfiniteCoins);
+  if(cheatInfiniteCoins)G.coins=Number.MAX_SAFE_INTEGER;
+  updateUI();
+}
+
+function toggleCheatFree(){
+  cheatFreeBuy=!cheatFreeBuy;
+  document.getElementById('cheat-free-toggle').classList.toggle('on',cheatFreeBuy);
+}
+
+function maxAllUpgrades(){
+  [...PPS,...PPC].forEach(u=>u.owned=u.max);
+  OFFLINE_UPGRADES.forEach(u=>u.bought=true);
+  QUANTUM_UPGRADES.forEach(u=>u.owned=u.max);
+  saveGame();updateUI();
+  if(activeTab==='pps'||activeTab==='ppc')renderUpgrades();
+  else if(activeTab==='offline')renderOffline();
+  else if(activeTab==='quantum')renderQuantum();
+  showToast('CHEATS','All upgrades maxed');
+}
+
+function unlockQuantum(){
+  G.quantumUnlocked=true;
+  updateUI();
+  showToast('CHEATS','Quantum unlocked');
+}
+
+// Check if dev cheat should be visible
+(function(){
+  const params=new URLSearchParams(location.search);
+  if(params.has('dev')||localStorage.getItem('nexus_dev')==='1'){
+    document.getElementById('header-cheat-wrap').hidden=false;
+    localStorage.setItem('nexus_dev','1');
+  }
+})();
+
+// ═══════════════════════════════════════════
+//  BUY FUNCTIONS
+// ═══════════════════════════════════════════
+function buyUpgrade(u){
+  if(u.owned>=u.max)return;
+  const cost=upgradeCost(u,buyAmt===0?0:buyAmt);
+  if(cheatInfiniteCoins && !cheatFreeBuy && G.coins<cost) G.coins=Number.MAX_SAFE_INTEGER;
+  if(!cheatFreeBuy && G.coins<cost)return;
+
+  const amt=buyAmt===0?u.max-u.owned:Math.min(buyAmt,u.max-u.owned);
+  if(!cheatFreeBuy)G.coins-=cost;
+  u.owned+=amt;
+
+  const isPPC=(activeTab==='ppc');
+  const r=document.querySelector('.upg-card');
+  if(r){
+    const themeCol=()=>getComputedStyle(document.body).getPropertyValue('--c1').trim();
+    const col=isPPC?getComputedStyle(document.body).getPropertyValue('--c6').trim():themeCol();
+    spawnSparks(r.getBoundingClientRect().left+r.getBoundingClientRect().width/2,r.getBoundingClientRect().top+r.getBoundingClientRect().height/2,col);
+  }
+  saveGame();updateUI();
+  renderUpgrades();
+}
+
+function buyOffline(u){
+  if(u.bought)return;
+  if(cheatInfiniteCoins && !cheatFreeBuy && G.coins<u.cost) G.coins=Number.MAX_SAFE_INTEGER;
+  if(!cheatFreeBuy && G.coins<u.cost)return;
+  if(!cheatFreeBuy) G.coins-=u.cost;
+  u.bought=true;
+  spawnSparks(window.innerWidth/2,window.innerHeight*0.6,getComputedStyle(document.body).getPropertyValue('--c5').trim()||'#ffd60a');
+  saveGame();updateUI();
+  renderOffline();
+}
+
+function buyQuantum(u){
+  if(u.owned>=u.max)return;
+  const cost=u.cost*Math.pow(u.costMult,u.owned);
+  if(G.quantumPoints<cost)return;
+  G.quantumPoints-=Math.floor(cost);
+  u.owned++;
+  spawnSparks(window.innerWidth/2,window.innerHeight*0.6,getComputedStyle(document.body).getPropertyValue('--c6').trim()||'#ff6b00');
+  saveGame();updateUI();
+  renderQuantum();
+}
+
+// ═══════════════════════════════════════════
+//  TAB / DRAWER
+// ═══════════════════════════════════════════
+function syncTapDrawerLayout(){
+  const dr=document.getElementById('drawer');
+  const tz=document.getElementById('tap-zone');
+  if(!dr||!tz)return;
+  const open=!dr.classList.contains('collapsed');
+  tz.classList.remove('tap-zone-menus-open','tap-zone-menus-closed');
+  if(open){
+    tz.classList.add('tap-zone-menus-open');
+  }else{
+    tz.classList.add('tap-zone-menus-closed');
+  }
+}
+
+function switchTab(tab){
+  if(tab===activeTab){
+    drawerOpen=!drawerOpen;
+    document.getElementById('drawer').classList.toggle('collapsed',!drawerOpen);
+    syncTapDrawerLayout();
+    return;
+  }
+  if(tab==='quantum' && !G.quantumUnlocked) return;
+  activeTab=tab;
+  drawerOpen=true;
+  document.getElementById('drawer').classList.remove('collapsed');
+
+  ['pps','ppc','offline','quantum','stats','settings'].forEach(t=>{
+    const btn=document.getElementById('tab-'+t);
+    if(btn) btn.classList.toggle('active',t===tab);
+  });
+
+  const ul=document.getElementById('upgrades-list');
+  const ol=document.getElementById('offline-list');
+  const ql=document.getElementById('quantum-list');
+  const sp=document.getElementById('settings-panel');
+  const st=document.getElementById('stats-panel');
+  const bb=document.getElementById('buy-bar');
+
+  ul.style.display='none';
+  ol.classList.remove('vis');
+  ql.classList.remove('vis');
+  sp.classList.remove('vis');
+  st.classList.remove('vis');
+  bb.style.display='none';
+
+  if(tab==='pps'||tab==='ppc'){
+    ul.style.display='flex';
+    bb.style.display='flex';
+    renderUpgrades();
+  } else if(tab==='offline'){
+    ol.classList.add('vis');
+    renderOffline();
+  } else if(tab==='quantum'){
+    ql.classList.add('vis');
+    renderQuantum();
+  } else if(tab==='stats'){
+    st.classList.add('vis');
+  } else if(tab==='settings'){
+    sp.classList.add('vis');
+  }
+  syncTapDrawerLayout();
+}
+
+function setBuy(n){
+  buyAmt=n;
+  const vals=[1,10,25,100,0];
+  document.querySelectorAll('.buy-btn').forEach((b,i)=>b.classList.toggle('active',vals[i]===n));
+  renderUpgrades();
+}
+
+// ═══════════════════════════════════════════
+//  SWIPE-TO-CLOSE DRAWER
+// ═══════════════════════════════════════════
+(function(){
+  const drawer=document.getElementById('drawer');
+  const handle=document.getElementById('drawer-handle');
+  let startY=0,currentY=0,isDragging=false;
+
+  function onStart(e){
+    if(interactionLocked)return;
+    const touch=e.touches?e.touches[0]:e;
+    startY=touch.clientY;
+    currentY=startY;
+    isDragging=true;
+  }
+
+  function onMove(e){
+    if(!isDragging)return;
+    const touch=e.touches?e.touches[0]:e;
+    currentY=touch.clientY;
+    const delta=currentY-startY;
+    if(delta>0){
+      drawer.style.transform=`translateY(${delta}px)`;
+    }
+  }
+
+  function onEnd(e){
+    if(!isDragging)return;
+    isDragging=false;
+    const delta=currentY-startY;
+    drawer.style.transform='';
+    if(delta>80){
+      drawerOpen=false;
+      drawer.classList.add('collapsed');
+      syncTapDrawerLayout();
+    }
+  }
+
+  handle.addEventListener('touchstart',onStart,{passive:true});
+  handle.addEventListener('touchmove',onMove,{passive:true});
+  handle.addEventListener('touchend',onEnd,{passive:true});
+  handle.addEventListener('mousedown',onStart);
+  document.addEventListener('mousemove',onMove);
+  document.addEventListener('mouseup',onEnd);
+})();
+
+// ═══════════════════════════════════════════
+//  TAP ZONE
+// ═══════════════════════════════════════════
+const tapZone=document.getElementById('tap-zone');
+let tapLock=false;
+
+function doTap(cx,cy){
+  if(interactionLocked) return;
+  const amt=tapAmt();
+  if(cheatInfiniteCoins) G.totalCoins+=amt;
+  else{G.coins+=amt;G.totalCoins+=amt;}
+  spawnSparks(cx,cy);
+  spawnFloat(cx,cy,fmt(amt));
+  tapZone.classList.add('tapped');
+  if(!tapLock){tapLock=true;setTimeout(()=>{tapZone.classList.remove('tapped');tapLock=false;},110);}
+  updateUI();
+}
+
+tapZone.addEventListener('click',e=>doTap(e.clientX,e.clientY));
+tapZone.addEventListener('touchstart',e=>{
+  if(interactionLocked){ e.preventDefault(); return; }
+  e.preventDefault();
+  Array.from(e.changedTouches).forEach(t=>doTap(t.clientX,t.clientY));
+},{passive:false});
+
+// ═══════════════════════════════════════════
+//  PRESTIGE & QUANTUM
+// ═══════════════════════════════════════════
+function doPrestige(){
+  if(G.coins<presThresh()) return;
+  if(S.pconf&&!confirm('PRESTIGE RESET? You will lose regular progress for a permanent ×2 boost.'))return;
+  const run=Date.now()-G.prestigeRunStart;
+  if(run>0) G.fastestPrestigeMs=G.fastestPrestigeMs?Math.min(G.fastestPrestigeMs,run):run;
+  G.prestigeCount++;
+  G.prestigeMult*=2;
+  G.coins=0;
+  PPS.forEach(u=>u.owned=0);PPC.forEach(u=>u.owned=0);OFFLINE_UPGRADES.forEach(u=>u.bought=false);
+  G.prestigeRunStart=Date.now();
+  if(cheatInfiniteCoins) G.coins=Number.MAX_SAFE_INTEGER;
+  saveGame();updateUI();
+  if(activeTab==='pps'||activeTab==='ppc') renderUpgrades();
+  else if(activeTab==='offline') renderOffline();
+  else if(activeTab==='quantum') renderQuantum();
+}
+
+function doQuantumReset(){
+  if(G.coins<quantumThresh()) return;
+  if(!confirm('QUANTUM RESET? This will wipe credits, upgrades, and prestige progress for Quantum Points.')) return;
+  const run=Date.now()-G.quantumRunStart;
+  if(run>0) G.fastestQuantumMs=G.fastestQuantumMs?Math.min(G.fastestQuantumMs,run):run;
+  const reward=quantumReward();
+  G.quantumCount++;
+  G.quantumUnlocked=true;
+  G.quantumPoints+=reward;
+  G.totalQuantumPoints+=reward;
+  G.prestigeMult=1;
+  G.prestigeCount=0;
+  G.coins=0;
+  PPS.forEach(u=>u.owned=0);PPC.forEach(u=>u.owned=0);OFFLINE_UPGRADES.forEach(u=>u.bought=false);
+  G.prestigeRunStart=Date.now();
+  G.quantumRunStart=Date.now();
+  saveGame();updateUI();
+  switchTab('quantum');
+  renderQuantum();
+}
+
+// ═══════════════════════════════════════════
+//  GAME TICK
+// ═══════════════════════════════════════════
+let barStep=0;
+setInterval(()=>{
+  const cps=totalCPS(),amt=cps/10;
+  if(cheatInfiniteCoins) G.totalCoins+=amt;
+  else{G.coins+=amt;G.totalCoins+=amt;}
+  barStep=(barStep+(cps>0?1:0))%10;
+  document.getElementById('idle-bar').style.width=(barStep*10)+'%';
+  updateUI();
+},100);
+
+// Auto-save every 15s
+setInterval(saveGame,15000);
+
+// ═══════════════════════════════════════════
+//  VISIBILITY CHANGE
+// ═══════════════════════════════════════════
+document.addEventListener('visibilitychange',()=>{
+  if(document.hidden){saveGame();return;}
+  try{
+    const raw=localStorage.getItem('nexus_v4');
+    if(!raw)return;
+    const d=JSON.parse(raw);
+    const capSec=offlineCapSecs();
+    const rawSec=Math.max(0,(Date.now()-(d.lastSeen||Date.now()))/1000);
+    const sec=Math.min(rawSec,capSec);
+    if(sec>10){
+      const earned=totalCPS()*sec*offlineRateMult();
+      if(earned>0){
+        if(cheatInfiniteCoins) G.totalCoins+=earned;
+        else{G.coins+=earned;G.totalCoins+=earned;}
+        showOfflineToast(earned,sec,rawSec>capSec);
+        saveGame();updateUI();
+      }
+    }
+  }catch(e){}
+});
+
+// ═══════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════
+applyTheme('nexus', false);
+loadGame();
+buildThemes();
+applySettings();
+switchTab('pps');
+updateUI();
+renderOffline();
+if(!localStorage.getItem('nexus_seen_howto')) showHowToToast();
+
+setInterval(()=>{
+  if(activeTab==='pps'||activeTab==='ppc') renderUpgrades();
+  else if(activeTab==='offline') renderOffline();
+  else if(activeTab==='quantum') renderQuantum();
+  else if(activeTab==='stats') updateUI();
+},400);
+
+document.addEventListener('click', (e)=>{
+  const wrap=document.getElementById('header-cheat-wrap');
+  if(!wrap||wrap.hidden)return;
+  if(wrap.contains(e.target))return;
+  closeHeaderCheatMenu();
+});
+</script>
+
+</body>
+</html>
