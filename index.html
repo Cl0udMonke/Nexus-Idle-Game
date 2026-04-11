@@ -740,7 +740,9 @@ OFFLINE TOAST
 DRAG TO CLOSE GESTURE STYLES
 ═══════════════════════════════════════════ */
 #drawer-content{
-  position:relative;touch-action:none;user-select:none;-webkit-user-select:none;
+  position:relative;
+  /* touch-action:none removed to allow scrolling inside lists */
+  user-select:none;-webkit-user-select:none;
 }
 
 .drag-indicator{
@@ -2167,7 +2169,7 @@ drawer.addEventListener('touchmove', e => {
       drawer.style.maxHeight = 'min(52vh, calc(100dvh - 240px))';
     }
   }
-}, { passive: false });
+}, { passive: true });
 
 drawer.addEventListener('touchend', e => {
   if (!inSwipe) return;
@@ -2192,7 +2194,13 @@ drawer.addEventListener('touchend', e => {
 
 // Prevent text selection while swiping
 drawer.addEventListener('touchmove', e => {
-  if (e.touches[0].pageY < startY) {
+  // Only prevent if we are trying to drag the drawer (swipe down)
+  // otherwise let browser handle scroll inside lists
+  const currentY = e.touches[0].pageY;
+  const diff = startY - currentY;
+  
+  // Allow scrolling only if diff is near 0 (not swiping significantly) or if inside a specific scrollable child
+  if (Math.abs(diff) > 20) {
     e.preventDefault();
     e.stopPropagation();
   }
