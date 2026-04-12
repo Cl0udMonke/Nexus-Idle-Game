@@ -737,25 +737,9 @@ OFFLINE TOAST
 }
 
 /* ═══════════════════════════════════════════
-DRAG TO CLOSE GESTURE STYLES
+SCROLLBAR HIDE
 ═══════════════════════════════════════════ */
-#drawer-content{
-  position:relative;
-  /* touch-action:none removed to allow scrolling inside lists */
-  user-select:none;-webkit-user-select:none;
-}
-
-.drag-indicator{
-  position:absolute;top:0;left:0;right:0;height:6px;background:linear-gradient(to bottom, var(--c1), transparent);
-  opacity:0.3;pointer-events:none;transition:opacity 0.15s;display:flex;align-items:center;justify-content:center;}
-
-.drag-indicator.visible{opacity:0.6;}
-
-.drag-handle{
-  position:absolute;top:-10px;left:0;right:0;height:8px;cursor:grab;pointer-events:none;
-  opacity:0;transition:opacity 0.2s;display:flex;align-items:center;justify-content:center;}
-
-.drag-handle.visible{opacity:0.5;}
+::-webkit-scrollbar{display:none;}
 </style>
 </head>
 
@@ -867,9 +851,6 @@ Prestige at 1M credits for a permanent x2 boost.</div>
   <!-- COLLAPSIBLE DRAWER (panels live here) -->
   <div id="drawer">
     <div id="drawer-content">
-      <div class="drag-indicator" id="drag-indicator"></div>
-      <div class="drag-handle" id="drag-handle">⋮</div>
-      
       <!-- BUY BAR (hidden on settings/offline tabs) -->
       <div id="buy-bar">
         <span id="buy-lbl">BUY</span>
@@ -2107,7 +2088,7 @@ setInterval(()=>{
 },400);
 
 // ═══════════════════════════════════════════
-//  DRAG TO CLOSE GESTURE HANDLING — FIXED FOR SCROLLING
+//  DRAG TO CLOSE GESTURE — ONLY ON DRAWER BACKGROUND, NOT CONTENT
 // ═══════════════════════════════════════════
 const drawer=document.getElementById('drawer');
 const drawerContent=document.getElementById('drawer-content');
@@ -2116,7 +2097,6 @@ let startY=0;
 let touchStartY=0;
 let swipeThreshold=150; // pixels to trigger collapse
 let inSwipe=false;
-let lastTouchTime=0;
 
 // Initialize drag indicators
 const indicator=document.getElementById('drag-indicator');
@@ -2125,13 +2105,6 @@ const handle=document.getElementById('drag-handle');
 drawer.addEventListener('touchstart', e => {
   if (drawer.classList.contains('collapsed')) return;
   
-  // Check if touch is inside a scrollable area — if so, DON'T prevent default or set startY
-  const touchTarget = e.target.closest('.upg-row,.off-row,.hcd-item');
-  if (touchTarget && touchTarget.closest('#upgrades-list,#offline-list,#quantum-list')) {
-    // Touch is inside a scrollable list - let browser handle it
-    return;
-  }
-  
   touchStartY = e.touches[0].pageY;
   startY = Date.now();
   inSwipe = false;
@@ -2139,46 +2112,30 @@ drawer.addEventListener('touchstart', e => {
 
 drawer.addEventListener('touchmove', e => {
   const now = Date.now();
-  // Prevent double tap zoom
-  if (now - lastTouchTime < 300) {
-    return; // Don't prevent default, let scroll happen
-  }
+  // Allow scroll in all cases, no prevention
   lastTouchTime = now;
 
   const currentY = e.touches[0].pageY;
   const diff = startY - currentY;
   
-  // Only handle dragging gesture if we're NOT in a scrollable area
-  const touchTarget = e.target.closest('.upg-row,.off-row');
-  const isScrollableArea = touchTarget && touchTarget.closest('#upgrades-list,#offline-list,#quantum-list,#settings-panel');
-  
-  if (isScrollableArea) {
-    // Let browser handle scrolling in these areas
-    return;
-  }
-  
-  // If swiping down, show drag indicator and handle
-  if (diff > swipeThreshold / 2) {
+  // If swiping down past threshold, show drag indicator
+  if (diff > swipeThreshold) {
     indicator.classList.add('visible');
     handle.classList.add('visible');
     inSwipe = true;
     
-    // Calculate how much to collapse the drawer
+    // Collapse drawer gradually
     const maxDrawDown = swipeThreshold * 2;
     const progress = Math.min(diff, maxDrawDown) / maxDrawDown;
     drawer.style.maxHeight = (52 + progress * -48) + 'vh';
   } else {
     indicator.classList.remove('visible');
     handle.classList.remove('visible');
-    if (diff < 0 && diff > -150) {
-      // Swiping up, restore drawer
-      const minDrawUp = Math.min(diff, -swipeThreshold / 2);
-      drawer.style.maxHeight = 'min(52vh, calc(100dvh - 240px))';
-    } else {
-      // Normal position
-      drawer.style.maxHeight = 'min(52vh, calc(100dvh - 240px))';
-    }
+    // Restore drawer height if swiping up or returning to normal
+    drawer.style.maxHeight = 'min(52vh, calc(100dvh - 240px))';
   }
+  
+  lastTouchTime = now;
 }, { passive: true });
 
 drawer.addEventListener('touchend', e => {
@@ -2187,7 +2144,7 @@ drawer.addEventListener('touchend', e => {
   const diff = startY - e.changedTouches[0].pageY;
   
   // If swiped down enough, collapse drawer
-  if (diff > swipeThreshold * 1.5) {
+  if (diff > swipeThreshold * 2) {
     drawer.classList.add('collapsed');
     indicator.classList.remove('visible');
     handle.classList.remove('visible');
@@ -2202,29 +2159,19 @@ drawer.addEventListener('touchend', e => {
   inSwipe = false;
 }, { passive: true });
 
-// Prevent text selection while swiping — only outside scrollable areas
+// Prevent text selection while swiping — only on background swipe gesture
 drawer.addEventListener('touchmove', e => {
-  // Only prevent if we are trying to drag the drawer (swipe down)
-  // otherwise let browser handle scroll inside lists
   const currentY = e.touches[0].pageY;
   const diff = startY - currentY;
   
-  // Check if NOT in a scrollable area
-  const touchTarget = e.target.closest('.upg-row,.off-row');
-  const isScrollableArea = touchTarget && touchTarget.closest('#upgrades-list,#offline-list,#quantum-list,#settings-panel');
-  
-  // Allow scrolling only if inside scrollable child
-  if (isScrollableArea) {
-    return;
-  }
-  
-  if (Math.abs(diff) > 20) {
+  // Only prevent if we're actively dragging (swipe gesture)
+  if (Math.abs(diff) > swipeThreshold && inSwipe) {
     e.preventDefault();
     e.stopPropagation();
   }
 }, { passive: false });
 
-// Fix for click closing settings menu — only close cheat menus, not tab clicks
+// Fix for click closing menus — only close cheat menus, not tab clicks or drawer content interactions
 document.addEventListener('click', (e)=>{
   const wrap=document.getElementById('header-cheat-wrap');
   if(!wrap||wrap.hidden)return;
@@ -2237,6 +2184,14 @@ document.addEventListener('click', (e)=>{
   
   closeHeaderCheatMenu();
 });
+
+// Prevent double-tap zoom anywhere in app
+document.addEventListener('touchmove', e => {
+  if ((e.touches.length === 1 || e.touches.length === 2) && 
+      Math.abs(e.touches[0].clientY - (e.touches[1]?.clientY || 0)) < 30) {
+    e.preventDefault();
+  }
+}, { passive: false });
 
 </script>
 </body>
