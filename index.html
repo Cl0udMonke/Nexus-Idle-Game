@@ -269,11 +269,11 @@ button,input,select,textarea{font:inherit}
 .tab-btn.active::after{
   content:"";position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--c1);box-shadow:0 0 8px var(--c1glow)
 }
+.tab-hidden{display:none!important}
 
 #upgrades-list,#offline-list,#quantum-list,#settings-panel,#stats-panel{
   display:none;flex-direction:column;gap:6px;padding:12px 10px;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;flex:1
 }
-#upgrades-list,#offline-list,#quantum-list,#settings-panel,#stats-panel.vis{display:flex}
 .up-card,.off-card,.qn-card{
   position:relative;overflow:hidden;touch-action:manipulation;
   border-radius:5px;padding:10px;
@@ -458,7 +458,7 @@ button,input,select,textarea{font:inherit}
       <button class="tab-btn" id="tab-pps"><span class="icon">⟐</span><span>PPS</span></button>
       <button class="tab-btn" id="tab-ppc"><span class="icon">⌁</span><span>PPC</span></button>
       <button class="tab-btn" id="tab-offline"><span class="icon">⬚</span><span>OFFLINE</span></button>
-      <button class="tab-btn" id="tab-quantum"><span class="icon">◈</span><span>QUANTUM</span></button>
+      <button class="tab-btn tab-hidden" id="tab-quantum"><span class="icon">◈</span><span>QUANTUM</span></button>
       <button class="tab-btn" id="tab-stats"><span class="icon">⌬</span><span>STATS</span></button>
       <button class="tab-btn" id="tab-settings"><span class="icon">☰</span><span>SETTINGS</span></button>
     </div>
@@ -521,12 +521,13 @@ const THEMES = {
   nexus: { bg:'#06121f', bg2:'#0a1b2d', c1:'#00f5ff', c1dim:'rgba(0,245,255,0.14)', c1glow:'rgba(0,245,255,0.30)', c2:'#00bcd4', c3:'#39ff14', c4:'#ff006e', c5:'#ffd60a', c6:'#ff6b00', border:'rgba(0,245,255,0.30)', border2:'rgba(0,245,255,0.14)', txt:'#eef9ff', txt2:'#9fc6da', txt3:'#6f96ad', tapFlash:'rgba(0,245,255,0.10)', gridC:'rgba(0,245,255,0.06)', ring1:'rgba(0,245,255,0.45)', ring2:'rgba(57,255,20,0.32)', meta:'#00f5ff' },
   neon: { bg:'#08131c', bg2:'#102436', c1:'#6dfcff', c1dim:'rgba(109,252,255,0.12)', c1glow:'rgba(109,252,255,0.26)', c2:'#00d4ff', c3:'#43ff8b', c4:'#ff4d8d', c5:'#ffdf6b', c6:'#ff8a3d', border:'rgba(109,252,255,0.28)', border2:'rgba(109,252,255,0.12)', txt:'#f3fbff', txt2:'#a4c3d8', txt3:'#7a97ab', tapFlash:'rgba(109,252,255,0.10)', gridC:'rgba(109,252,255,0.05)', ring1:'rgba(109,252,255,0.45)', ring2:'rgba(67,255,139,0.32)', meta:'#6dfcff' },
   violet: { bg:'#110a1f', bg2:'#1b1230', c1:'#c77dff', c1dim:'rgba(199,125,255,0.12)', c1glow:'rgba(199,125,255,0.26)', c2:'#9d4edd', c3:'#72efdd', c4:'#ff5d8f', c5:'#ffe66d', c6:'#ff9f1c', border:'rgba(199,125,255,0.28)', border2:'rgba(199,125,255,0.12)', txt:'#fbf7ff', txt2:'#d1c5ea', txt3:'#9f8abf', tapFlash:'rgba(199,125,255,0.10)', gridC:'rgba(199,125,255,0.05)', ring1:'rgba(199,125,255,0.45)', ring2:'rgba(114,239,221,0.32)', meta:'#c77dff' },
-  light: { bg:'#edf7ff', bg2:'#dcecff', c1:'#00f5ff', c1dim:'rgba(0,245,255,0.10)', c1glow:'rgba(0,245,255,0.22)', c2:'#00bcd4', c3:'#0f9b55', c4:'#d6005a', c5:'#9c7f00', c6:'#c45900', border:'rgba(14,27,38,0.20)', border2:'rgba(14,27,38,0.10)', txt:'#0e1b26', txt2:'#355065', txt3:'#67849b', tapFlash:'rgba(0,245,255,0.08)', gridC:'rgba(14,27,38,0.05)', ring1:'rgba(0,245,255,0.34)', ring2:'rgba(15,155,85,0.26)', meta:'#00f5ff' }
+  solar: { bg:'#1a1206', bg2:'#2b1c08', c1:'#ffb703', c1dim:'rgba(255,183,3,0.12)', c1glow:'rgba(255,183,3,0.26)', c2:'#fb8500', c3:'#80ed99', c4:'#ff4d6d', c5:'#ffd166', c6:'#ff9f1c', border:'rgba(255,183,3,0.28)', border2:'rgba(255,183,3,0.12)', txt:'#fff9ee', txt2:'#e8d2a2', txt3:'#bfa56d', tapFlash:'rgba(255,183,3,0.10)', gridC:'rgba(255,183,3,0.05)', ring1:'rgba(255,183,3,0.45)', ring2:'rgba(128,237,153,0.32)', meta:'#ffb703' },
+  light: { bg:'#edf7ff', bg2:'#dcecff', c1:'#00a7c4', c1dim:'rgba(0,167,196,0.10)', c1glow:'rgba(0,167,196,0.22)', c2:'#3a7db3', c3:'#0f9b55', c4:'#d6005a', c5:'#9c7f00', c6:'#c45900', border:'rgba(14,27,38,0.20)', border2:'rgba(14,27,38,0.10)', txt:'#0e1b26', txt2:'#355065', txt3:'#67849b', tapFlash:'rgba(0,167,196,0.08)', gridC:'rgba(14,27,38,0.05)', ring1:'rgba(0,167,196,0.34)', ring2:'rgba(15,155,85,0.26)', meta:'#00a7c4' }
 };
 
 const MODETHEMES = {
   dark: { bg:'#06121f', bg2:'#0a1b2d', txt:'#eef9ff', txt2:'#9fc6da', txt3:'#6f96ad', border:'rgba(0,245,255,0.30)', border2:'rgba(0,245,255,0.14)', c1dim:'rgba(0,245,255,0.14)', tapFlash:'rgba(0,245,255,0.10)', gridC:'rgba(0,245,255,0.06)', meta:'#00f5ff' },
-  light:{ bg:'#edf7ff', bg2:'#dcecff', txt:'#0e1b26', txt2:'#355065', txt3:'#67849b', border:'rgba(14,27,38,0.20)', border2:'rgba(14,27,38,0.10)', c1dim:'rgba(0,245,255,0.10)', tapFlash:'rgba(0,245,255,0.08)', gridC:'rgba(14,27,38,0.05)', meta:'#00f5ff' }
+  light:{ bg:'#edf7ff', bg2:'#dcecff', txt:'#0e1b26', txt2:'#355065', txt3:'#67849b', border:'rgba(14,27,38,0.20)', border2:'rgba(14,27,38,0.10)', c1dim:'rgba(0,167,196,0.10)', tapFlash:'rgba(0,167,196,0.08)', gridC:'rgba(14,27,38,0.05)', meta:'#00a7c4' }
 };
 
 const PPS = [
@@ -636,11 +637,12 @@ function updateUI(){
   pb.textContent='PRESTIGE '+fmt(presThresh());
 
   const qb=document.getElementById('quantum-btn');
-  qb.style.display=G.coins>=quantumThresh()?'block':'none';
+  qb.style.display=G.quantumCount>0?'block':'none';
   qb.textContent='QUANTUM '+fmt(quantumThresh())+' '+quantumReward()+'QP';
 
   const qt=document.getElementById('tab-quantum');
-  if(G.quantumUnlocked) qt.classList.add('unlocked');
+  qt.classList.toggle('tab-hidden',G.quantumCount===0);
+  qt.classList.toggle('unlocked',G.quantumCount>0);
 
   document.getElementById('st-total').textContent=fmt(G.totalCoins);
   document.getElementById('st-pcount').textContent=G.prestigeCount;
@@ -675,7 +677,7 @@ function renderUpgrades(){
 function buyUpgrade(u,n){
   if(interactionLocked) return;
   const c=cost(u,n);
-  if(cheatInfiniteCoins || cheatFreeBuy) G.coins=Number.MAX_SAFE_INTEGER;
+  if(cheatInfiniteCoins) G.coins=Number.MAX_SAFE_INTEGER;
   if(!cheatFreeBuy && G.coins<c) return;
   if(!cheatFreeBuy) G.coins-=c;
   u.owned+=n;
@@ -701,7 +703,7 @@ function renderOffline(){
 
 function buyOffline(u){
   if(interactionLocked || u.bought) return;
-  if(cheatInfiniteCoins || cheatFreeBuy) G.coins=Number.MAX_SAFE_INTEGER;
+  if(cheatInfiniteCoins) G.coins=Number.MAX_SAFE_INTEGER;
   if(!cheatFreeBuy && G.coins<u.cost) return;
   if(!cheatFreeBuy) G.coins-=u.cost;
   u.bought=true;
@@ -741,27 +743,40 @@ function syncTapDrawerLayout(){
   tz.classList.toggle('tap-zone-menus-open',open);
 }
 
+function hideAllPanels(){
+  document.getElementById('upgrades-list').style.display='none';
+  document.getElementById('offline-list').style.display='none';
+  document.getElementById('quantum-list').style.display='none';
+  document.getElementById('stats-panel').style.display='none';
+  document.getElementById('settings-panel').style.display='none';
+  document.getElementById('buy-bar').style.display='none';
+}
+
 function switchTab(tab){
-  if(tab===activeTab){ drawerOpen=!drawerOpen; document.getElementById('drawer').classList.toggle('collapsed',!drawerOpen); syncTapDrawerLayout(); return; }
-  if(tab==='quantum' && !G.quantumUnlocked) return;
-  activeTab=tab; drawerOpen=true;
+  if(tab==='quantum' && G.quantumCount===0) return;
+  activeTab=tab;
+  drawerOpen=true;
   document.getElementById('drawer').classList.remove('collapsed');
   ['pps','ppc','offline','quantum','stats','settings'].forEach(t=>{
     const btn=document.getElementById('tab-'+t);
     if(btn) btn.classList.toggle('active',t===tab);
   });
-  const ul=document.getElementById('upgrades-list');
-  const ol=document.getElementById('offline-list');
-  const ql=document.getElementById('quantum-list');
-  const sp=document.getElementById('settings-panel');
-  const st=document.getElementById('stats-panel');
-  const bb=document.getElementById('buy-bar');
-  ul.style.display='none'; ol.classList.remove('vis'); ql.classList.remove('vis'); sp.classList.remove('vis'); st.classList.remove('vis'); bb.style.display='none';
-  if(tab==='pps' || tab==='ppc'){ ul.style.display='flex'; bb.style.display='block'; renderUpgrades(); }
-  else if(tab==='offline'){ ol.classList.add('vis'); renderOffline(); }
-  else if(tab==='quantum'){ ql.classList.add('vis'); renderQuantum(); }
-  else if(tab==='stats'){ st.classList.add('vis'); }
-  else if(tab==='settings'){ sp.classList.add('vis'); }
+  hideAllPanels();
+  if(tab==='pps' || tab==='ppc'){
+    document.getElementById('upgrades-list').style.display='flex';
+    document.getElementById('buy-bar').style.display='block';
+    renderUpgrades();
+  }else if(tab==='offline'){
+    document.getElementById('offline-list').style.display='flex';
+    renderOffline();
+  }else if(tab==='quantum' && G.quantumCount>0){
+    document.getElementById('quantum-list').style.display='flex';
+    renderQuantum();
+  }else if(tab==='stats'){
+    document.getElementById('stats-panel').style.display='flex';
+  }else if(tab==='settings'){
+    document.getElementById('settings-panel').style.display='flex';
+  }
   syncTapDrawerLayout();
 }
 
@@ -814,12 +829,10 @@ function doQuantumReset(){
   saveGame(); updateUI(); switchTab('quantum'); renderQuantum();
 }
 
-let barStep=0;
 setInterval(()=>{
   const cps=totalCPS(), amt=cps/10;
   if(cheatInfiniteCoins) G.totalCoins+=amt; else { G.coins+=amt; G.totalCoins+=amt; }
-  barStep=(barStep+cps>0?10:0);
-  document.getElementById('idle-bar').style.width=barStep+'%';
+  document.getElementById('idle-bar').style.width='100%';
   updateUI();
 },100);
 
@@ -832,7 +845,8 @@ document.addEventListener('visibilitychange',()=>{
     if(!raw) return;
     const d=JSON.parse(raw);
     const capSec=offlineCapSecs();
-    const rawSec=Math.max(0, (Date.now()-d?.G?.lastSeen||Date.now())/1000);
+    const rawLast=d?.G?.lastSeen||Date.now();
+    const rawSec=Math.max(0,(Date.now()-rawLast)/1000);
     const sec=Math.min(rawSec,capSec);
     if(sec>=10){
       const earned=totalCPS()*sec*offlineRateMult();
@@ -902,12 +916,12 @@ function showHowToToast(){ showToast('TAP the center to earn credits! Open drawe
 function applyTheme(name,save=true){
   const t=THEMES[name]||THEMES.nexus;
   const mode=MODETHEMES[S.mode==='light'?'light':'dark'];
+  const merged={...t,...mode};
   const r=document.documentElement.style;
-  Object.keys(t).forEach(k=>r.setProperty(`--${k}`,t[k]));
-  Object.keys(mode).forEach(k=>r.setProperty(`--${k}`,mode[k]));
+  Object.keys(merged).forEach(k=>r.setProperty(`--${k}`,merged[k]));
   document.body.classList.toggle('reduced-motion',!!S.reduceMotion);
-  document.body.style.background=mode.bg;
-  document.getElementById('theme-meta').content=mode.bg2;
+  document.body.style.background=merged.bg;
+  document.getElementById('theme-meta').content=merged.meta||merged.bg2;
   updateThemeButtonStates();
   if(save){ S.theme=name; saveGame(); }
 }
