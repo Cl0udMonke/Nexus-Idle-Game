@@ -116,12 +116,16 @@ tap-zone grows/shrinks via flex-grow
 
 #credit-unit{font-size:9px;letter-spacing:3px;color:var(--txt2);margin-top:2px;}
 
+/* ── FIXED: COMPACT STAT BOXES ─────────── */
 .stats-row{display:flex;gap:5px;margin-top:8px;flex-wrap:wrap;}
 
 .stat-box{
   border:1px solid var(--border2);background:var(--c1dim);
   padding:3px 8px;border-radius:3px;font-size:8px;color:var(--txt2);
   position:relative;overflow:hidden;
+  flex:0 1 auto; /* Compact width, won't grow */
+  min-width:64px; /* Fixed minimum compact width */
+  max-width:140px; /* Compact max width */
   padding-bottom:max(56px, calc(48px + env(safe-area-inset-bottom, 0px))); /* iOS Safe Area Bottom */
   box-sizing:border-box;
 }
@@ -427,17 +431,20 @@ BOTTOM DRAWER — collapsible panels
 
 .buy-btn.active{border-color:var(--c1);color:var(--c1);background:var(--c1dim);}
 
-/* Upgrade list */
+/* Upgrade list — FIXED: Proper overflow and spacing */
 #upgrades-list{
+  flex:1 1 auto; /* Flexible height */
+  min-height:0;   /* Prevents layout issues */
+  max-height:none; /* Allow full scroll */
   overflow-y:auto;-webkit-overflow-scrolling:touch;
-  padding:6px max(10px, env(safe-area-inset-left, 0px)) max(12px, env(safe-area-inset-bottom, 0px)) max(10px, env(safe-area-inset-right, 0px));display:flex;flex-direction:column;gap:5px;
+  padding:8px max(10px, env(safe-area-inset-left, 0px)) max(12px, env(safe-area-inset-bottom, 0px)) max(10px, env(safe-area-inset-right, 0px));display:flex;flex-direction:column;gap:6px;
 }
 
 #upgrades-list::-webkit-scrollbar{display:none;}
 
 .upg-row{
   display:flex;align-items:center;gap:10px;
-  padding:8px 10px;border-radius:3px;cursor:pointer;
+  padding:9px 10px;border-radius:3px;cursor:pointer;
   border:1px solid var(--border2);background:rgba(255,255,255,0.02);
   position:relative;overflow:hidden;transition:all 0.14s;
   touch-action:auto;-webkit-user-select:none;user-select:none;
@@ -519,8 +526,11 @@ BOTTOM DRAWER — collapsible panels
 
 /* ── OFFLINE UPGRADES tab panel ─── */
 #offline-list{
+  flex:1 1 auto; /* Flexible height */
+  min-height:0;   /* Prevents layout issues */
+  max-height:none; /* Allow full scroll */
   overflow-y:auto;-webkit-overflow-scrolling:touch;
-  padding:6px max(10px, env(safe-area-inset-left, 0px)) max(12px, env(safe-area-inset-bottom, 0px)) max(10px, env(safe-area-inset-right, 0px));display:none;flex-direction:column;gap:5px;
+  padding:8px max(10px, env(safe-area-inset-left, 0px)) max(12px, env(safe-area-inset-bottom, 0px)) max(10px, env(safe-area-inset-right, 0px));display:none;flex-direction:column;gap:6px;
 }
 
 #offline-list::-webkit-scrollbar{display:none;}
@@ -528,6 +538,9 @@ BOTTOM DRAWER — collapsible panels
 #offline-list.vis{display:flex;}
 
 #quantum-list,#stats-panel{
+  flex:1 1 auto; /* Flexible height */
+  min-height:0;   /* Prevents layout issues */
+  max-height:none; /* Allow full scroll */
   overflow-y:auto;-webkit-overflow-scrolling:touch;
   padding:8px max(12px, env(safe-area-inset-left, 0px)) max(16px, env(safe-area-inset-bottom, 0px)) max(12px, env(safe-area-inset-right, 0px));display:none;flex-direction:column;gap:8px;
 }
@@ -542,7 +555,7 @@ BOTTOM DRAWER — collapsible panels
 
 .off-row{
   display:flex;align-items:center;gap:10px;
-  padding:8px 10px;border-radius:3px;cursor:pointer;
+  padding:9px 10px;border-radius:3px;cursor:pointer;
   border:1px solid var(--border2);background:rgba(255,255,255,0.02);
   position:relative;overflow:hidden;transition:all 0.14s;
   touch-action:auto;-webkit-user-select:none;user-select:none;
@@ -583,6 +596,9 @@ BOTTOM DRAWER — collapsible panels
 
 /* ── SETTINGS panel ─── */
 #settings-panel{
+  flex:1 1 auto; /* Flexible height */
+  min-height:0;   /* Prevents layout issues */
+  max-height:none; /* Allow full scroll */
   overflow-y:auto;-webkit-overflow-scrolling:touch;
   padding:8px max(12px, env(safe-area-inset-left, 0px)) max(16px, env(safe-area-inset-bottom, 0px)) max(12px, env(safe-area-inset-right, 0px));display:none;flex-direction:column;
 }
@@ -826,7 +842,6 @@ Prestige at 1M credits for a permanent x2 boost.</div>
       <div class="stat-box s-green"><span class="val" id="cps-val">0.00</span>/SEC</div>
       <div class="stat-box s-orange"><span class="val" id="cpt-val">1</span>/TAP</div>
       <div class="stat-box"><span class="val" id="total-val">0</span>TOTAL</div>
-      <div class="stat-box" id="mult-box" style="display:none"><span class="val" id="mult-val">×2</span>BOOST</div>
     </div>
     <button id="prestige-btn" onclick="doPrestige()">[ PRESTIGE RESET — +×2 BOOST ]</button>
     <button id="quantum-btn" onclick="doQuantumReset()" style="display:none">[ QUANTUM RESET — +2 QP ]</button>
@@ -2088,110 +2103,13 @@ setInterval(()=>{
 },400);
 
 // ═══════════════════════════════════════════
-//  DRAG TO CLOSE GESTURE — ONLY ON DRAWER BACKGROUND, NOT CONTENT
+//  DRAG TO CLOSE GESTURE STYLES — REMOVED, JUST STATIC DRAWER
 // ═══════════════════════════════════════════
-const drawer=document.getElementById('drawer');
-const drawerContent=document.getElementById('drawer-content');
+#drawer-content{
+  position:relative;
+}
 
-let startY=0;
-let touchStartY=0;
-let swipeThreshold=150; // pixels to trigger collapse
-let inSwipe=false;
-
-// Initialize drag indicators
-const indicator=document.getElementById('drag-indicator');
-const handle=document.getElementById('drag-handle');
-
-drawer.addEventListener('touchstart', e => {
-  if (drawer.classList.contains('collapsed')) return;
-  
-  touchStartY = e.touches[0].pageY;
-  startY = Date.now();
-  inSwipe = false;
-}, { passive: true });
-
-drawer.addEventListener('touchmove', e => {
-  const now = Date.now();
-  // Allow scroll in all cases, no prevention
-  lastTouchTime = now;
-
-  const currentY = e.touches[0].pageY;
-  const diff = startY - currentY;
-  
-  // If swiping down past threshold, show drag indicator
-  if (diff > swipeThreshold) {
-    indicator.classList.add('visible');
-    handle.classList.add('visible');
-    inSwipe = true;
-    
-    // Collapse drawer gradually
-    const maxDrawDown = swipeThreshold * 2;
-    const progress = Math.min(diff, maxDrawDown) / maxDrawDown;
-    drawer.style.maxHeight = (52 + progress * -48) + 'vh';
-  } else {
-    indicator.classList.remove('visible');
-    handle.classList.remove('visible');
-    // Restore drawer height if swiping up or returning to normal
-    drawer.style.maxHeight = 'min(52vh, calc(100dvh - 240px))';
-  }
-  
-  lastTouchTime = now;
-}, { passive: true });
-
-drawer.addEventListener('touchend', e => {
-  if (!inSwipe) return;
-  
-  const diff = startY - e.changedTouches[0].pageY;
-  
-  // If swiped down enough, collapse drawer
-  if (diff > swipeThreshold * 2) {
-    drawer.classList.add('collapsed');
-    indicator.classList.remove('visible');
-    handle.classList.remove('visible');
-    syncTapDrawerLayout();
-  } else {
-    // Swipe didn't complete - restore drawer height
-    drawer.style.maxHeight = 'min(52vh, calc(100dvh - 240px))';
-    indicator.classList.remove('visible');
-    handle.classList.remove('visible');
-  }
-  
-  inSwipe = false;
-}, { passive: true });
-
-// Prevent text selection while swiping — only on background swipe gesture
-drawer.addEventListener('touchmove', e => {
-  const currentY = e.touches[0].pageY;
-  const diff = startY - currentY;
-  
-  // Only prevent if we're actively dragging (swipe gesture)
-  if (Math.abs(diff) > swipeThreshold && inSwipe) {
-    e.preventDefault();
-    e.stopPropagation();
-  }
-}, { passive: false });
-
-// Fix for click closing menus — only close cheat menus, not tab clicks or drawer content interactions
-document.addEventListener('click', (e)=>{
-  const wrap=document.getElementById('header-cheat-wrap');
-  if(!wrap||wrap.hidden)return;
-  if(wrap.contains(e.target))return;
-  
-  // Don't close when clicking on drawer content tabs or settings button
-  const tabBar = document.getElementById('tab-bar');
-  const isOnTabBar = tabBar && tabBar.contains(e.target);
-  if (isOnTabBar) return;
-  
-  closeHeaderCheatMenu();
-});
-
-// Prevent double-tap zoom anywhere in app
-document.addEventListener('touchmove', e => {
-  if ((e.touches.length === 1 || e.touches.length === 2) && 
-      Math.abs(e.touches[0].clientY - (e.touches[1]?.clientY || 0)) < 30) {
-    e.preventDefault();
-  }
-}, { passive: false });
+/* Drag indicators removed completely */
 
 </script>
 </body>
