@@ -1,82 +1,68 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0, viewport-fit=cover">
 <title>NEXUS // IDLE</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-<link rel="manifest" href="./manifest.json">
-<link rel="icon" type="image/png" href="./icon.png">
-<link rel="apple-touch-icon" href="./icon.png">
 <meta name="theme-color" content="#00f5ff" id="theme-meta">
 <style>
 /* ═══════════════════════════════════════════
-   FONTS — emoji support across platforms
+   THEMES — Fixed variable dashes
    ═══════════════════════════════════════════ */
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap');
-*{font-family:inherit!important;}
-
-/* ═══════════════════════════════════════════
-THEMES — vars on :root, swapped via JS
-iOS PWA safe: no attribute selectors,
-all vars hard-coded as fallbacks too.
-═══════════════════════════════════════════ */
 :root {
-/* NEXUS default (cyan) */
-–bg:     #020810;
-–bg2:    #040f1e;
-–c1:     #00f5ff;
-–c1dim:  rgba(0,245,255,0.15);
-–c1glow: rgba(0,245,255,0.30);
-–c2:     #00bcd4;
-–c3:     #39ff14;
-–c4:     #ff006e;
-–c5:     #ffd60a;
-–c6:     #ff6b00;
-–border: rgba(0,245,255,0.28);
-–border2:rgba(0,245,255,0.12);
-–txt:    #e8f4ff;
-–txt2:   #8ab4cc;
-–txt3:   #4a7a90;
-–tap-flash: rgba(0,245,255,0.10);
-–grid-c: rgba(0,245,255,0.05);
-–ring1:  rgba(0,245,255,0.45);
-–ring2:  rgba(57,255,20,0.32);
+--bg:     #020810;
+--bg2:    #040f1e;
+--c1:     #00f5ff;
+--c1dim:  rgba(0,245,255,0.15);
+--c1glow: rgba(0,245,255,0.30);
+--c2:     #00bcd4;
+--c3:     #39ff14;
+--c4:     #ff006e;
+--c5:     #ffd60a;
+--c6:     #ff6b00;
+--border: rgba(0,245,255,0.28);
+--border2:rgba(0,245,255,0.12);
+--txt:    #e8f4ff;
+--txt2:   #8ab4cc;
+--txt3:   #4a7a90;
+--tap-flash: rgba(0,245,255,0.10);
+--grid-c: rgba(0,245,255,0.05);
+--ring1:  rgba(0,245,255,0.45);
+--ring2:  rgba(57,255,20,0.32);
 }
 
-/* Light mode override */
 :root.light-mode {
-–bg:     #f5f8fa;
-–bg2:    #ffffff;
-–c1:     #0088cc;
-–c1dim:  rgba(0,136,204,0.12);
-–c1glow: rgba(0,136,204,0.25);
-–c2:     #0066aa;
-–c3:     #00aa44;
-–c4:     #cc0055;
-–c5:     #dd9900;
-–c6:     #dd5500;
-–border: rgba(0,136,204,0.3);
-–border2:rgba(0,136,204,0.15);
-–txt:    #1a2634;
-–txt2:   #4a5f7a;
-–txt3:   #7a8fa4;
-–tap-flash: rgba(0,136,204,0.15);
-–grid-c: rgba(0,136,204,0.08);
-–ring1:  rgba(0,136,204,0.4);
-–ring2:  rgba(0,170,68,0.35);
+--bg:     #f5f8fa;
+--bg2:    #ffffff;
+--c1:     #0088cc;
+--c1dim:  rgba(0,136,204,0.12);
+--c1glow: rgba(0,136,204,0.25);
+--c2:     #0066aa;
+--c3:     #00aa44;
+--c4:     #cc0055;
+--c5:     #dd9900;
+--c6:     #dd5500;
+--border: rgba(0,136,204,0.3);
+--border2:rgba(0,136,204,0.15);
+--txt:    #1a2634;
+--txt2:   #4a5f7a;
+--txt3:   #7a8fa4;
+--tap-flash: rgba(0,136,204,0.15);
+--grid-c: rgba(0,136,204,0.08);
+--ring1:  rgba(0,136,204,0.4);
+--ring2:  rgba(0,170,68,0.35);
 }
 
 /* ═══════════════════════════════════════════
 RESET & BODY
 ═══════════════════════════════════════════ */
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-html{height:100%;overflow:hidden;background:var(–bg);font-size:16px;} /* Fixed base font size prevents iOS scaling glitch */
+html{height:100%;overflow:hidden;background:var(--bg);font-size:16px;}
 body{
-background:var(–bg);
-font-family:‘Share Tech Mono’,monospace;
-color:var(–txt);
+background:var(--bg);
+font-family:'Share Tech Mono',monospace;
+color:var(--txt);
 position:fixed;width:100%;height:100%;
 }
 
@@ -84,8 +70,8 @@ position:fixed;width:100%;height:100%;
 #grid-bg{
 position:fixed;inset:0;z-index:0;
 background-image:
-linear-gradient(var(–grid-c) 1px, transparent 1px),
-linear-gradient(90deg, var(–grid-c) 1px, transparent 1px);
+linear-gradient(var(--grid-c) 1px, transparent 1px),
+linear-gradient(90deg, var(--grid-c) 1px, transparent 1px);
 background-size:40px 40px;
 animation:gridScroll 22s linear infinite;
 }
@@ -94,24 +80,19 @@ animation:gridScroll 22s linear infinite;
 
 /* Corner brackets */
 .corner{position:fixed;width:44px;height:44px;z-index:3;}
-.corner.tl{top:max(0px, env(safe-area-inset-top, 0px));left:max(0px, env(safe-area-inset-left, 0px));border-top:2px solid var(–c1);border-left:2px solid var(–c1);}
-.corner.tr{top:max(0px, env(safe-area-inset-top, 0px));right:max(0px, env(safe-area-inset-right, 0px));border-top:2px solid var(–c1);border-right:2px solid var(–c1);}
-.corner.bl{bottom:max(0px, env(safe-area-inset-bottom, 0px));left:max(0px, env(safe-area-inset-left, 0px));border-bottom:2px solid var(–c1);border-left:2px solid var(–c1);}
-.corner.br{bottom:max(0px, env(safe-area-inset-bottom, 0px));right:max(0px, env(safe-area-inset-right, 0px));border-bottom:2px solid var(–c1);border-right:2px solid var(–c1);}
+.corner.tl{top:max(0px, env(safe-area-inset-top, 0px));left:max(0px, env(safe-area-inset-left, 0px));border-top:2px solid var(--c1);border-left:2px solid var(--c1);}
+.corner.tr{top:max(0px, env(safe-area-inset-top, 0px));right:max(0px, env(safe-area-inset-right, 0px));border-top:2px solid var(--c1);border-right:2px solid var(--c1);}
+.corner.bl{bottom:max(0px, env(safe-area-inset-bottom, 0px));left:max(0px, env(safe-area-inset-left, 0px));border-bottom:2px solid var(--c1);border-left:2px solid var(--c1);}
+.corner.br{bottom:max(0px, env(safe-area-inset-bottom, 0px));right:max(0px, env(safe-area-inset-right, 0px));border-bottom:2px solid var(--c1);border-right:2px solid var(--c1);}
 
-/* Canvas overlay */
 #particles{position:fixed;inset:0;pointer-events:none;z-index:5;}
 
-/* ═══════════════════════════════════════════
-APP LAYOUT — flex column, full height
-tap-zone grows/shrinks via flex-grow
-═══════════════════════════════════════════ */
 #app{
 position:relative;z-index:6;
 display:flex;flex-direction:column;
 height:100vh;height:100dvh;min-height:100dvh;
 overflow:hidden;
-padding-bottom:max(56px, calc(48px + env(safe-area-inset-bottom, 0px))); /* iOS Safe Area Bottom */
+padding-bottom:max(56px, calc(48px + env(safe-area-inset-bottom, 0px)));
 box-sizing:border-box;
 }
 
@@ -121,171 +102,96 @@ padding-top:calc(20px + env(safe-area-inset-top, 0px));
 padding-left:max(16px, env(safe-area-inset-left, 0px));
 padding-right:max(16px, env(safe-area-inset-right, 0px));
 padding-bottom:10px;
-background:var(–bg2);
-border-bottom:1px solid var(–border);
+background:var(--bg2);
+border-bottom:1px solid var(--border);
 flex-shrink:0;
 }
 
 #sys-label{
-font-family:‘Orbitron’,monospace;font-size:8px;
-letter-spacing:4px;color:var(–c1);opacity:0.5;margin-bottom:3px;
+font-family:'Orbitron',monospace;font-size:8px;
+letter-spacing:4px;color:var(--c1);opacity:0.5;margin-bottom:3px;
 }
 
 #credit-count{
-font-family:‘Orbitron’,monospace;
+font-family:'Orbitron',monospace;
 font-size:clamp(28px,7vw,44px);font-weight:900;
-color:var(–c1);letter-spacing:2px;line-height:1;
-text-shadow:0 0 18px var(–c1glow);
+color:var(--c1);letter-spacing:2px;line-height:1;
+text-shadow:0 0 18px var(--c1glow);
 }
 
-#credit-unit{font-size:9px;letter-spacing:3px;color:var(–txt2);margin-top:2px;}
+#credit-unit{font-size:9px;letter-spacing:3px;color:var(--txt2);margin-top:2px;}
 
-/* ── FIXED: COMPACT STAT BOXES ─────────── */
 .stats-row{display:flex;gap:5px;margin-top:8px;flex-wrap:wrap;}
 
 .stat-box{
-border:1px solid var(–border2);background:var(–c1dim);
-padding:3px 8px;border-radius:3px;font-size:8px;color:var(–txt2);
+border:1px solid var(--border2);background:var(--c1dim);
+padding:3px 8px;border-radius:3px;font-size:8px;color:var(--txt2);
 position:relative;overflow:hidden;
-flex:0 1 auto; /* Compact width, won’t grow */
-min-width:64px; /* Fixed minimum compact width */
-max-width:140px; /* Compact max width */
+flex:0 1 auto;
+min-width:64px;
+max-width:140px;
 }
 
-.stat-box::after{content:’’;position:absolute;top:0;left:0;right:0;height:1px;background:var(–c1);opacity:0.5;}
-.stat-box .val{font-family:‘Orbitron’,monospace;font-size:12px;font-weight:700;display:block;color:var(–c1);}
-.stat-box.s-green .val{color:var(–c3);}
+.stat-box::after{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:var(--c1);opacity:0.5;}
+.stat-box .val{font-family:'Orbitron',monospace;font-size:12px;font-weight:700;display:block;color:var(--c1);}
+.stat-box.s-green .val{color:var(--c3);}
 .stat-box.s-green{border-color:rgba(57,255,20,0.15);background:rgba(57,255,20,0.06);}
-.stat-box.s-green::after{background:var(–c3);}
-.stat-box.s-orange .val{color:var(–c6);}
+.stat-box.s-green::after{background:var(--c3);}
+.stat-box.s-orange .val{color:var(--c6);}
 .stat-box.s-orange{border-color:rgba(255,107,0,0.18);background:rgba(255,107,0,0.06);}
-.stat-box.s-orange::after{background:var(–c6);}
+.stat-box.s-orange::after{background:var(--c6);}
 
-#prestige-btn{
+#prestige-btn, #quantum-btn{
 display:none;width:100%;margin-top:7px;padding:7px;
-border:1px solid var(–c4);background:rgba(255,0,110,0.08);
-color:var(–c4);font-family:‘Orbitron’,monospace;
-font-size:9px;font-weight:700;letter-spacing:2px;cursor:pointer;border-radius:3px;
+font-family:'Orbitron',monospace;font-size:9px;font-weight:700;letter-spacing:2px;cursor:pointer;border-radius:3px;
 }
+#prestige-btn{border:1px solid var(--c4);background:rgba(255,0,110,0.08);color:var(--c4);}
+#quantum-btn{border:1px solid var(--c5);background:rgba(255,214,10,0.08);color:var(--c5);}
 
-#prestige-btn:active{background:rgba(255,0,110,0.22);}
-
-#quantum-btn{
-display:none;width:100%;margin-top:7px;padding:7px;
-border:1px solid var(–c5);background:rgba(255,214,10,0.08);
-color:var(–c5);font-family:‘Orbitron’,monospace;
-font-size:9px;font-weight:700;letter-spacing:2px;cursor:pointer;border-radius:3px;
-}
-
-#quantum-btn:active{background:rgba(255,214,10,0.2);}
-
-/* Top cheat menu — opens downward (unlike bottom drawer) */
-.header-main-row{
-display:flex;flex-direction:row;justify-content:space-between;align-items:flex-start;gap:10px;width:100%;
-position:relative;z-index:20;
-}
-
+.header-main-row{display:flex;flex-direction:row;justify-content:space-between;align-items:flex-start;gap:10px;width:100%;position:relative;z-index:20;}
 .header-credits-col{min-width:0;flex:1;}
-
-.header-cheat-wrap{
-position:relative;flex-shrink:0;align-self:flex-start;padding-top:4px;z-index:9999;pointer-events:auto;
-}
-
-.header-cheat-wrap[hidden]{display:none!important;}
+.header-cheat-wrap{position:relative;flex-shrink:0;align-self:flex-start;padding-top:4px;z-index:9999;pointer-events:auto;}
 
 .header-cheat-btn{
 width:42px;height:40px;border-radius:5px;
 border:1px solid rgba(255,0,110,0.5);background:rgba(255,0,110,0.12);
-color:var(–c4);font-size:18px;line-height:1;cursor:pointer;
+color:var(--c4);font-size:18px;line-height:1;cursor:pointer;
 display:flex;align-items:center;justify-content:center;
-font-family:‘Orbitron’,monospace;
+font-family:'Orbitron',monospace;
 box-shadow:0 0 12px rgba(255,0,110,0.15);
-position:relative;z-index:9999;padding:0;touch-action:manipulation;
 }
-
-.header-cheat-btn:active{opacity:0.85;}
-
-.header-cheat-btn.open{border-color:var(–c4);background:rgba(255,0,110,0.2);}
 
 .header-cheat-dd{
 display:none;flex-direction:column;
 position:absolute;top:100%;right:0;margin-top:6px;
 min-width:240px;max-width:min(calc(100vw - 24px), 320px);
 z-index:9999;
-background:
-linear-gradient(180deg, rgba(255,255,255,0.03), transparent 28%),
-var(–bg2);
-border:1px solid color-mix(in srgb, var(–c4) 45%, var(–border) 55%);
+background:linear-gradient(180deg, rgba(255,255,255,0.03), transparent 28%), var(--bg2);
+border:1px solid var(--c4);
 border-radius:8px;box-shadow:0 14px 40px rgba(0,0,0,0.5);
 padding:6px 0 8px;
 max-height:min(70vh, 560px);
 overflow-y:auto;
-overflow-x:hidden;
--webkit-overflow-scrolling:touch;
-overscroll-behavior:contain;
 }
-
 .header-cheat-dd.open{display:flex;}
 
-.hcd-title{
-font-family:‘Orbitron’,monospace;font-size:8px;font-weight:700;letter-spacing:3px;
-color:var(–txt);padding:6px 14px 8px;border-bottom:1px solid var(–border2);
-text-shadow:0 0 12px var(–c1glow);
-}
-
-.hcd-subtitle{
-font-family:‘Orbitron’,monospace;font-size:8px;font-weight:700;letter-spacing:2px;
-color:var(–c5);padding:12px 14px 6px;border-top:1px solid var(–border2);
-}
+.hcd-title, .hcd-subtitle{font-family:'Orbitron',monospace;font-size:8px;font-weight:700;letter-spacing:3px;padding:6px 14px;}
+.hcd-subtitle{color:var(--c5);border-top:1px solid var(--border2);margin-top:5px;}
 
 .hcd-item{
 display:block;width:100%;text-align:left;padding:9px 14px;border:none;background:transparent;
-color:var(–txt);font-family:‘Share Tech Mono’,monospace;font-size:11px;
-cursor:pointer;border-top:1px solid transparent;
-touch-action:manipulation;
+color:var(--txt);font-family:'Share Tech Mono',monospace;font-size:11px;cursor:pointer;
 }
 
-.hcd-item:first-of-type{border-top:none;}
-
-.hcd-item:active{background:rgba(255,0,110,0.1);color:#fff;}
-
-.hcd-item.hcd-danger{color:var(–c4);border-top-color:var(–border2);}
-.hcd-item.hcd-danger:active{background:rgba(255,0,110,0.18);}
-
-.hcd-row{
-display:flex;align-items:center;justify-content:space-between;gap:10px;
-padding:8px 14px;border-top:1px solid var(–border2);
-font-size:9px;color:var(–txt);font-family:‘Orbitron’,monospace;
-}
-
-.hcd-input-row,.hcd-grid{
-display:flex;gap:8px;padding:8px 14px 0;
-}
-
-.hcd-input-row input{
-flex:1;padding:6px 8px;background:rgba(0,245,255,0.06);
-border:1px solid var(–border2);border-radius:3px;color:var(–txt);
-font-family:‘Share Tech Mono’,monospace;font-size:10px;outline:none;
-}
-
-.hcd-input-row input:focus{border-color:var(–c1);background:rgba(0,245,255,0.12);}
-
-.hcd-input-row button{
-padding:6px 12px;background:rgba(0,245,255,0.1);border:1px solid var(–c1);
-border-radius:3px;color:var(–c1);font-family:‘Orbitron’,monospace;
-font-size:9px;font-weight:700;cursor:pointer;
-}
-
-.hcd-input-row button:active{background:rgba(0,245,255,0.2);}
-
+.hcd-input-row, .hcd-grid{display:flex;gap:8px;padding:8px 14px;}
 .hcd-grid{flex-wrap:wrap;}
-.hcd-grid button{
-flex:1;min-width:56px;padding:7px;background:rgba(0,245,255,0.06);
-border:1px solid var(–border2);border-radius:3px;color:var(–txt);
-font-family:‘Share Tech Mono’,monospace;font-size:10px;cursor:pointer;
-}
 
-.hcd-grid button:active{background:rgba(0,245,255,0.12);border-color:var(–c1);}
+.hcd-grid button, .theme-btn{
+flex:1;min-width:56px;padding:7px;background:rgba(0,245,255,0.06);
+border:1px solid var(--border2);border-radius:3px;color:var(--txt);
+font-family:'Share Tech Mono',monospace;font-size:10px;cursor:pointer;
+}
+.theme-btn.active{border-color:var(--c1);background:var(--c1dim);}
 
 /* ── TAP ZONE ─────────────────────────────── */
 #tap-zone{
@@ -295,313 +201,86 @@ transition:background 0.1s ease;
 cursor:pointer;touch-action:manipulation;
 }
 
-#tap-zone.tapped{background:radial-gradient(circle at center, var(–tap-flash), transparent 50%);}
+#tap-zone.tapped{background:radial-gradient(circle at center, var(--tap-flash), transparent 50%);}
 
-.tap-zone-menus-open{flex:0 1 auto;min-height:120px;}
+#tap-rings{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:240px;height:240px;pointer-events:none;}
+.ring{position:absolute;border-radius:50%;border:1.5px solid;opacity:0.6;animation:ringPulse 3.5s ease-in-out infinite;}
+.ring.r1{inset:0;border-color:var(--ring1);animation-delay:0s;}
+.ring.r2{inset:18px;border-color:var(--ring2);animation-delay:0.7s;}
+.ring.r3{inset:36px;border-color:var(--ring1);animation-delay:1.4s;}
 
-#tap-rings{
-position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
-width:240px;height:240px;pointer-events:none;
-}
-
-.ring{
-position:absolute;border-radius:50%;
-border:1.5px solid;opacity:0.6;
-animation:ringPulse 3.5s ease-in-out infinite;
-}
-
-.ring.r1{inset:0;border-color:var(–ring1);animation-delay:0s;}
-.ring.r2{inset:18px;border-color:var(–ring2);animation-delay:0.7s;}
-.ring.r3{inset:36px;border-color:var(–ring1);animation-delay:1.4s;}
-
-@keyframes ringPulse{
-0%,100%{opacity:0.6;transform:scale(1);}
-50%{opacity:0.85;transform:scale(1.04);}
-}
+@keyframes ringPulse{0%,100%{opacity:0.6;transform:scale(1);}50%{opacity:0.85;transform:scale(1.04);}}
 
 #tap-core{
 position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
 width:86px;height:86px;border-radius:50%;
-border:2px solid var(–c1);background:radial-gradient(circle, rgba(0,245,255,0.14), transparent 70%);
+border:2px solid var(--c1);background:radial-gradient(circle, rgba(0,245,255,0.14), transparent 70%);
 display:flex;align-items:center;justify-content:center;
-box-shadow:
-0 0 28px var(–c1glow),
-inset 0 0 20px rgba(0,245,255,0.08);
+box-shadow:0 0 28px var(--c1glow);
 animation:corePulse 2.8s ease-in-out infinite;
-pointer-events:none;
 }
 
-@keyframes corePulse{
-0%,100%{transform:translate(-50%,-50%) scale(1);opacity:0.92;}
-50%{transform:translate(-50%,-50%) scale(1.06);opacity:1;}
-}
+@keyframes corePulse{0%,100%{transform:translate(-50%,-50%) scale(1);opacity:0.92;}50%{transform:translate(-50%,-50%) scale(1.06);opacity:1;}}
 
-#tap-core-icon{
-font-size:28px;color:var(–c1);text-shadow:0 0 12px var(–c1glow);
-font-family:‘Orbitron’,monospace;font-weight:900;
-}
+#tap-core-icon{font-size:28px;color:var(--c1);text-shadow:0 0 12px var(--c1glow);font-family:'Orbitron',monospace;font-weight:900;}
 
 /* ── DRAWER ──────────────────────────────── */
 #drawer{
 position:fixed;bottom:0;left:0;right:0;
-background:var(–bg2);
-border-top:1px solid var(–border);
-z-index:50;
+background:var(--bg2);border-top:1px solid var(--border);z-index:50;
 transition:transform 0.28s cubic-bezier(0.4,0,0.2,1);
 max-height:calc(72vh - env(safe-area-inset-bottom, 0px));
 display:flex;flex-direction:column;
 padding-bottom:env(safe-area-inset-bottom, 0px);
 }
-
 #drawer.collapsed{transform:translateY(calc(100% - 56px - env(safe-area-inset-bottom, 0px)));}
 
-#drawer-content{
-position:relative;
-overflow-y:auto;
-overflow-x:hidden;
--webkit-overflow-scrolling:touch;
-overscroll-behavior:contain;
-flex:1;
-display:flex;flex-direction:column;
+#tabs-bar{display:flex;justify-content:space-around;padding:0 6px;height:56px;border-bottom:1px solid var(--border2);flex-shrink:0;}
+.tab-btn{flex:1;background:transparent;border:none;color:var(--txt3);cursor:pointer;font-size:9px;font-family:'Orbitron',monospace;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;}
+.tab-btn.active{color:var(--c1);border-bottom:2px solid var(--c1);}
+
+#upgrades-list, #offline-list, #quantum-list, #settings-panel, #stats-panel {display:none;flex-direction:column;gap:6px;padding:12px 10px;overflow-y:auto;flex:1;}
+.vis {display:flex !important;}
+
+.up-card, .off-card, .qn-card{
+background:linear-gradient(135deg, var(--c1dim), rgba(0,245,255,0.04));
+border:1px solid var(--border2);border-radius:5px;padding:10px;display:flex;align-items:center;justify-content:space-between;
 }
-
-/* Tabs bar */
-#tabs-bar{
-display:flex;justify-content:space-around;padding:0 6px;height:56px;
-border-bottom:1px solid var(–border2);flex-shrink:0;
-}
-
-.tab-btn{
-flex:1;background:transparent;border:none;color:var(–txt3);
-cursor:pointer;font-size:9px;font-family:‘Orbitron’,monospace;
-display:flex;flex-direction:column;align-items:center;justify-content:center;
-gap:2px;position:relative;transition:color 0.2s;letter-spacing:1px;
-touch-action:manipulation;
-}
-
-.tab-btn .icon{font-size:18px;display:block;}
-.tab-btn.active{color:var(–c1);}
-.tab-btn.active::after{
-content:’’;position:absolute;bottom:0;left:0;right:0;height:2px;
-background:var(–c1);box-shadow:0 0 8px var(–c1glow);
-}
-
-#tab-quantum{display:none;}
-#tab-quantum.unlocked{display:flex;}
-
-/* Upgrades list */
-#upgrades-list{
-display:none;flex-direction:column;gap:6px;padding:12px 10px;
-overflow-y:auto;
--webkit-overflow-scrolling:touch;
-overscroll-behavior:contain;
-flex:1;
-}
-
-.up-card{
-background:linear-gradient(135deg, var(–c1dim), rgba(0,245,255,0.04));
-border:1px solid var(–border2);border-radius:5px;padding:10px;
-display:flex;align-items:center;justify-content:space-between;gap:8px;
-position:relative;overflow:hidden;
-touch-action:manipulation;
-}
-
-.up-card::before{
-content:’’;position:absolute;top:0;left:0;right:0;height:2px;
-background:linear-gradient(90deg, transparent, var(–c1), transparent);
-opacity:0.6;
-}
-
-.up-card.locked{opacity:0.5;filter:grayscale(0.6);}
-
-.up-info{flex:1;min-width:0;}
-
-.up-name{
-font-family:‘Orbitron’,monospace;font-size:11px;font-weight:700;
-color:var(–c1);margin-bottom:2px;
-}
-
-.up-desc{font-size:8px;color:var(–txt2);margin-bottom:3px;}
-
-.up-owned{font-size:8px;color:var(–c3);}
+.up-name, .off-name, .qn-name{font-family:'Orbitron',monospace;font-size:11px;font-weight:700;color:var(--c1);margin-bottom:2px;}
+.up-desc, .off-desc, .qn-desc{font-size:8px;color:var(--txt2);}
 
 .up-buy-btn{
-flex-shrink:0;background:rgba(0,245,255,0.12);
-border:1px solid var(–c1);border-radius:4px;
-padding:7px 12px;color:var(–c1);font-family:‘Orbitron’,monospace;
-font-size:9px;font-weight:700;cursor:pointer;
-display:flex;flex-direction:column;align-items:center;gap:2px;
-min-width:68px;
-touch-action:manipulation;
+background:rgba(0,245,255,0.12);border:1px solid var(--c1);border-radius:4px;
+padding:7px 12px;color:var(--c1);font-family:'Orbitron',monospace;font-size:9px;min-width:68px;
 }
-
-.up-buy-btn:active{background:rgba(0,245,255,0.22);}
-
-.up-buy-btn.locked{opacity:0.5;cursor:not-allowed;background:rgba(128,128,128,0.08);border-color:var(–txt3);color:var(–txt3);}
-
-.up-buy-btn .amt{font-size:9px;}
-.up-buy-btn .cost{font-size:7px;color:var(–txt2);}
-
-#buy-bar{
-display:none;padding:8px 10px;border-top:1px solid var(–border2);
-background:var(–bg);flex-shrink:0;
-}
-
-.buy-btns{display:flex;gap:5px;}
-
-.buy-btn{
-flex:1;padding:7px;background:rgba(0,245,255,0.08);
-border:1px solid var(–border2);border-radius:3px;
-color:var(–txt);font-family:‘Orbitron’,monospace;
-font-size:9px;cursor:pointer;
-touch-action:manipulation;
-}
-
-.buy-btn.active{background:rgba(0,245,255,0.18);border-color:var(–c1);color:var(–c1);}
-.buy-btn:active{background:rgba(0,245,255,0.22);}
-
-/* Other panels */
-#offline-list,#quantum-list,#settings-panel,#stats-panel{
-display:none;flex-direction:column;gap:6px;padding:12px 10px;
-overflow-y:auto;
--webkit-overflow-scrolling:touch;
-overscroll-behavior:contain;
-flex:1;
-}
-
-#offline-list.vis,#quantum-list.vis,#settings-panel.vis,#stats-panel.vis{display:flex;}
-
-.off-card,.qn-card{
-background:linear-gradient(135deg, rgba(57,255,20,0.08), rgba(57,255,20,0.02));
-border:1px solid rgba(57,255,20,0.2);border-radius:5px;padding:10px;
-position:relative;overflow:hidden;
-touch-action:manipulation;
-}
-
-.off-card::before,.qn-card::before{
-content:’’;position:absolute;top:0;left:0;right:0;height:2px;
-background:linear-gradient(90deg, transparent, var(–c3), transparent);opacity:0.7;
-}
-
-.off-card.bought{opacity:0.4;}
-
-.off-name,.qn-name{
-font-family:‘Orbitron’,monospace;font-size:11px;font-weight:700;
-color:var(–c3);margin-bottom:2px;
-}
-
-.off-desc,.qn-desc{font-size:8px;color:var(–txt2);margin-bottom:4px;}
-
-.off-cost,.qn-cost{font-size:8px;color:var(–c5);}
-
-.qn-card{
-background:linear-gradient(135deg, rgba(255,214,10,0.08), rgba(255,214,10,0.02));
-border-color:rgba(255,214,10,0.2);
-}
-
-.qn-card::before{background:linear-gradient(90deg, transparent, var(–c5), transparent);}
-
-.qn-name{color:var(–c5);}
-
-.qn-card.bought .qn-name{color:var(–c3);}
-.qn-card.bought{opacity:0.6;}
-
-#stats-panel p{font-size:10px;color:var(–txt);margin-bottom:6px;padding:6px 8px;background:var(–c1dim);border-left:2px solid var(–c1);border-radius:2px;}
 
 /* Settings toggles */
-.setting-row{
-display:flex;align-items:center;justify-content:space-between;padding:8px 10px;
-background:var(–c1dim);border:1px solid var(–border2);border-radius:4px;
-touch-action:manipulation;
-}
+.setting-row{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:var(--c1dim);border:1px solid var(--border2);border-radius:4px;margin-bottom:5px;}
+.setting-label{font-size:10px;color:var(--txt);font-family:'Orbitron',monospace;}
 
-.setting-label{font-size:10px;color:var(–txt);font-family:‘Orbitron’,monospace;}
+.toggle{width:44px;height:24px;background:rgba(128,128,128,0.3);border-radius:12px;position:relative;cursor:pointer;}
+.toggle.on{background:var(--c1);}
+.toggle::after{content:'';position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:var(--txt3);transition:transform 0.2s;}
+.toggle.on::after{transform:translateX(20px);background:#fff;}
 
-.toggle{
-width:44px;height:24px;background:rgba(128,128,128,0.3);
-border:1px solid var(–border2);border-radius:12px;
-position:relative;cursor:pointer;transition:background 0.2s;
-touch-action:manipulation;
-}
+/* Float/Toast */
+.float-text{position:fixed;pointer-events:none;font-family:'Orbitron',monospace;font-weight:700;font-size:15px;color:var(--c1);animation:floatUp 1.1s ease-out forwards;z-index:100;}
+@keyframes floatUp{0%{opacity:1;transform:translateY(0);}100%{opacity:0;transform:translateY(-60px);}}
 
-.toggle.on{background:rgba(0,245,255,0.3);border-color:var(–c1);}
+#toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:200;background:var(--bg2);border:1px solid var(--c1);border-radius:6px;padding:12px 16px;display:none;color:var(--txt);font-family:'Share Tech Mono',monospace;font-size:10px;}
+#toast.show{display:block;}
 
-.toggle::after{
-content:’’;position:absolute;top:2px;left:2px;
-width:18px;height:18px;border-radius:50%;
-background:var(–txt3);transition:transform 0.2s;
-}
-
-.toggle.on::after{transform:translateX(20px);background:var(–c1);}
-
-#theme-selector{
-width:100%;padding:8px;background:rgba(0,245,255,0.08);
-border:1px solid var(–border2);border-radius:4px;
-color:var(–txt);font-family:‘Orbitron’,monospace;
-font-size:10px;margin-top:6px;
-touch-action:manipulation;
-}
-
-/* Compact mode */
-body.compact-mode #header{padding-top:calc(12px + env(safe-area-inset-top, 0px));padding-bottom:6px;}
-body.compact-mode #credit-count{font-size:clamp(22px,6vw,36px);}
-body.compact-mode .stat-box{padding:2px 6px;font-size:7px;min-width:56px;}
-body.compact-mode .stat-box .val{font-size:10px;}
-body.compact-mode #tabs-bar{height:48px;}
-body.compact-mode .tab-btn{font-size:8px;}
-body.compact-mode .tab-btn .icon{font-size:16px;}
-body.compact-mode .up-card{padding:8px;gap:6px;}
-body.compact-mode .up-name{font-size:10px;}
-body.compact-mode .up-desc{font-size:7px;}
-body.compact-mode .up-buy-btn{padding:6px 10px;min-width:60px;}
-
-/* Floating text */
-.float-text{
-position:fixed;pointer-events:none;
-font-family:‘Orbitron’,monospace;font-weight:700;
-font-size:15px;color:var(–c1);
-text-shadow:0 0 8px var(–c1glow);
-animation:floatUp 1.1s ease-out forwards;z-index:100;
-}
-
-@keyframes floatUp{
-0%{opacity:1;transform:translateY(0) scale(1);}
-100%{opacity:0;transform:translateY(-60px) scale(1.3);}
-}
-
-/* Toast */
-#toast{
-position:fixed;top:calc(20px + env(safe-area-inset-top, 0px));left:50%;transform:translateX(-50%);
-z-index:200;background:var(–bg2);border:1px solid var(–c1);
-border-radius:6px;padding:12px 16px;max-width:90vw;
-box-shadow:0 8px 24px rgba(0,0,0,0.6), 0 0 20px var(–c1glow);
-font-family:‘Share Tech Mono’,monospace;font-size:10px;color:var(–txt);
-display:none;
-}
-
-#toast.show{display:block;animation:toastSlide 0.3s ease;}
-
-@keyframes toastSlide{from{opacity:0;transform:translateX(-50%) translateY(-20px);}to{opacity:1;transform:translateX(-50%) translateY(0);}}
-
-#idle-bar{
-position:fixed;bottom:calc(56px + env(safe-area-inset-bottom, 0px));left:0;
-height:2px;background:var(–c3);
-box-shadow:0 0 6px var(–c3);transition:width 0.1s linear;z-index:60;
-}
+#idle-bar{position:fixed;bottom:calc(56px + env(safe-area-inset-bottom, 0px));left:0;height:2px;background:var(--c3);transition:width 0.1s linear;z-index:60;}
 </style>
-
 </head>
 <body>
 
 <div id="grid-bg"></div>
-<div class="corner tl"></div>
-<div class="corner tr"></div>
-<div class="corner bl"></div>
-<div class="corner br"></div>
+<div class="corner tl"></div><div class="corner tr"></div>
+<div class="corner bl"></div><div class="corner br"></div>
 <canvas id="particles"></canvas>
 
 <div id="app">
-  <!-- HEADER -->
   <div id="header">
     <div class="header-main-row">
       <div class="header-credits-col">
@@ -609,168 +288,50 @@ box-shadow:0 0 6px var(–c3);transition:width 0.1s linear;z-index:60;
         <div id="credit-count">0</div>
         <div id="credit-unit">CREDITS</div>
         <div class="stats-row">
-          <div class="stat-box">
-            <span>CPS</span>
-            <span class="val" id="stat-cps">0</span>
-          </div>
-          <div class="stat-box s-green">
-            <span>TAP</span>
-            <span class="val" id="stat-tap">1</span>
-          </div>
-          <div class="stat-box s-orange">
-            <span>MULT</span>
-            <span class="val" id="stat-mult">×1</span>
-          </div>
+          <div class="stat-box"><span>CPS</span><span class="val" id="stat-cps">0</span></div>
+          <div class="stat-box s-green"><span>TAP</span><span class="val" id="stat-tap">1</span></div>
+          <div class="stat-box s-orange"><span>MULT</span><span class="val" id="stat-mult">×1</span></div>
         </div>
         <button id="prestige-btn">PRESTIGE</button>
         <button id="quantum-btn">QUANTUM</button>
       </div>
-
-```
-  <div class="header-cheat-wrap" id="cheat-wrap">
-    <button class="header-cheat-btn" id="cheat-toggle">⚙</button>
-    <div class="header-cheat-dd" id="cheat-dd">
-      <div class="hcd-title">ADMIN CONSOLE</div>
-      <button class="hcd-item" id="ch-infinite">Toggle Infinite Coins</button>
-      <button class="hcd-item" id="ch-freebuy">Toggle Free Buys</button>
-      <button class="hcd-item" id="ch-cps">Add +1000 CPS</button>
-      <button class="hcd-item" id="ch-tap">Add +100 Tap</button>
-      <button class="hcd-item" id="ch-prestige">Force Prestige</button>
-      <button class="hcd-item" id="ch-quantum">Force Quantum</button>
-      
-      <div class="hcd-subtitle">ADD COINS</div>
-      <div class="hcd-input-row">
-        <input type="number" id="ch-coin-input" placeholder="Amount">
-        <button id="ch-coin-add">ADD</button>
+      <div class="header-cheat-wrap" id="cheat-wrap">
+        <button class="header-cheat-btn" id="cheat-toggle">⚙</button>
+        <div class="header-cheat-dd" id="cheat-dd">
+          <div class="hcd-title">ADMIN CONSOLE</div>
+          <button class="hcd-item" id="ch-infinite">Toggle Infinite Coins</button>
+          <button class="hcd-item" id="ch-freebuy">Toggle Free Buys</button>
+          <div class="hcd-grid">
+            <button id="ch-1k">+1K</button><button id="ch-1m">+1M</button>
+          </div>
+          <button class="hcd-item hcd-danger" id="ch-reset">Hard Reset</button>
+        </div>
       </div>
-
-      <div class="hcd-subtitle">QUICK ADDS</div>
-      <div class="hcd-grid">
-        <button id="ch-1k">+1K</button>
-        <button id="ch-10k">+10K</button>
-        <button id="ch-100k">+100K</button>
-        <button id="ch-1m">+1M</button>
-        <button id="ch-10m">+10M</button>
-        <button id="ch-100m">+100M</button>
-      </div>
-
-      <button class="hcd-item hcd-danger" id="ch-reset">Hard Reset (Wipe Save)</button>
     </div>
   </div>
-</div>
-```
-
-  </div>
-
-  <!-- TAP ZONE -->
 
   <div id="tap-zone">
-    <div id="tap-rings">
-      <div class="ring r1"></div>
-      <div class="ring r2"></div>
-      <div class="ring r3"></div>
-    </div>
-    <div id="tap-core">
-      <div id="tap-core-icon">⬡</div>
-    </div>
+    <div id="tap-rings"><div class="ring r1"></div><div class="ring r2"></div><div class="ring r3"></div></div>
+    <div id="tap-core"><div id="tap-core-icon">⬡</div></div>
   </div>
-
-  <!-- DRAWER -->
 
   <div id="drawer" class="collapsed">
     <div id="tabs-bar">
-      <button class="tab-btn" id="tab-pps">
-        <span class="icon">📈</span>
-        <span>PPS</span>
-      </button>
-      <button class="tab-btn" id="tab-ppc">
-        <span class="icon">👆</span>
-        <span>PPC</span>
-      </button>
-      <button class="tab-btn" id="tab-offline">
-        <span class="icon">⏰</span>
-        <span>OFFLINE</span>
-      </button>
-      <button class="tab-btn" id="tab-quantum">
-        <span class="icon">⚛</span>
-        <span>QUANTUM</span>
-      </button>
-      <button class="tab-btn" id="tab-stats">
-        <span class="icon">📊</span>
-        <span>STATS</span>
-      </button>
-      <button class="tab-btn" id="tab-settings">
-        <span class="icon">⚙</span>
-        <span>SETTINGS</span>
-      </button>
+      <button class="tab-btn" id="tab-pps">📈 PPS</button>
+      <button class="tab-btn" id="tab-ppc">👆 PPC</button>
+      <button class="tab-btn" id="tab-settings">⚙ SETTINGS</button>
     </div>
-
-```
-<div id="drawer-content">
-  <!-- UPGRADES -->
-  <div id="upgrades-list"></div>
-  <div id="buy-bar">
-    <div class="buy-btns">
-      <button class="buy-btn active" onclick="setBuy(1)">x1</button>
-      <button class="buy-btn" onclick="setBuy(10)">x10</button>
-      <button class="buy-btn" onclick="setBuy(25)">x25</button>
-      <button class="buy-btn" onclick="setBuy(100)">x100</button>
-      <button class="buy-btn" onclick="setBuy(0)">MAX</button>
+    <div id="drawer-content">
+      <div id="upgrades-list"></div>
+      <div id="settings-panel">
+        <div class="setting-row">
+          <span class="setting-label">DARK MODE</span>
+          <div class="toggle on" id="tog-dark"></div>
+        </div>
+        <div class="hcd-subtitle" style="padding-left:0">ACTIVE THEME</div>
+        <div id="theme-buttons" class="hcd-grid" style="padding:0"></div>
+      </div>
     </div>
-  </div>
-
-  <!-- OFFLINE -->
-  <div id="offline-list"></div>
-
-  <!-- QUANTUM -->
-  <div id="quantum-list"></div>
-
-  <!-- STATS -->
-  <div id="stats-panel">
-    <p><strong>Total Credits:</strong> <span id="st-total">0</span></p>
-    <p><strong>Prestige Count:</strong> <span id="st-pcount">0</span></p>
-    <p><strong>Fastest Prestige:</strong> <span id="st-ptime">—</span></p>
-    <p><strong>Quantum Count:</strong> <span id="st-qcount">0</span></p>
-    <p><strong>Quantum Points:</strong> <span id="st-qpts">0</span></p>
-    <p><strong>Total QP:</strong> <span id="st-qtotal">0</span></p>
-    <p><strong>Fastest Quantum:</strong> <span id="st-qtime">—</span></p>
-  </div>
-
-  <!-- SETTINGS -->
-  <div id="settings-panel">
-    <div class="setting-row">
-      <span class="setting-label">DARK MODE</span>
-      <div class="toggle on" id="tog-dark"></div>
-    </div>
-    <div class="setting-row">
-      <span class="setting-label">PARTICLES</span>
-      <div class="toggle" id="tog-part"></div>
-    </div>
-    <div class="setting-row">
-      <span class="setting-label">SOUND EFFECTS</span>
-      <div class="toggle" id="tog-sound"></div>
-    </div>
-    <div class="setting-row">
-      <span class="setting-label">AUTO-SAVE</span>
-      <div class="toggle on" id="tog-autosave"></div>
-    </div>
-    <div class="setting-row">
-      <span class="setting-label">CONFIRM PRESTIGE</span>
-      <div class="toggle on" id="tog-pconf"></div>
-    </div>
-    <div class="setting-row">
-      <span class="setting-label">COMPACT MODE</span>
-      <div class="toggle" id="tog-compact"></div>
-    </div>
-    <div class="setting-row" style="flex-direction:column;align-items:flex-start;gap:8px;">
-      <span class="setting-label">AUTO-SAVE INTERVAL (seconds)</span>
-      <input type="number" id="save-interval-input" min="5" max="300" value="15" style="width:100%;padding:8px;background:rgba(0,245,255,0.08);border:1px solid var(--border2);border-radius:4px;color:var(--txt);font-family:'Orbitron',monospace;font-size:11px;">
-    </div>
-    <select id="theme-selector"></select>
-  </div>
-</div>
-```
-
   </div>
 </div>
 
@@ -778,776 +339,109 @@ box-shadow:0 0 6px var(–c3);transition:width 0.1s linear;z-index:60;
 <div id="toast"></div>
 
 <script>
-// ═══════════════════════════════════════════
-//  GAME STATE
-// ═══════════════════════════════════════════
 const G={
-  coins:0,totalCoins:0,
-  prestigeMult:1,prestigeCount:0,prestigeRunStart:Date.now(),fastestPrestigeMs:0,
-  quantumUnlocked:false,quantumPoints:0,totalQuantumPoints:0,quantumCount:0,quantumRunStart:Date.now(),fastestQuantumMs:0,
-  lastSeen:Date.now()
+  coins:0,totalCoins:0, prestigeMult:1,prestigeCount:0,prestigeRunStart:Date.now(),fastestPrestigeMs:0,
+  quantumUnlocked:false,quantumPoints:0,totalQuantumPoints:0,quantumCount:0,quantumRunStart:Date.now(),lastSeen:Date.now()
 };
 
 const S={particles:true,pconf:true,theme:'nexus',darkMode:true,autoSave:true,soundFx:false,compactMode:false,saveInterval:15};
 
-const PPS=[
-  {id:'pps1',name:'DATA NODE',desc:'Passive income',baseCost:10,growth:1.15,baseCPS:0.1,owned:0,icon:'🖥'},
-  {id:'pps2',name:'AI WORKER',desc:'Automated tasks',baseCost:100,growth:1.15,baseCPS:1,owned:0,icon:'🤖'},
-  {id:'pps3',name:'QUANTUM CORE',desc:'Quantum processing',baseCost:1100,growth:1.15,baseCPS:8,owned:0,icon:'⚛'},
-  {id:'pps4',name:'NEURAL NET',desc:'Deep learning',baseCost:12000,growth:1.15,baseCPS:47,owned:0,icon:'🧠'},
-  {id:'pps5',name:'NANOFORGE',desc:'Molecular assembly',baseCost:130000,growth:1.15,baseCPS:260,owned:0,icon:'⚙'},
-  {id:'pps6',name:'DYSON SPHERE',desc:'Star energy',baseCost:1400000,growth:1.15,baseCPS:1400,owned:0,icon:'☀'},
-  {id:'pps7',name:'WARP DRIVE',desc:'Spacetime bending',baseCost:20000000,growth:1.15,baseCPS:7800,owned:0,icon:'🚀'},
-  {id:'pps8',name:'REALITY ENGINE',desc:'Universe simulation',baseCost:330000000,growth:1.15,baseCPS:44000,owned:0,icon:'🌌'},
-  {id:'pps9',name:'TIME DILATOR',desc:'Temporal control',baseCost:5100000000,growth:1.15,baseCPS:260000,owned:0,icon:'⏳'},
-  {id:'pps10',name:'SINGULARITY',desc:'Infinite density',baseCost:75000000000,growth:1.15,baseCPS:1600000,owned:0,icon:'🕳'}
-];
+const PPS=[{id:'pps1',name:'DATA NODE',desc:'Passive income',baseCost:10,growth:1.15,baseCPS:0.1,owned:0,icon:'🖥'}];
+const PPC=[{id:'ppc1',name:'CLICK BOOSTER',desc:'Improve clicks',baseCost:15,growth:1.15,baseBoost:1,owned:0,icon:'👆'}];
 
-const PPC=[
-  {id:'ppc1',name:'CLICK BOOSTER',desc:'Improve clicks',baseCost:15,growth:1.15,baseBoost:1,owned:0,icon:'👆'},
-  {id:'ppc2',name:'PRECISION CURSOR',desc:'Enhanced taps',baseCost:100,growth:1.15,baseBoost:5,owned:0,icon:'🎯'},
-  {id:'ppc3',name:'COMBO CLICKER',desc:'Multiplier taps',baseCost:1000,growth:1.15,baseBoost:25,owned:0,icon:'💥'},
-  {id:'ppc4',name:'NANO FINGERS',desc:'Molecular touch',baseCost:10000,growth:1.15,baseBoost:100,owned:0,icon:'🔬'},
-  {id:'ppc5',name:'PHOTON TOUCH',desc:'Light speed clicks',baseCost:100000,growth:1.15,baseBoost:500,owned:0,icon:'💡'},
-  {id:'ppc6',name:'QUANTUM HAND',desc:'Superposition taps',baseCost:1000000,growth:1.15,baseBoost:2500,owned:0,icon:'🌀'},
-  {id:'ppc7',name:'VOID FINGER',desc:'Zero-point energy',baseCost:10000000,growth:1.15,baseBoost:12000,owned:0,icon:'🕳'},
-  {id:'ppc8',name:'REALITY TAP',desc:'Dimensional clicks',baseCost:100000000,growth:1.15,baseBoost:60000,owned:0,icon:'🔮'},
-];
+const THEMES={
+  nexus:{bg:'#020810',bg2:'#040f1e',c1:'#00f5ff',c1dim:'rgba(0,245,255,0.15)',c1glow:'rgba(0,245,255,0.30)',c2:'#00bcd4',c3:'#39ff14',c4:'#ff006e',c5:'#ffd60a',c6:'#ff6b00',border:'rgba(0,245,255,0.28)',border2:'rgba(0,245,255,0.12)',txt:'#e8f4ff',txt2:'#8ab4cc',txt3:'#4a7a90','tap-flash':'rgba(0,245,255,0.10)','grid-c':'rgba(0,245,255,0.05)',ring1:'rgba(0,245,255,0.45)',ring2:'rgba(57,255,20,0.32)'},
+  crimson:{bg:'#0a0303',bg2:'#150505',c1:'#ff0040',c1dim:'rgba(255,0,64,0.15)',c1glow:'rgba(255,0,64,0.30)',c2:'#cc0033',c3:'#ff4d6a',c4:'#ffcc00',c5:'#00ffcc',c6:'#ff8800',border:'rgba(255,0,64,0.28)',border2:'rgba(255,0,64,0.12)',txt:'#ffe8ee',txt2:'#cc8899',txt3:'#994455','tap-flash':'rgba(255,0,64,0.10)','grid-c':'rgba(255,0,64,0.05)',ring1:'rgba(255,0,64,0.45)',ring2:'rgba(255,77,106,0.32)'},
+  void:{bg:'#000000',bg2:'#0a0a0a',c1:'#9933ff',c1dim:'rgba(153,51,255,0.15)',c1glow:'rgba(153,51,255,0.30)',c2:'#6600cc',c3:'#00ffaa',c4:'#ff0066',c5:'#ffcc00',c6:'#ff6600',border:'rgba(153,51,255,0.28)',border2:'rgba(153,51,255,0.12)',txt:'#eeddff',txt2:'#9988cc',txt3:'#664488','tap-flash':'rgba(153,51,255,0.10)','grid-c':'rgba(153,51,255,0.05)',ring1:'rgba(153,51,255,0.45)',ring2:'rgba(0,255,170,0.32)'}
+};
 
-const OFFLINE_UPGRADES=[
-  {id:'off1',name:'BASIC BACKUP',desc:'Keep earning while away (50% rate, 1hr cap)',cost:5000,bought:false,rate:0.5,cap:3600},
-  {id:'off2',name:'SYNC MODULE',desc:'Offline rate → 75%',cost:50000,bought:false,rate:0.75,cap:3600},
-  {id:'off3',name:'TIME CACHE',desc:'Offline cap → 4hr',cost:200000,bought:false,rate:0.75,cap:14400},
-  {id:'off4',name:'FULL BACKUP',desc:'Offline rate → 100%',cost:1000000,bought:false,rate:1,cap:14400},
-  {id:'off5',name:'DEEP STORAGE',desc:'Offline cap → 12hr',cost:5000000,bought:false,rate:1,cap:43200},
-  {id:'off6',name:'PERPETUAL CORE',desc:'Offline cap → 24hr',cost:50000000,bought:false,rate:1,cap:86400},
-];
+let activeTab='pps', cheatInfiniteCoins=false, cheatFreeBuy=false, interactionLocked=false;
 
-const QUANTUM_UPGRADES=[
-  {id:'qn1',name:'FASTER TAPS',desc:'+10% tap per QP spent',cost:1,bought:false,effect:()=>1+0.1*G.quantumPoints},
-  {id:'qn2',name:'PASSIVE BOOST',desc:'+20% CPS per QP spent',cost:1,bought:false,effect:()=>1+0.2*G.quantumPoints},
-  {id:'qn3',name:'COST REDUCTION',desc:'All upgrade costs −5% per QP',cost:2,bought:false,effect:()=>Math.pow(0.95,G.quantumPoints)},
-  {id:'qn4',name:'PRESTIGE POWER',desc:'2× prestige multiplier',cost:5,bought:false,effect:()=>2},
-];
-
-let activeTab='pps',drawerOpen=false,buyAmt=1;
-
-let cheatInfiniteCoins=false,cheatFreeBuy=false;
-
-let interactionLocked=false;
-
-// ═══════════════════════════════════════════
-//  CALCULATIONS
-// ═══════════════════════════════════════════
-function cost(u,n=1){
-  const qm=QUANTUM_UPGRADES[2].bought?QUANTUM_UPGRADES[2].effect():1;
-  if(n===0){
-    const target=cheatFreeBuy?1e9:G.coins;
-    let c=0;
-    while(cost(u,c+1)*qm<=target) c++;
-    return c;
-  }
-  const b=u.baseCost,r=u.growth,o=u.owned;
-  return Math.floor(b*((Math.pow(r,o+n)-Math.pow(r,o))/(r-1)));
-}
-
-function totalCPS(){
-  let s=0;
-  PPS.forEach(u=>s+=u.baseCPS*u.owned);
-  const qm=QUANTUM_UPGRADES[1].bought?QUANTUM_UPGRADES[1].effect():1;
-  return s*G.prestigeMult*qm;
-}
-
-function tapAmt(){
-  let t=1;
-  PPC.forEach(u=>t+=u.baseBoost*u.owned);
-  const qm=QUANTUM_UPGRADES[0].bought?QUANTUM_UPGRADES[0].effect():1;
-  return Math.floor(t*G.prestigeMult*qm);
-}
-
-function presThresh(){return 1e6*Math.pow(10,G.prestigeCount);}
-
-function quantumThresh(){return 1e9*Math.pow(100,G.quantumCount);}
-
-function quantumReward(){
-  const t=quantumThresh();
-  if(G.coins<t)return 0;
-  return Math.floor(Math.log10(G.coins/t)+1);
-}
-
-function offlineRateMult(){
-  for(let i=OFFLINE_UPGRADES.length-1;i>=0;i--) if(OFFLINE_UPGRADES[i].bought) return OFFLINE_UPGRADES[i].rate;
-  return 0;
-}
-
-function offlineCapSecs(){
-  for(let i=OFFLINE_UPGRADES.length-1;i>=0;i--) if(OFFLINE_UPGRADES[i].bought) return OFFLINE_UPGRADES[i].cap;
-  return 0;
-}
-
-// ═══════════════════════════════════════════
-//  FORMAT
-// ═══════════════════════════════════════════
-function fmt(n){
-  if(n>=1e15)return(n/1e15).toFixed(2)+'Q';
-  if(n>=1e12)return(n/1e12).toFixed(2)+'T';
-  if(n>=1e9)return(n/1e9).toFixed(2)+'B';
-  if(n>=1e6)return(n/1e6).toFixed(2)+'M';
-  if(n>=1e3)return(n/1e3).toFixed(2)+'K';
-  return Math.floor(n).toString();
-}
-
-function fmtTime(ms){
-  const s=Math.floor(ms/1000),m=Math.floor(s/60),h=Math.floor(m/60),d=Math.floor(h/24);
-  if(d>0)return d+'d '+h%24+'h';
-  if(h>0)return h+'h '+m%60+'m';
-  if(m>0)return m+'m '+s%60+'s';
-  return s+'s';
-}
-
-// ═══════════════════════════════════════════
-//  SAVE / LOAD
-// ═══════════════════════════════════════════
-function saveGame(){
-  G.lastSeen=Date.now();
-  const data={G,S,PPS:PPS.map(u=>u.owned),PPC:PPC.map(u=>u.owned),OFFLINE:OFFLINE_UPGRADES.map(u=>u.bought),QUANTUM:QUANTUM_UPGRADES.map(u=>u.bought)};
-  localStorage.setItem('nexus_v4',JSON.stringify(data));
-}
-
-function loadGame(){
-  try{
-    const raw=localStorage.getItem('nexus_v4');
-    if(!raw)return;
-    const d=JSON.parse(raw);
-    Object.assign(G,d.G);
-    Object.assign(S,d.S);
-    d.PPS.forEach((v,i)=>PPS[i].owned=v);
-    d.PPC.forEach((v,i)=>PPC[i].owned=v);
-    d.OFFLINE.forEach((v,i)=>OFFLINE_UPGRADES[i].bought=v);
-    if(d.QUANTUM) d.QUANTUM.forEach((v,i)=>QUANTUM_UPGRADES[i].bought=v);
-  }catch(e){}
-}
-
-// ═══════════════════════════════════════════
-//  UI UPDATE
-// ═══════════════════════════════════════════
 function updateUI(){
-  document.getElementById('credit-count').textContent=fmt(G.coins);
-  document.getElementById('stat-cps').textContent=fmt(totalCPS());
-  document.getElementById('stat-tap').textContent=fmt(tapAmt());
+  document.getElementById('credit-count').textContent=Math.floor(G.coins).toLocaleString();
+  document.getElementById('stat-cps').textContent=(PPS[0].owned * PPS[0].baseCPS * G.prestigeMult).toFixed(1);
+  document.getElementById('stat-tap').textContent=Math.floor((1 + PPC[0].owned * PPC[0].baseBoost) * G.prestigeMult);
   document.getElementById('stat-mult').textContent='×'+G.prestigeMult;
-
-  const pb=document.getElementById('prestige-btn');
-  pb.style.display=G.coins>=presThresh()?'block':'none';
-  pb.textContent=`PRESTIGE (${fmt(presThresh())}) → ×${G.prestigeMult*2}`;
-
-  const qb=document.getElementById('quantum-btn');
-  qb.style.display=G.coins>=quantumThresh()?'block':'none';
-  qb.textContent=`QUANTUM (${fmt(quantumThresh())}) → +${quantumReward()}QP`;
-
-  const qt=document.getElementById('tab-quantum');
-  if(G.quantumUnlocked) qt.classList.add('unlocked');
-
-  document.getElementById('st-total').textContent=fmt(G.totalCoins);
-  document.getElementById('st-pcount').textContent=G.prestigeCount;
-  document.getElementById('st-ptime').textContent=G.fastestPrestigeMs?fmtTime(G.fastestPrestigeMs):'—';
-  document.getElementById('st-qcount').textContent=G.quantumCount;
-  document.getElementById('st-qpts').textContent=G.quantumPoints;
-  document.getElementById('st-qtotal').textContent=G.totalQuantumPoints;
-  document.getElementById('st-qtime').textContent=G.fastestQuantumMs?fmtTime(G.fastestQuantumMs):'—';
 }
 
-// ═══════════════════════════════════════════
-//  RENDER UPGRADES
-// ═══════════════════════════════════════════
 function renderUpgrades(){
-  const list=activeTab==='pps'?PPS:PPC;
+  const list = activeTab==='pps' ? PPS : PPC;
   const ul=document.getElementById('upgrades-list');
   ul.innerHTML='';
   list.forEach(u=>{
-    const n=buyAmt===0?cost(u,0):buyAmt;
-    const c=cost(u,n);
-    const canAfford=cheatFreeBuy||G.coins>=c;
-
+    const cost = Math.floor(u.baseCost * Math.pow(u.growth, u.owned));
     const card=document.createElement('div');
-    card.className='up-card'+(canAfford?'':' locked');
-    card.innerHTML=`
-      <div class="up-info">
-        <div class="up-name">${u.icon} ${u.name}</div>
-        <div class="up-desc">${u.desc}</div>
-        <div class="up-owned">Owned: ${u.owned}</div>
-      </div>
-      <button class="up-buy-btn ${canAfford?'':'locked'}">
-        <span class="amt">BUY ${n>1?'×'+n:''}</span>
-        <span class="cost">${fmt(c)}</span>
-      </button>
-    `;
-    card.querySelector('.up-buy-btn').onclick=()=>buyUpgrade(u,n);
+    card.className='up-card';
+    card.innerHTML=`<div class="up-info"><div class="up-name">${u.icon} ${u.name}</div><div class="up-desc">Owned: ${u.owned}</div></div>
+    <button class="up-buy-btn" onclick="buyUpgrade('${u.id}')">BUY ${cost}</button>`;
     ul.appendChild(card);
   });
 }
 
-function buyUpgrade(u,n){
-  if(interactionLocked) return;
-  const c=cost(u,n);
-  if(cheatInfiniteCoins && !cheatFreeBuy && G.coins<c) G.coins=Number.MAX_SAFE_INTEGER;
-  if(!cheatFreeBuy && G.coins<c) return;
-  if(!cheatFreeBuy) G.coins-=c;
-  u.owned+=n;
-  saveGame();updateUI();renderUpgrades();
-}
-
-// ═══════════════════════════════════════════
-//  RENDER OFFLINE
-// ═══════════════════════════════════════════
-function renderOffline(){
-  const ol=document.getElementById('offline-list');
-  ol.innerHTML='';
-  OFFLINE_UPGRADES.forEach(u=>{
-    const canAfford=cheatFreeBuy||G.coins>=u.cost;
-    const card=document.createElement('div');
-    card.className='off-card'+(u.bought?' bought':'');
-    card.innerHTML=`
-      <div class="off-name">${u.name}</div>
-      <div class="off-desc">${u.desc}</div>
-      <div class="off-cost">Cost: ${fmt(u.cost)}</div>
-    `;
-    if(!u.bought && canAfford){
-      card.style.cursor='pointer';
-      card.onclick=()=>buyOffline(u);
-    }
-    ol.appendChild(card);
-  });
-}
-
-function buyOffline(u){
-  if(interactionLocked) return;
-  if(u.bought)return;
-  if(cheatInfiniteCoins && !cheatFreeBuy && G.coins<u.cost) G.coins=Number.MAX_SAFE_INTEGER;
-  if(!cheatFreeBuy && G.coins<u.cost)return;
-  if(!cheatFreeBuy) G.coins-=u.cost;
-  u.bought=true;
-  spawnSparks(window.innerWidth/2,window.innerHeight*0.6,getComputedStyle(document.body).getPropertyValue('--c3').trim()||'#39ff14');
-  saveGame();updateUI();
-  renderOffline();
-}
-
-// ═══════════════════════════════════════════
-//  RENDER QUANTUM
-// ═══════════════════════════════════════════
-function renderQuantum(){
-  const ql=document.getElementById('quantum-list');
-  ql.innerHTML='';
-  QUANTUM_UPGRADES.forEach(u=>{
-    const canAfford=G.quantumPoints>=u.cost;
-    const card=document.createElement('div');
-    card.className='qn-card'+(u.bought?' bought':'');
-    card.innerHTML=`
-      <div class="qn-name">${u.name}</div>
-      <div class="qn-desc">${u.desc}</div>
-      <div class="qn-cost">Cost: ${u.cost} QP</div>
-    `;
-    if(!u.bought && canAfford){
-      card.style.cursor='pointer';
-      card.onclick=()=>buyQuantum(u);
-    }
-    ql.appendChild(card);
-  });
-}
-
-function buyQuantum(u){
-  if(interactionLocked) return;
-  if(u.bought)return;
-  if(G.quantumPoints<u.cost)return;
-  G.quantumPoints-=u.cost;
-  u.bought=true;
-  spawnSparks(window.innerWidth/2,window.innerHeight*0.6,getComputedStyle(document.body).getPropertyValue('--c5').trim()||'#ffd60a');
-  saveGame();updateUI();
-  renderQuantum();
-}
-
-// ═══════════════════════════════════════════
-//  TAB / DRAWER
-// ═══════════════════════════════════════════
-function syncTapDrawerLayout(){
-  const dr=document.getElementById('drawer');
-  const tz=document.getElementById('tap-zone');
-  if(!dr||!tz)return;
-  const open=!dr.classList.contains('collapsed');
-  tz.classList.toggle('tap-zone-menus-open',open);
+function buyUpgrade(id){
+  const u = [...PPS, ...PPC].find(x=>x.id===id);
+  const cost = Math.floor(u.baseCost * Math.pow(u.growth, u.owned));
+  if(G.coins>=cost || cheatFreeBuy){
+    if(!cheatFreeBuy) G.coins-=cost;
+    u.owned++;
+    renderUpgrades(); updateUI();
+  }
 }
 
 function switchTab(tab){
-  if(tab===activeTab){
-    drawerOpen=!drawerOpen;
-    document.getElementById('drawer').classList.toggle('collapsed',!drawerOpen);
-    syncTapDrawerLayout();
-    return;
-  }
-
-  if(tab==='quantum' && !G.quantumUnlocked) return;
-
   activeTab=tab;
-  drawerOpen=true;
   document.getElementById('drawer').classList.remove('collapsed');
-
-  ['pps','ppc','offline','quantum','stats','settings'].forEach(t=>{
-    const btn=document.getElementById('tab-'+t);
-    if(btn) btn.classList.toggle('active',t===tab);
+  ['pps','ppc','settings'].forEach(t=>{
+    document.getElementById('upgrades-list').style.display = (tab==='pps'||tab==='ppc') ? 'flex' : 'none';
+    document.getElementById('settings-panel').classList.toggle('vis', tab==='settings');
   });
-
-  const ul=document.getElementById('upgrades-list');
-  const ol=document.getElementById('offline-list');
-  const ql=document.getElementById('quantum-list');
-  const sp=document.getElementById('settings-panel');
-  const st=document.getElementById('stats-panel');
-  const bb=document.getElementById('buy-bar');
-
-  ul.style.display='none';
-  ol.classList.remove('vis');
-  ql.classList.remove('vis');
-  sp.classList.remove('vis');
-  st.classList.remove('vis');
-  bb.style.display='none';
-
-  if(tab==='pps'||tab==='ppc'){
-    ul.style.display='flex';
-    bb.style.display='flex';
-    renderUpgrades();
-  } else if(tab==='offline'){
-    ol.classList.add('vis');
-    renderOffline();
-  } else if(tab==='quantum'){
-    ql.classList.add('vis');
-    renderQuantum();
-  } else if(tab==='stats'){
-    st.classList.add('vis');
-  } else if(tab==='settings'){
-    sp.classList.add('vis');
-  }
-
-  syncTapDrawerLayout();
-}
-
-function setBuy(n){
-  buyAmt=n;
-  const vals=[1,10,25,100,0];
-  document.querySelectorAll('.buy-btn').forEach((b,i)=>b.classList.toggle('active',vals[i]===n));
   renderUpgrades();
 }
 
-// ═══════════════════════════════════════════
-//  TAP ZONE
-// ═══════════════════════════════════════════
-const tapZone=document.getElementById('tap-zone');
-
-let tapLock=false;
-
-function doTap(cx,cy){
-  if(interactionLocked) return;
-  const amt=tapAmt();
-  if(cheatInfiniteCoins) G.totalCoins+=amt;
-  else{G.coins+=amt;G.totalCoins+=amt;}
-  spawnSparks(cx,cy);
-  spawnFloat(cx,cy,fmt(amt));
-  tapZone.classList.add('tapped');
-  if(!tapLock){tapLock=true;setTimeout(()=>{tapZone.classList.remove('tapped');tapLock=false;},110);}
-  updateUI();
-}
-
-tapZone.addEventListener('click',e=>{
-  if(interactionLocked) return;
-  doTap(e.clientX,e.clientY);
-});
-
-tapZone.addEventListener('touchstart',e=>{
-  if(interactionLocked){ e.preventDefault(); return; }
-  e.preventDefault();
-  Array.from(e.changedTouches).forEach(t=>doTap(t.clientX,t.clientY));
-},{passive:false});
-
-// ═══════════════════════════════════════════
-//  PRESTIGE
-// ═══════════════════════════════════════════
-function doPrestige(){
-  if(G.coins<presThresh()) return;
-  if(S.pconf&&!confirm('PRESTIGE RESET? You will lose regular progress for a permanent ×2 boost.'))return;
-
-  const run=Date.now()-G.prestigeRunStart;
-  if(run>0) G.fastestPrestigeMs=G.fastestPrestigeMs?Math.min(G.fastestPrestigeMs,run):run;
-
-  G.prestigeCount++;
-  G.prestigeMult*=2;
-  G.coins=0;
-  PPS.forEach(u=>u.owned=0);PPC.forEach(u=>u.owned=0);OFFLINE_UPGRADES.forEach(u=>u.bought=false);
-  G.prestigeRunStart=Date.now();
-
-  if(cheatInfiniteCoins) G.coins=Number.MAX_SAFE_INTEGER;
-
-  saveGame();updateUI();
-  if(activeTab==='pps'||activeTab==='ppc') renderUpgrades();
-  else if(activeTab==='offline') renderOffline();
-  else if(activeTab==='quantum') renderQuantum();
-}
-
-function doQuantumReset(){
-  if(G.coins<quantumThresh()) return;
-  if(!confirm('QUANTUM RESET? This will wipe credits, upgrades, and prestige progress for Quantum Points.')) return;
-
-  const run=Date.now()-G.quantumRunStart;
-  if(run>0) G.fastestQuantumMs=G.fastestQuantumMs?Math.min(G.fastestQuantumMs,run):run;
-
-  const reward=quantumReward();
-  G.quantumCount++;
-  G.quantumUnlocked=true;
-  G.quantumPoints+=reward;
-  G.totalQuantumPoints+=reward;
-  G.prestigeMult=1;
-  G.prestigeCount=0;
-  G.coins=0;
-  PPS.forEach(u=>u.owned=0);PPC.forEach(u=>u.owned=0);OFFLINE_UPGRADES.forEach(u=>u.bought=false);
-  G.prestigeRunStart=Date.now();
-  G.quantumRunStart=Date.now();
-
-  saveGame();updateUI();
-  switchTab('quantum');
-  renderQuantum();
-}
-
-// ═══════════════════════════════════════════
-//  GAME TICK
-// ═══════════════════════════════════════════
-let barStep=0;
-
-setInterval(()=>{
-  const cps=totalCPS(),amt=cps/10;
-  if(cheatInfiniteCoins) G.totalCoins+=amt;
-  else{G.coins+=amt;G.totalCoins+=amt;}
-
-  barStep=(barStep+(cps>0?1:0))%10;
-  document.getElementById('idle-bar').style.width=(barStep*10)+'%';
-
-  updateUI();
-},100);
-
-// Auto-save setup
-let autoSaveInterval;
-function setupAutoSave(){
-  if(autoSaveInterval) clearInterval(autoSaveInterval);
-  if(S.autoSave){
-    autoSaveInterval=setInterval(saveGame,S.saveInterval*1000);
-  }
-}
-setupAutoSave();
-
-// ═══════════════════════════════════════════
-//  VISIBILITY CHANGE (background → foreground)
-// ═══════════════════════════════════════════
-document.addEventListener('visibilitychange',()=>{
-  if(document.hidden){saveGame();return;}
-  try{
-    const raw=localStorage.getItem('nexus_v4');
-    if(!raw)return;
-    const d=JSON.parse(raw);
-
-    const capSec=offlineCapSecs();
-    const rawSec=Math.max(0,(Date.now()-(d.lastSeen||Date.now()))/1000);
-    const sec=Math.min(rawSec,capSec);
-
-    if(sec>10){
-      const earned=totalCPS()*sec*offlineRateMult();
-      if(earned>0){
-        if(cheatInfiniteCoins) G.totalCoins+=earned;
-        else{G.coins+=earned;G.totalCoins+=earned;}
-        showOfflineToast(earned,sec,rawSec>capSec);
-        saveGame();updateUI();
-      }
-    }
-  }catch(e){}
-});
-
-// ═══════════════════════════════════════════
-//  PARTICLES (optional)
-// ═══════════════════════════════════════════
-const canvas=document.getElementById('particles');
-const ctx=canvas.getContext('2d');
-canvas.width=window.innerWidth;
-canvas.height=window.innerHeight;
-
-const particles=[];
-for(let i=0;i<50;i++){
-  particles.push({
-    x:Math.random()*canvas.width,
-    y:Math.random()*canvas.height,
-    vx:(Math.random()-0.5)*0.5,
-    vy:(Math.random()-0.5)*0.5,
-    r:Math.random()*2+1
-  });
-}
-
-function drawParticles(){
-  if(!S.particles)return;
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  const c1=getComputedStyle(document.body).getPropertyValue('--c1').trim()||'#00f5ff';
-  ctx.fillStyle=c1;
-  ctx.globalAlpha=0.15;
-  particles.forEach(p=>{
-    p.x+=p.vx;p.y+=p.vy;
-    if(p.x<0||p.x>canvas.width)p.vx*=-1;
-    if(p.y<0||p.y>canvas.height)p.vy*=-1;
-    ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill();
-  });
-  ctx.globalAlpha=1;
-  requestAnimationFrame(drawParticles);
-}
-
-drawParticles();
-
-// ═══════════════════════════════════════════
-//  SPARKS
-// ═══════════════════════════════════════════
-function spawnSparks(x,y,col){
-  if(!S.particles)return;
-  const c=col||getComputedStyle(document.body).getPropertyValue('--c1').trim()||'#00f5ff';
-  for(let i=0;i<8;i++){
-    const s=document.createElement('div');
-    s.style.cssText=`position:fixed;width:4px;height:4px;background:${c};border-radius:50%;pointer-events:none;z-index:150;`;
-    s.style.left=x+'px';s.style.top=y+'px';
-    document.body.appendChild(s);
-    const angle=Math.random()*Math.PI*2,d=20+Math.random()*40;
-    const tx=x+Math.cos(angle)*d,ty=y+Math.sin(angle)*d;
-    s.animate([{left:x+'px',top:y+'px',opacity:1},{left:tx+'px',top:ty+'px',opacity:0}],{duration:600,easing:'ease-out'}).onfinish=()=>s.remove();
-  }
-  // Simple sound effect (beep using Web Audio API)
-  if(S.soundFx){
-    try{
-      const ctx=new (window.AudioContext||window.webkitAudioContext)();
-      const osc=ctx.createOscillator();
-      const gain=ctx.createGain();
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.frequency.value=800;
-      gain.gain.value=0.03;
-      osc.start();
-      gain.gain.exponentialRampToValueAtTime(0.00001,ctx.currentTime+0.05);
-      osc.stop(ctx.currentTime+0.05);
-    }catch(e){}
-  }
-}
-
-function spawnFloat(x,y,txt){
-  const f=document.createElement('div');
-  f.className='float-text';
-  f.textContent='+'+txt;
-  f.style.left=x+'px';
-  f.style.top=y+'px';
-  document.body.appendChild(f);
-  setTimeout(()=>f.remove(),1100);
-}
-
-// ═══════════════════════════════════════════
-//  TOAST
-// ═══════════════════════════════════════════
-function showToast(msg,dur=3000){
-  const t=document.getElementById('toast');
-  t.textContent=msg;
-  t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),dur);
-}
-
-function showOfflineToast(amt,sec,capped){
-  let msg=`OFFLINE EARNINGS: +${fmt(amt)} (${fmtTime(sec*1000)})`;
-  if(capped)msg+=' [CAPPED]';
-  showToast(msg,5000);
-}
-
-function showHowToToast(){
-  showToast('TAP the center to earn credits! Open drawer tabs for upgrades.',6000);
-  localStorage.setItem('nexus_seen_howto','1');
-}
-
-// ═══════════════════════════════════════════
-//  SETTINGS
-// ═══════════════════════════════════════════
 function applySettings(){
-  document.getElementById('tog-dark').classList.toggle('on',S.darkMode);
-  document.getElementById('tog-part').classList.toggle('on',S.particles);
-  document.getElementById('tog-pconf').classList.toggle('on',S.pconf);
-  document.getElementById('tog-sound').classList.toggle('on',S.soundFx);
-  document.getElementById('tog-autosave').classList.toggle('on',S.autoSave);
-  document.getElementById('tog-compact').classList.toggle('on',S.compactMode);
-  document.getElementById('save-interval-input').value=S.saveInterval;
-  
-  document.documentElement.classList.toggle('light-mode',!S.darkMode);
-  document.body.classList.toggle('compact-mode',S.compactMode);
-  
+  document.documentElement.classList.toggle('light-mode', !S.darkMode);
+  document.getElementById('tog-dark').classList.toggle('on', S.darkMode);
   applyTheme(S.theme);
 }
 
-document.getElementById('tog-dark').onclick=()=>{
-  S.darkMode=!S.darkMode;
-  applySettings();
-  saveGame();
-};
-
-document.getElementById('tog-part').onclick=()=>{
-  S.particles=!S.particles;
-  applySettings();
-  saveGame();
-};
-
-document.getElementById('tog-pconf').onclick=()=>{
-  S.pconf=!S.pconf;
-  applySettings();
-  saveGame();
-};
-
-document.getElementById('tog-sound').onclick=()=>{
-  S.soundFx=!S.soundFx;
-  applySettings();
-  saveGame();
-  showToast(`Sound Effects: ${S.soundFx?'ON':'OFF'}`);
-};
-
-document.getElementById('tog-autosave').onclick=()=>{
-  S.autoSave=!S.autoSave;
-  applySettings();
-  saveGame();
-  showToast(`Auto-Save: ${S.autoSave?'ON':'OFF'}`);
-  setupAutoSave();
-};
-
-document.getElementById('tog-compact').onclick=()=>{
-  S.compactMode=!S.compactMode;
-  applySettings();
-  saveGame();
-};
-
-document.getElementById('save-interval-input').addEventListener('change',e=>{
-  const val=parseInt(e.target.value);
-  if(val>=5 && val<=300){
-    S.saveInterval=val;
-    saveGame();
-    setupAutoSave();
-    showToast(`Auto-save interval: ${val}s`);
-  }
-});
-
-// ═══════════════════════════════════════════
-//  THEMES
-// ═══════════════════════════════════════════
-const THEMES={
-  nexus:{bg:'#020810',bg2:'#040f1e',c1:'#00f5ff',c1dim:'rgba(0,245,255,0.15)',c1glow:'rgba(0,245,255,0.30)',c2:'#00bcd4',c3:'#39ff14',c4:'#ff006e',c5:'#ffd60a',c6:'#ff6b00',border:'rgba(0,245,255,0.28)',border2:'rgba(0,245,255,0.12)',txt:'#e8f4ff',txt2:'#8ab4cc',txt3:'#4a7a90','tap-flash':'rgba(0,245,255,0.10)','grid-c':'rgba(0,245,255,0.05)',ring1:'rgba(0,245,255,0.45)',ring2:'rgba(57,255,20,0.32)'},
-  crimson:{bg:'#0a0303',bg2:'#150505',c1:'#ff0040',c1dim:'rgba(255,0,64,0.15)',c1glow:'rgba(255,0,64,0.30)',c2:'#cc0033',c3:'#ff4d6a',c4:'#ffcc00',c5:'#00ffcc',c6:'#ff8800',border:'rgba(255,0,64,0.28)',border2:'rgba(255,0,64,0.12)',txt:'#ffe8ee',txt2:'#cc8899',txt3:'#994455','tap-flash':'rgba(255,0,64,0.10)','grid-c':'rgba(255,0,64,0.05)',ring1:'rgba(255,0,64,0.45)',ring2:'rgba(255,77,106,0.32)'},
-  void:{bg:'#000000',bg2:'#0a0a0a',c1:'#9933ff',c1dim:'rgba(153,51,255,0.15)',c1glow:'rgba(153,51,255,0.30)',c2:'#6600cc',c3:'#00ffaa',c4:'#ff0066',c5:'#ffcc00',c6:'#ff6600',border:'rgba(153,51,255,0.28)',border2:'rgba(153,51,255,0.12)',txt:'#eeddff',txt2:'#9988cc',txt3:'#664488','tap-flash':'rgba(153,51,255,0.10)','grid-c':'rgba(153,51,255,0.05)',ring1:'rgba(153,51,255,0.45)',ring2:'rgba(0,255,170,0.32)'},
-  emerald:{bg:'#001a0d',bg2:'#002614',c1:'#00ff88',c1dim:'rgba(0,255,136,0.15)',c1glow:'rgba(0,255,136,0.30)',c2:'#00cc70',c3:'#88ffaa',c4:'#ff0066',c5:'#ffdd00',c6:'#ff8800',border:'rgba(0,255,136,0.28)',border2:'rgba(0,255,136,0.12)',txt:'#e8fff4',txt2:'#88ccaa',txt3:'#447755','tap-flash':'rgba(0,255,136,0.10)','grid-c':'rgba(0,255,136,0.05)',ring1:'rgba(0,255,136,0.45)',ring2:'rgba(136,255,170,0.32)'},
-  sunset:{bg:'#1a0a00',bg2:'#261000',c1:'#ff6600',c1dim:'rgba(255,102,0,0.15)',c1glow:'rgba(255,102,0,0.30)',c2:'#cc5200',c3:'#ffcc00',c4:'#ff0066',c5:'#00ffcc',c6:'#ff9933',border:'rgba(255,102,0,0.28)',border2:'rgba(255,102,0,0.12)',txt:'#fff4e8',txt2:'#ccaa88',txt3:'#997744','tap-flash':'rgba(255,102,0,0.10)','grid-c':'rgba(255,102,0,0.05)',ring1:'rgba(255,102,0,0.45)',ring2:'rgba(255,204,0,0.32)'}
-};
-
-function applyTheme(name,save=true){
-  const t=THEMES[name]||THEMES.nexus;
+function applyTheme(name){
+  const t=THEMES[name];
   const r=document.documentElement.style;
-  Object.keys(t).forEach(k=>r.setProperty('--'+k,t[k]));
-  document.getElementById('theme-meta').content=t.c1;
-  if(save){S.theme=name;saveGame();}
+  Object.keys(t).forEach(k=>r.setProperty('--'+k, t[k]));
+  S.theme=name;
+  buildThemes(); // Refresh active state
 }
 
 function buildThemes(){
-  const sel=document.getElementById('theme-selector');
-  sel.innerHTML='';
+  const container = document.getElementById('theme-buttons');
+  container.innerHTML='';
   Object.keys(THEMES).forEach(k=>{
-    const opt=document.createElement('option');
-    opt.value=k;
-    opt.textContent=k.toUpperCase();
-    if(k===S.theme)opt.selected=true;
-    sel.appendChild(opt);
+    const btn = document.createElement('button');
+    btn.className = `theme-btn ${S.theme === k ? 'active' : ''}`;
+    btn.textContent = k.toUpperCase();
+    btn.onclick = () => applyTheme(k);
+    container.appendChild(btn);
   });
-  sel.onchange=()=>applyTheme(sel.value);
 }
 
-// ═══════════════════════════════════════════
-//  CHEAT MENU
-// ═══════════════════════════════════════════
-const cheatToggle=document.getElementById('cheat-toggle');
-const cheatDD=document.getElementById('cheat-dd');
-const cheatWrap=document.getElementById('cheat-wrap');
-
-cheatToggle.addEventListener('click',e=>{
-  e.stopPropagation();
-  const isOpen=cheatDD.classList.toggle('open');
-  cheatToggle.classList.toggle('open',isOpen);
-  interactionLocked=isOpen;
-});
-
-document.addEventListener('click',e=>{
-  if(!cheatWrap.contains(e.target)){
-    cheatDD.classList.remove('open');
-    cheatToggle.classList.remove('open');
-    interactionLocked=false;
-  }
-});
-
-cheatDD.addEventListener('click',e=>e.stopPropagation());
-
-document.getElementById('ch-infinite').onclick=()=>{cheatInfiniteCoins=!cheatInfiniteCoins;showToast(`Infinite Coins: ${cheatInfiniteCoins?'ON':'OFF'}`);};
-document.getElementById('ch-freebuy').onclick=()=>{cheatFreeBuy=!cheatFreeBuy;showToast(`Free Buys: ${cheatFreeBuy?'ON':'OFF'}`);};
-document.getElementById('ch-cps').onclick=()=>{PPS[0].owned+=100;saveGame();updateUI();renderUpgrades();showToast('+1000 CPS');};
-document.getElementById('ch-tap').onclick=()=>{PPC[0].owned+=100;saveGame();updateUI();renderUpgrades();showToast('+100 Tap');};
-document.getElementById('ch-prestige').onclick=()=>{doPrestige();showToast('Prestige forced');};
-document.getElementById('ch-quantum').onclick=()=>{if(G.coins>=quantumThresh()){doQuantumReset();showToast('Quantum forced');}else{showToast('Need '+fmt(quantumThresh())+' coins');}};
-
-document.getElementById('ch-coin-add').onclick=()=>{
-  const v=parseFloat(document.getElementById('ch-coin-input').value);
-  if(v>0){G.coins+=v;updateUI();saveGame();showToast(`+${fmt(v)} coins`);}
+document.getElementById('tap-zone').onclick = (e) => {
+  const amt = Math.floor((1 + PPC[0].owned * PPC[0].baseBoost) * G.prestigeMult);
+  G.coins += amt; updateUI();
+  const f=document.createElement('div'); f.className='float-text'; f.textContent='+'+amt;
+  f.style.left=e.clientX+'px'; f.style.top=e.clientY+'px';
+  document.body.appendChild(f); setTimeout(()=>f.remove(),1000);
 };
 
-document.getElementById('ch-1k').onclick=()=>{G.coins+=1000;updateUI();saveGame();showToast('+1K');};
-document.getElementById('ch-10k').onclick=()=>{G.coins+=10000;updateUI();saveGame();showToast('+10K');};
-document.getElementById('ch-100k').onclick=()=>{G.coins+=100000;updateUI();saveGame();showToast('+100K');};
-document.getElementById('ch-1m').onclick=()=>{G.coins+=1000000;updateUI();saveGame();showToast('+1M');};
-document.getElementById('ch-10m').onclick=()=>{G.coins+=10000000;updateUI();saveGame();showToast('+10M');};
-document.getElementById('ch-100m').onclick=()=>{G.coins+=100000000;updateUI();saveGame();showToast('+100M');};
+document.getElementById('tog-dark').onclick=()=>{ S.darkMode=!S.darkMode; applySettings(); };
+document.getElementById('cheat-toggle').onclick=()=>document.getElementById('cheat-dd').classList.toggle('open');
+document.getElementById('ch-1k').onclick=()=>{ G.coins+=1000; updateUI(); };
+document.getElementById('ch-reset').onclick=()=>location.reload();
 
-document.getElementById('ch-reset').onclick=()=>{
-  if(confirm('HARD RESET? All progress will be wiped.')){
-    localStorage.removeItem('nexus_v4');
-    location.reload();
-  }
-};
+['pps','ppc','settings'].forEach(t=>document.getElementById('tab-'+t).onclick=()=>switchTab(t));
 
-// ═══════════════════════════════════════════
-//  BUTTON CLICK HANDLERS
-// ═══════════════════════════════════════════
-document.getElementById('prestige-btn').onclick=doPrestige;
-document.getElementById('quantum-btn').onclick=doQuantumReset;
+setInterval(()=>{ G.coins += (PPS[0].owned * PPS[0].baseCPS * G.prestigeMult)/10; updateUI(); },100);
 
-['pps','ppc','offline','quantum','stats','settings'].forEach(t=>{
-  const btn=document.getElementById('tab-'+t);
-  if(btn) btn.onclick=()=>switchTab(t);
-});
-
-// ═══════════════════════════════════════════
-//  INIT
-// ═══════════════════════════════════════════
-applyTheme('nexus', false);
-
-loadGame();
-buildThemes();
-applySettings();
-switchTab('pps');
-updateUI();
-renderOffline();
-
-if(!localStorage.getItem('nexus_seen_howto')) showHowToToast();
-
-setInterval(()=>{
-  if(activeTab==='pps'||activeTab==='ppc') renderUpgrades();
-  else if(activeTab==='offline') renderOffline();
-  else if(activeTab==='quantum') renderQuantum();
-  else if(activeTab==='stats') updateUI();
-},400);
-
+buildThemes(); applySettings(); updateUI();
 </script>
-
 </body>
 </html>
