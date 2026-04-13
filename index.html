@@ -47,25 +47,43 @@ all vars hard-coded as fallbacks too.
 
 /* Light mode override */
 :root.light-mode {
-–bg:     #f5f8fa;
+–bg:     #f0f4f8;
 –bg2:    #ffffff;
-–c1:     #0088cc;
-–c1dim:  rgba(0,136,204,0.12);
-–c1glow: rgba(0,136,204,0.25);
-–c2:     #0066aa;
+–c1:     #0066cc;
+–c1dim:  rgba(0,102,204,0.15);
+–c1glow: rgba(0,102,204,0.3);
+–c2:     #0052a3;
 –c3:     #00aa44;
-–c4:     #cc0055;
-–c5:     #dd9900;
+–c4:     #dd0055;
+–c5:     #cc8800;
 –c6:     #dd5500;
-–border: rgba(0,136,204,0.3);
-–border2:rgba(0,136,204,0.15);
+–border: rgba(0,102,204,0.25);
+–border2:rgba(0,102,204,0.12);
 –txt:    #1a2634;
-–txt2:   #4a5f7a;
-–txt3:   #7a8fa4;
-–tap-flash: rgba(0,136,204,0.15);
-–grid-c: rgba(0,136,204,0.08);
-–ring1:  rgba(0,136,204,0.4);
-–ring2:  rgba(0,170,68,0.35);
+–txt2:   #3a4a5a;
+–txt3:   #6a7a8a;
+–tap-flash: rgba(0,102,204,0.12);
+–grid-c: rgba(0,102,204,0.06);
+–ring1:  rgba(0,102,204,0.35);
+–ring2:  rgba(0,170,68,0.3);
+}
+
+/* Light mode specific overrides for better visibility */
+:root.light-mode #grid-bg{
+opacity:0.4;
+}
+
+:root.light-mode .corner{
+opacity:0.6;
+}
+
+:root.light-mode #tap-zone{
+background:radial-gradient(circle at center, rgba(0,102,204,0.05), transparent 60%);
+}
+
+:root.light-mode #tap-core{
+background:radial-gradient(circle, rgba(0,102,204,0.18), rgba(255,255,255,0.8) 70%);
+box-shadow:0 0 28px rgba(0,102,204,0.3), inset 0 0 20px rgba(0,102,204,0.1);
 }
 
 /* ═══════════════════════════════════════════
@@ -542,6 +560,43 @@ font-size:10px;margin-top:6px;
 touch-action:manipulation;
 }
 
+.theme-quick-btn{
+padding:10px 8px;
+background:linear-gradient(135deg, var(–theme-color,var(–c1)), transparent);
+background-color:rgba(0,245,255,0.08);
+border:1px solid var(–border2);
+border-radius:4px;
+color:var(–txt);
+font-family:‘Orbitron’,monospace;
+font-size:9px;
+font-weight:700;
+cursor:pointer;
+transition:all 0.2s;
+touch-action:manipulation;
+position:relative;
+overflow:hidden;
+}
+
+.theme-quick-btn::before{
+content:’’;
+position:absolute;
+top:0;left:0;right:0;
+height:2px;
+background:var(–theme-color,var(–c1));
+opacity:0.6;
+}
+
+.theme-quick-btn:active{
+transform:scale(0.95);
+background-color:rgba(0,245,255,0.15);
+}
+
+.theme-quick-btn.active{
+border-color:var(–c1);
+background-color:rgba(0,245,255,0.2);
+box-shadow:0 0 12px rgba(0,245,255,0.3);
+}
+
 /* Compact mode */
 body.compact-mode #header{padding-top:calc(12px + env(safe-area-inset-top, 0px));padding-bottom:6px;}
 body.compact-mode #credit-count{font-size:clamp(22px,6vw,36px);}
@@ -742,6 +797,18 @@ box-shadow:0 0 6px var(–c3);transition:width 0.1s linear;z-index:60;
       <span class="setting-label">DARK MODE</span>
       <div class="toggle on" id="tog-dark"></div>
     </div>
+    
+    <div style="padding:12px 10px 8px;border-top:1px solid var(--border2);margin-top:6px;">
+      <div class="setting-label" style="margin-bottom:8px;opacity:0.7;">QUICK THEMES</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+        <button class="theme-quick-btn" data-theme="nexus" style="--theme-color:#00f5ff;">NEXUS</button>
+        <button class="theme-quick-btn" data-theme="crimson" style="--theme-color:#ff0040;">CRIMSON</button>
+        <button class="theme-quick-btn" data-theme="void" style="--theme-color:#9933ff;">VOID</button>
+        <button class="theme-quick-btn" data-theme="emerald" style="--theme-color:#00ff88;">EMERALD</button>
+        <button class="theme-quick-btn" data-theme="sunset" style="--theme-color:#ff6600;">SUNSET</button>
+      </div>
+    </div>
+    
     <div class="setting-row">
       <span class="setting-label">PARTICLES</span>
       <div class="toggle" id="tog-part"></div>
@@ -1288,9 +1355,9 @@ for(let i=0;i<50;i++){
 function drawParticles(){
   if(!S.particles)return;
   ctx.clearRect(0,0,canvas.width,canvas.height);
-  const c1=getComputedStyle(document.body).getPropertyValue('--c1').trim()||'#00f5ff';
+  const c1=getComputedStyle(document.documentElement).getPropertyValue('--c1').trim()||'#00f5ff';
   ctx.fillStyle=c1;
-  ctx.globalAlpha=0.15;
+  ctx.globalAlpha=S.darkMode?0.15:0.08;
   particles.forEach(p=>{
     p.x+=p.vx;p.y+=p.vy;
     if(p.x<0||p.x>canvas.width)p.vx*=-1;
@@ -1308,7 +1375,7 @@ drawParticles();
 // ═══════════════════════════════════════════
 function spawnSparks(x,y,col){
   if(!S.particles)return;
-  const c=col||getComputedStyle(document.body).getPropertyValue('--c1').trim()||'#00f5ff';
+  const c=col||getComputedStyle(document.documentElement).getPropertyValue('--c1').trim()||'#00f5ff';
   for(let i=0;i<8;i++){
     const s=document.createElement('div');
     s.style.cssText=`position:fixed;width:4px;height:4px;background:${c};border-radius:50%;pointer-events:none;z-index:150;`;
@@ -1382,6 +1449,7 @@ function applySettings(){
   document.body.classList.toggle('compact-mode',S.compactMode);
   
   applyTheme(S.theme);
+  updateThemeButtons();
 }
 
 document.getElementById('tog-dark').onclick=()=>{
@@ -1463,6 +1531,23 @@ function buildThemes(){
     sel.appendChild(opt);
   });
   sel.onchange=()=>applyTheme(sel.value);
+  
+  // Setup quick theme buttons
+  document.querySelectorAll('.theme-quick-btn').forEach(btn=>{
+    btn.onclick=()=>{
+      const theme=btn.dataset.theme;
+      applyTheme(theme);
+      sel.value=theme;
+      updateThemeButtons();
+    };
+  });
+  updateThemeButtons();
+}
+
+function updateThemeButtons(){
+  document.querySelectorAll('.theme-quick-btn').forEach(btn=>{
+    btn.classList.toggle('active',btn.dataset.theme===S.theme);
+  });
 }
 
 // ═══════════════════════════════════════════
