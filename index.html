@@ -23,98 +23,116 @@ iOS PWA safe: no attribute selectors,
 all vars hard-coded as fallbacks too.
 ═══════════════════════════════════════════ */
 :root {
-/* NEXUS default (cyan) */
-–bg:     #020810;
-–bg2:    #040f1e;
-–c1:     #00f5ff;
-–c1dim:  rgba(0,245,255,0.15);
-–c1glow: rgba(0,245,255,0.30);
-–c2:     #00bcd4;
-–c3:     #39ff14;
-–c4:     #ff006e;
-–c5:     #ffd60a;
-–c6:     #ff6b00;
-–border: rgba(0,245,255,0.28);
-–border2:rgba(0,245,255,0.12);
-–txt:    #e8f4ff;
-–txt2:   #8ab4cc;
-–txt3:   #4a7a90;
-–tap-flash: rgba(0,245,255,0.10);
-–grid-c: rgba(0,245,255,0.05);
-–ring1:  rgba(0,245,255,0.45);
-–ring2:  rgba(57,255,20,0.32);
+--bg:#020810;
+--bg2:#040f1e;
+--c1:#00f5ff;
+--c1dim:rgba(0,245,255,0.15);
+--c1glow:rgba(0,245,255,0.30);
+--c2:#00bcd4;
+--c3:#39ff14;
+--c4:#ff006e;
+--c5:#ffd60a;
+--c6:#ff6b00;
+--border:rgba(0,245,255,0.28);
+--border2:rgba(0,245,255,0.12);
+--txt:#e8f4ff;
+--txt2:#8ab4cc;
+--txt3:#4a7a90;
+--tap-flash:rgba(0,245,255,0.10);
+--grid-c:rgba(0,245,255,0.05);
+--ring1:rgba(0,245,255,0.45);
+--ring2:rgba(57,255,20,0.32);
 }
 
-/* Light mode override - SOLID COLORS */
 :root.light-mode {
-–bg:     #f5f8fb;
-–bg2:    #ffffff;
-–c1:     #0066cc;
-–c1dim:  #e8f0f8;
-–c1glow: rgba(0,102,204,0.3);
-–c2:     #0052a3;
-–c3:     #00aa44;
-–c4:     #dd0055;
-–c5:     #cc8800;
-–c6:     #dd5500;
-–border: #c8d8e8;
-–border2:#e0e8f0;
-–txt:    #1a2634;
-–txt2:   #3a4a5a;
-–txt3:   #6a7a8a;
-–tap-flash: rgba(0,102,204,0.12);
-–grid-c: rgba(0,102,204,0.06);
-–ring1:  rgba(0,102,204,0.35);
-–ring2:  rgba(0,170,68,0.3);
+--bg:#f4f7fb;
+--bg2:#ffffff;
+--c1:#0066cc;
+--c1dim:#e6f0fa;
+--c1glow:rgba(0,102,204,0.25);
+--c2:#0052a3;
+--c3:#00aa44;
+--c4:#cc0044;
+--c5:#cc8800;
+--c6:#cc5500;
+--border:#cfdbe7;
+--border2:#e3edf5;
+--txt:#1a2634;
+--txt2:#3a4a5a;
+--txt3:#6a7a8a;
+--tap-flash:rgba(0,102,204,0.10);
+--grid-c:rgba(0,102,204,0.06);
+--ring1:rgba(0,102,204,0.35);
+--ring2:rgba(0,170,68,0.30);
 }
 
-/* Light mode specific overrides for better visibility */
-:root.light-mode #grid-bg{
-opacity:0.3;
+/* ===== GLOBAL ===== */
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html{height:100%;overflow:hidden;background:var(--bg);}
+body{
+background:var(--bg);
+font-family:'Share Tech Mono',monospace;
+color:var(--txt);
+position:fixed;width:100%;height:100%;
 }
 
-:root.light-mode .corner{
-opacity:0.5;
+/* Smooth transitions */
+body,#header,#drawer,.stat-box,.up-card{
+transition:background .25s,color .25s,border-color .25s;
 }
 
-:root.light-mode #tap-zone{
-background:radial-gradient(circle at center, rgba(0,102,204,0.04), transparent 60%);
+/* ===== GRID ===== */
+#grid-bg{
+position:fixed;inset:0;
+background-image:
+linear-gradient(var(--grid-c) 1px, transparent 1px),
+linear-gradient(90deg, var(--grid-c) 1px, transparent 1px);
+background-size:40px 40px;
 }
 
+/* ===== HEADER ===== */
+#header{
+background:var(--bg2);
+border-bottom:1px solid var(--border);
+padding:20px;
+}
+
+#credit-count{
+font-family:'Orbitron',monospace;
+font-size:32px;
+color:var(--c1);
+text-shadow:0 0 12px var(--c1glow);
+}
+
+/* ===== TAP CORE ===== */
+#tap-core{
+border:2px solid var(--c1);
+background:radial-gradient(circle, var(--c1dim), transparent);
+box-shadow:0 0 20px var(--c1glow);
+}
+
+/* ===== BUTTONS ===== */
+button{
+background:var(--c1dim);
+border:1px solid var(--border);
+color:var(--txt);
+}
+
+/* ===== DRAWER ===== */
+#drawer{
+background:var(--bg2);
+border-top:1px solid var(--border);
+}
+
+/* ===== STAT BOX ===== */
+.stat-box{
+background:var(--c1dim);
+border:1px solid var(--border2);
+}
+
+/* ===== LIGHT MODE OVERRIDES ===== */
 :root.light-mode #tap-core{
-background:radial-gradient(circle, rgba(0,102,204,0.12), rgba(255,255,255,0.95) 70%);
-box-shadow:0 0 28px rgba(0,102,204,0.25), inset 0 0 20px rgba(0,102,204,0.08);
-border-color:rgba(0,102,204,0.6);
-}
-
-:root.light-mode .stat-box{
-background:#e8f2fb;
-border-color:#c0d8ec;
-}
-
-:root.light-mode .stat-box.s-green{
-background:#e8f7ed;
-border-color:#c0e6d0;
-}
-
-:root.light-mode .stat-box.s-orange{
-background:#fff5e8;
-border-color:#ffe0c0;
-}
-
-:root.light-mode .up-card{
-background:#f8fbfd;
-border-color:#d8e6f2;
-}
-
-:root.light-mode .off-card, :root.light-mode .qn-card{
-background:#f8fcf9;
-border-color:#d0e8d8;
-}
-
-:root.light-mode .setting-row{
-background:#f5f9fc;
-border-color:#d8e6f2;
+background:radial-gradient(circle, rgba(0,102,204,0.12), white);
 }
 
 /* ═══════════════════════════════════════════
