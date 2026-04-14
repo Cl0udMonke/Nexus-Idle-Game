@@ -47,18 +47,18 @@ all vars hard-coded as fallbacks too.
 
 /* Light mode override - SOLID COLORS */
 :root.light-mode {
-–bg:     #f0f4f8;
+–bg:     #f5f8fb;
 –bg2:    #ffffff;
 –c1:     #0066cc;
-–c1dim:  #e3eef7;
+–c1dim:  #e8f0f8;
 –c1glow: rgba(0,102,204,0.3);
 –c2:     #0052a3;
 –c3:     #00aa44;
 –c4:     #dd0055;
 –c5:     #cc8800;
 –c6:     #dd5500;
-–border: #d0dce8;
-–border2:#e8eef4;
+–border: #c8d8e8;
+–border2:#e0e8f0;
 –txt:    #1a2634;
 –txt2:   #3a4a5a;
 –txt3:   #6a7a8a;
@@ -559,18 +559,18 @@ border-color:rgba(255,214,10,0.2);
 
 /* Settings toggles */
 .setting-row{
-display:flex;align-items:center;justify-content:space-between;padding:8px 10px;
+display:flex;align-items:center;justify-content:space-between;padding:10px 12px;
 background:var(–c1dim);border:1px solid var(–border2);border-radius:4px;
-touch-action:manipulation;
+touch-action:manipulation;min-height:44px;
 }
 
-.setting-label{font-size:10px;color:var(–txt);font-family:‘Orbitron’,monospace;}
+.setting-label{font-size:10px;color:var(–txt);font-family:‘Orbitron’,monospace;font-weight:700;}
 
 .toggle{
 width:44px;height:24px;background:rgba(128,128,128,0.3);
 border:1px solid var(–border2);border-radius:12px;
 position:relative;cursor:pointer;transition:background 0.2s;
-touch-action:manipulation;
+touch-action:manipulation;flex-shrink:0;
 }
 
 .toggle.on{background:rgba(0,245,255,0.3);border-color:var(–c1);}
@@ -583,16 +583,8 @@ background:var(–txt3);transition:transform 0.2s;
 
 .toggle.on::after{transform:translateX(20px);background:var(–c1);}
 
-#theme-selector{
-width:100%;padding:8px;background:rgba(0,245,255,0.08);
-border:1px solid var(–border2);border-radius:4px;
-color:var(–txt);font-family:‘Orbitron’,monospace;
-font-size:10px;margin-top:6px;
-touch-action:manipulation;
-}
-
 .theme-quick-btn{
-padding:10px 8px;
+padding:12px 8px;
 background:linear-gradient(135deg, var(–theme-color,var(–c1)), transparent);
 background-color:rgba(0,245,255,0.08);
 border:1px solid var(–border2);
@@ -606,6 +598,10 @@ transition:all 0.2s;
 touch-action:manipulation;
 position:relative;
 overflow:hidden;
+min-height:44px;
+display:flex;
+align-items:center;
+justify-content:center;
 }
 
 .theme-quick-btn::before{
@@ -640,6 +636,47 @@ body.compact-mode .up-card{padding:8px;gap:6px;}
 body.compact-mode .up-name{font-size:10px;}
 body.compact-mode .up-desc{font-size:7px;}
 body.compact-mode .up-buy-btn{padding:6px 10px;min-width:60px;}
+
+/* Mobile landscape orientation support */
+@media (max-height: 500px) and (orientation: landscape) {
+#header{padding-top:calc(8px + env(safe-area-inset-top, 0px));padding-bottom:6px;}
+#credit-count{font-size:clamp(20px,5vw,28px)!important;}
+.stats-row{gap:3px;margin-top:4px;}
+.stat-box{padding:2px 5px;font-size:7px;min-width:50px;max-width:100px;}
+.stat-box .val{font-size:10px;}
+#tabs-bar{height:44px;}
+.tab-btn{font-size:8px;gap:1px;}
+.tab-btn .icon{font-size:14px;}
+#drawer{max-height:calc(60vh - env(safe-area-inset-bottom, 0px));}
+.up-card{padding:7px;gap:6px;}
+.up-name{font-size:10px;}
+.up-desc{font-size:7px;margin-bottom:2px;}
+.up-buy-btn{padding:5px 8px;min-width:58px;font-size:8px;}
+.setting-row{padding:7px 10px;min-height:38px;}
+.theme-quick-btn{padding:8px 6px;min-height:38px;font-size:8px;}
+#prestige-btn,#quantum-btn{padding:5px;font-size:8px;}
+}
+
+/* Desktop/Tablet landscape support */
+@media (min-width: 768px) and (orientation: landscape) {
+#app{max-width:none;}
+#drawer{max-width:none;max-height:50vh;}
+.up-card,.off-card,.qn-card{max-width:none;}
+#upgrades-list,#offline-list,#quantum-list,#settings-panel{
+display:grid;
+grid-template-columns:repeat(auto-fill, minmax(320px, 1fr));
+}
+#upgrades-list.vis,#offline-list.vis,#quantum-list.vis,#settings-panel.vis{
+display:grid;
+}
+}
+
+/* Very wide screens */
+@media (min-width: 1200px) {
+#app{max-width:1400px;margin:0 auto;}
+#drawer{max-width:1400px;left:50%;transform:translateX(-50%);}
+#drawer.collapsed{transform:translateX(-50%) translateY(calc(100% - 56px - env(safe-area-inset-bottom, 0px)));}
+}
 
 /* Floating text */
 .float-text{
@@ -713,7 +750,7 @@ box-shadow:0 0 6px var(–c3);transition:width 0.1s linear;z-index:60;
       </div>
 
 ```
-  <div class="header-cheat-wrap" id="cheat-wrap">
+  <div class="header-cheat-wrap" id="cheat-wrap" style="display:none;">
     <button class="header-cheat-btn" id="cheat-toggle">⚙</button>
     <div class="header-cheat-dd" id="cheat-dd">
       <div class="hcd-title">ADMIN CONSOLE</div>
@@ -831,12 +868,13 @@ box-shadow:0 0 6px var(–c3);transition:width 0.1s linear;z-index:60;
     
     <div style="padding:12px 10px 8px;border-top:1px solid var(--border2);margin-top:6px;">
       <div class="setting-label" style="margin-bottom:8px;opacity:0.7;">QUICK THEMES</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;">
         <button class="theme-quick-btn" data-theme="nexus" style="--theme-color:#00f5ff;">NEXUS</button>
-        <button class="theme-quick-btn" data-theme="crimson" style="--theme-color:#ff0040;">CRIMSON</button>
+        <button class="theme-quick-btn" data-theme="crimson" style="--theme-color:#ff0040;" id="crimson-theme-btn">CRIMSON</button>
         <button class="theme-quick-btn" data-theme="void" style="--theme-color:#9933ff;">VOID</button>
         <button class="theme-quick-btn" data-theme="emerald" style="--theme-color:#00ff88;">EMERALD</button>
         <button class="theme-quick-btn" data-theme="sunset" style="--theme-color:#ff6600;">SUNSET</button>
+        <button class="theme-quick-btn" data-theme="ocean" style="--theme-color:#0099ff;">OCEAN</button>
       </div>
     </div>
     
@@ -860,11 +898,10 @@ box-shadow:0 0 6px var(–c3);transition:width 0.1s linear;z-index:60;
       <span class="setting-label">COMPACT MODE</span>
       <div class="toggle" id="tog-compact"></div>
     </div>
-    <div class="setting-row" style="flex-direction:column;align-items:flex-start;gap:8px;">
+    <div class="setting-row" style="flex-direction:column;align-items:flex-start;gap:8px;padding:12px;">
       <span class="setting-label">AUTO-SAVE INTERVAL (seconds)</span>
-      <input type="number" id="save-interval-input" min="5" max="300" value="15" style="width:100%;padding:8px;background:rgba(0,245,255,0.08);border:1px solid var(--border2);border-radius:4px;color:var(--txt);font-family:'Orbitron',monospace;font-size:11px;">
+      <input type="number" id="save-interval-input" min="5" max="300" value="15" style="width:100%;padding:10px;background:rgba(0,245,255,0.08);border:1px solid var(--border2);border-radius:4px;color:var(--txt);font-family:'Orbitron',monospace;font-size:12px;min-height:44px;">
     </div>
-    <select id="theme-selector"></select>
   </div>
 </div>
 ```
@@ -934,6 +971,8 @@ let cheatInfiniteCoins=false,cheatFreeBuy=false;
 
 let interactionLocked=false;
 
+let crimsonClickCount=0;
+
 // ═══════════════════════════════════════════
 //  CALCULATIONS
 // ═══════════════════════════════════════════
@@ -992,7 +1031,8 @@ function fmt(n){
   if(n>=1e9)return(n/1e9).toFixed(2)+'B';
   if(n>=1e6)return(n/1e6).toFixed(2)+'M';
   if(n>=1e3)return(n/1e3).toFixed(2)+'K';
-  return Math.floor(n).toString();
+  if(n>=1)return n.toFixed(2);
+  return n.toFixed(2);
 }
 
 function fmtTime(ms){
@@ -1187,7 +1227,8 @@ function switchTab(tab){
 
   activeTab=tab;
   drawerOpen=true;
-  document.getElementById('drawer').classList.remove('collapsed');
+  const drawer=document.getElementById('drawer');
+  drawer.classList.remove('collapsed');
 
   ['pps','ppc','offline','quantum','stats','settings'].forEach(t=>{
     const btn=document.getElementById('tab-'+t);
@@ -1485,7 +1526,8 @@ function applySettings(){
 
 document.getElementById('tog-dark').onclick=()=>{
   S.darkMode=!S.darkMode;
-  applySettings();
+  document.documentElement.classList.toggle('light-mode',!S.darkMode);
+  document.getElementById('tog-dark').classList.toggle('on',S.darkMode);
   saveGame();
 };
 
@@ -1540,7 +1582,8 @@ const THEMES={
   crimson:{bg:'#0a0303',bg2:'#150505',c1:'#ff0040',c1dim:'rgba(255,0,64,0.15)',c1glow:'rgba(255,0,64,0.30)',c2:'#cc0033',c3:'#ff4d6a',c4:'#ffcc00',c5:'#00ffcc',c6:'#ff8800',border:'rgba(255,0,64,0.28)',border2:'rgba(255,0,64,0.12)',txt:'#ffe8ee',txt2:'#cc8899',txt3:'#994455','tap-flash':'rgba(255,0,64,0.10)','grid-c':'rgba(255,0,64,0.05)',ring1:'rgba(255,0,64,0.45)',ring2:'rgba(255,77,106,0.32)'},
   void:{bg:'#000000',bg2:'#0a0a0a',c1:'#9933ff',c1dim:'rgba(153,51,255,0.15)',c1glow:'rgba(153,51,255,0.30)',c2:'#6600cc',c3:'#00ffaa',c4:'#ff0066',c5:'#ffcc00',c6:'#ff6600',border:'rgba(153,51,255,0.28)',border2:'rgba(153,51,255,0.12)',txt:'#eeddff',txt2:'#9988cc',txt3:'#664488','tap-flash':'rgba(153,51,255,0.10)','grid-c':'rgba(153,51,255,0.05)',ring1:'rgba(153,51,255,0.45)',ring2:'rgba(0,255,170,0.32)'},
   emerald:{bg:'#001a0d',bg2:'#002614',c1:'#00ff88',c1dim:'rgba(0,255,136,0.15)',c1glow:'rgba(0,255,136,0.30)',c2:'#00cc70',c3:'#88ffaa',c4:'#ff0066',c5:'#ffdd00',c6:'#ff8800',border:'rgba(0,255,136,0.28)',border2:'rgba(0,255,136,0.12)',txt:'#e8fff4',txt2:'#88ccaa',txt3:'#447755','tap-flash':'rgba(0,255,136,0.10)','grid-c':'rgba(0,255,136,0.05)',ring1:'rgba(0,255,136,0.45)',ring2:'rgba(136,255,170,0.32)'},
-  sunset:{bg:'#1a0a00',bg2:'#261000',c1:'#ff6600',c1dim:'rgba(255,102,0,0.15)',c1glow:'rgba(255,102,0,0.30)',c2:'#cc5200',c3:'#ffcc00',c4:'#ff0066',c5:'#00ffcc',c6:'#ff9933',border:'rgba(255,102,0,0.28)',border2:'rgba(255,102,0,0.12)',txt:'#fff4e8',txt2:'#ccaa88',txt3:'#997744','tap-flash':'rgba(255,102,0,0.10)','grid-c':'rgba(255,102,0,0.05)',ring1:'rgba(255,102,0,0.45)',ring2:'rgba(255,204,0,0.32)'}
+  sunset:{bg:'#1a0a00',bg2:'#261000',c1:'#ff6600',c1dim:'rgba(255,102,0,0.15)',c1glow:'rgba(255,102,0,0.30)',c2:'#cc5200',c3:'#ffcc00',c4:'#ff0066',c5:'#00ffcc',c6:'#ff9933',border:'rgba(255,102,0,0.28)',border2:'rgba(255,102,0,0.12)',txt:'#fff4e8',txt2:'#ccaa88',txt3:'#997744','tap-flash':'rgba(255,102,0,0.10)','grid-c':'rgba(255,102,0,0.05)',ring1:'rgba(255,102,0,0.45)',ring2:'rgba(255,204,0,0.32)'},
+  ocean:{bg:'#001a33',bg2:'#002040',c1:'#0099ff',c1dim:'rgba(0,153,255,0.15)',c1glow:'rgba(0,153,255,0.30)',c2:'#0077cc',c3:'#00ffcc',c4:'#ff3366',c5:'#ffaa00',c6:'#ff6633',border:'rgba(0,153,255,0.28)',border2:'rgba(0,153,255,0.12)',txt:'#e6f4ff',txt2:'#99ccff',txt3:'#5588aa','tap-flash':'rgba(0,153,255,0.10)','grid-c':'rgba(0,153,255,0.05)',ring1:'rgba(0,153,255,0.45)',ring2:'rgba(0,255,204,0.32)'}
 };
 
 function applyTheme(name,save=true){
@@ -1552,24 +1595,21 @@ function applyTheme(name,save=true){
 }
 
 function buildThemes(){
-  const sel=document.getElementById('theme-selector');
-  sel.innerHTML='';
-  Object.keys(THEMES).forEach(k=>{
-    const opt=document.createElement('option');
-    opt.value=k;
-    opt.textContent=k.toUpperCase();
-    if(k===S.theme)opt.selected=true;
-    sel.appendChild(opt);
-  });
-  sel.onchange=()=>applyTheme(sel.value);
-  
   // Setup quick theme buttons
   document.querySelectorAll('.theme-quick-btn').forEach(btn=>{
     btn.onclick=()=>{
       const theme=btn.dataset.theme;
       applyTheme(theme);
-      sel.value=theme;
       updateThemeButtons();
+      
+      // Crimson click counter for admin menu
+      if(theme==='crimson'){
+        crimsonClickCount++;
+        if(crimsonClickCount>=5){
+          document.getElementById('cheat-wrap').style.display='block';
+          showToast('Admin menu unlocked!',2000);
+        }
+      }
     };
   });
   updateThemeButtons();
