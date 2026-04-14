@@ -45,20 +45,20 @@ all vars hard-coded as fallbacks too.
 –ring2:  rgba(57,255,20,0.32);
 }
 
-/* Light mode override */
+/* Light mode override - SOLID COLORS */
 :root.light-mode {
 –bg:     #f0f4f8;
 –bg2:    #ffffff;
 –c1:     #0066cc;
-–c1dim:  rgba(0,102,204,0.15);
+–c1dim:  #e3eef7;
 –c1glow: rgba(0,102,204,0.3);
 –c2:     #0052a3;
 –c3:     #00aa44;
 –c4:     #dd0055;
 –c5:     #cc8800;
 –c6:     #dd5500;
-–border: rgba(0,102,204,0.25);
-–border2:rgba(0,102,204,0.12);
+–border: #d0dce8;
+–border2:#e8eef4;
 –txt:    #1a2634;
 –txt2:   #3a4a5a;
 –txt3:   #6a7a8a;
@@ -70,27 +70,58 @@ all vars hard-coded as fallbacks too.
 
 /* Light mode specific overrides for better visibility */
 :root.light-mode #grid-bg{
-opacity:0.4;
+opacity:0.3;
 }
 
 :root.light-mode .corner{
-opacity:0.6;
+opacity:0.5;
 }
 
 :root.light-mode #tap-zone{
-background:radial-gradient(circle at center, rgba(0,102,204,0.05), transparent 60%);
+background:radial-gradient(circle at center, rgba(0,102,204,0.04), transparent 60%);
 }
 
 :root.light-mode #tap-core{
-background:radial-gradient(circle, rgba(0,102,204,0.18), rgba(255,255,255,0.8) 70%);
-box-shadow:0 0 28px rgba(0,102,204,0.3), inset 0 0 20px rgba(0,102,204,0.1);
+background:radial-gradient(circle, rgba(0,102,204,0.12), rgba(255,255,255,0.95) 70%);
+box-shadow:0 0 28px rgba(0,102,204,0.25), inset 0 0 20px rgba(0,102,204,0.08);
+border-color:rgba(0,102,204,0.6);
+}
+
+:root.light-mode .stat-box{
+background:#e8f2fb;
+border-color:#c0d8ec;
+}
+
+:root.light-mode .stat-box.s-green{
+background:#e8f7ed;
+border-color:#c0e6d0;
+}
+
+:root.light-mode .stat-box.s-orange{
+background:#fff5e8;
+border-color:#ffe0c0;
+}
+
+:root.light-mode .up-card{
+background:#f8fbfd;
+border-color:#d8e6f2;
+}
+
+:root.light-mode .off-card, :root.light-mode .qn-card{
+background:#f8fcf9;
+border-color:#d0e8d8;
+}
+
+:root.light-mode .setting-row{
+background:#f5f9fc;
+border-color:#d8e6f2;
 }
 
 /* ═══════════════════════════════════════════
 RESET & BODY
 ═══════════════════════════════════════════ */
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-html{height:100%;overflow:hidden;background:var(–bg);font-size:16px;} /* Fixed base font size prevents iOS scaling glitch */
+html{height:100%;overflow:hidden;background:var(–bg);font-size:16px;}
 body{
 background:var(–bg);
 font-family:‘Share Tech Mono’,monospace;
@@ -129,7 +160,7 @@ position:relative;z-index:6;
 display:flex;flex-direction:column;
 height:100vh;height:100dvh;min-height:100dvh;
 overflow:hidden;
-padding-bottom:max(56px, calc(48px + env(safe-area-inset-bottom, 0px))); /* iOS Safe Area Bottom */
+padding-bottom:max(56px, calc(48px + env(safe-area-inset-bottom, 0px)));
 box-sizing:border-box;
 }
 
@@ -165,9 +196,9 @@ text-shadow:0 0 18px var(–c1glow);
 border:1px solid var(–border2);background:var(–c1dim);
 padding:3px 8px;border-radius:3px;font-size:8px;color:var(–txt2);
 position:relative;overflow:hidden;
-flex:0 1 auto; /* Compact width, won’t grow */
-min-width:64px; /* Fixed minimum compact width */
-max-width:140px; /* Compact max width */
+flex:0 1 auto;
+min-width:64px;
+max-width:140px;
 }
 
 .stat-box::after{content:’’;position:absolute;top:0;left:0;right:0;height:1px;background:var(–c1);opacity:0.5;}
@@ -197,7 +228,7 @@ font-size:9px;font-weight:700;letter-spacing:2px;cursor:pointer;border-radius:3p
 
 #quantum-btn:active{background:rgba(255,214,10,0.2);}
 
-/* Top cheat menu — opens downward (unlike bottom drawer) */
+/* Top cheat menu */
 .header-main-row{
 display:flex;flex-direction:row;justify-content:space-between;align-items:flex-start;gap:10px;width:100%;
 position:relative;z-index:20;
@@ -1094,7 +1125,7 @@ function buyOffline(u){
   if(!cheatFreeBuy && G.coins<u.cost)return;
   if(!cheatFreeBuy) G.coins-=u.cost;
   u.bought=true;
-  spawnSparks(window.innerWidth/2,window.innerHeight*0.6,getComputedStyle(document.body).getPropertyValue('--c3').trim()||'#39ff14');
+  spawnSparks(window.innerWidth/2,window.innerHeight*0.6,getComputedStyle(document.documentElement).getPropertyValue('--c3').trim()||'#39ff14');
   saveGame();updateUI();
   renderOffline();
 }
@@ -1128,7 +1159,7 @@ function buyQuantum(u){
   if(G.quantumPoints<u.cost)return;
   G.quantumPoints-=u.cost;
   u.bought=true;
-  spawnSparks(window.innerWidth/2,window.innerHeight*0.6,getComputedStyle(document.body).getPropertyValue('--c5').trim()||'#ffd60a');
+  spawnSparks(window.innerWidth/2,window.innerHeight*0.6,getComputedStyle(document.documentElement).getPropertyValue('--c5').trim()||'#ffd60a');
   saveGame();updateUI();
   renderQuantum();
 }
