@@ -1,61 +1,125 @@
-# Testing NEXUS // IDLE Game
+# Testing: Nexus Idle Game
 
-## Project Overview
-This is a static HTML idle/clicker game — a single `index.html` file with inline CSS and JS. No build tools, no package manager, no dependencies to install.
+## Overview
+Nexus Idle Game is a monolithic single-file web app (`index.html`) — all HTML, CSS, and JS live in one file. It's a browser-based idle/clicker game with themes, settings, and an admin cheat menu.
 
-## How to Serve Locally
+## Local Server Setup
 ```bash
-cd /home/ubuntu/repos/Nexus-Idle-Game
-python3 -m http.server 8080
+cd /home/ubuntu/Nexus-Idle-Game
+python3 -m http.server 8080 &
+# Access at http://localhost:8080/index.html
 ```
-Then open `http://localhost:8080` in Chrome.
+
+No build step or dependencies required — it's a static HTML file.
+
+## Game State
+- **localStorage key**: `nexus_v5`
+- **Clear state**: `localStorage.removeItem('nexus_v5')` then reload
+- **Save/load**: Game auto-saves; state includes coins, upgrades, settings, theme, dark mode preference, admin unlock status
+
+## Key UI Elements
+
+### Drawer Tabs (bottom bar)
+- 6 tabs: PPS, PPC, OFFLINE, QUANTUM, STATS, SETTINGS
+- Click active tab → closes drawer (toggle behavior)
+- Click different tab → opens that tab's content
+- Default tab on fresh load: PPS
+
+### Tap Zone
+- The entire area between the header and the drawer tab bar is the tap zone
+- Clicking anywhere in this zone increments credits (not just the center circle)
+- Each tap adds `getTap()` amount (starts at 1)
+
+### Settings Panel
+Accessed via SETTINGS tab. Contains:
+- **Dark Mode** toggle (tog-dark)
+- **Particles** toggle (tog-part)
+- **Tap Feedback** toggle (tog-pconf)
+- **Sound Effects** toggle (tog-sound)
+- **Auto-Save** toggle (tog-autosave)
+- **Save Interval** number input
+- **Theme grid**: 6 buttons — NEXUS, CRIMSON, VOID, EMERALD, SUNSET, OCEAN
+- **WIPE ALL DATA** button
+
+### Toggle Buttons
+- ON state: `.toggle-btn.on` class, cyan glow border, knob on right, "ON" label
+- OFF state: no `.on` class, gray background, knob on left, "OFF" label
+
+### Themes
+- **Dark mode**: Uses `THEMES` object (neon colors on dark backgrounds)
+- **Light mode**: Uses `THEMES_LIGHT` object (muted colors on tinted light backgrounds)
+- `applyTheme()` checks `S.darkMode` to pick the right palette
+- Each theme has distinct: bg, bg2, c1 (accent), border, txt colors
+- Light theme backgrounds: Nexus=#f0f4f8, Crimson=#fff0f3, Void=#f4f0ff, Emerald=#f0fff6, Sunset=#fff8f0, Ocean=#f0f8ff
 
 ## Known CSS Issues
 
-### Em-Dash in CSS Custom Properties
-The `<style>` block in `index.html` may use **em-dash characters (U+2014 `—`)** instead of **double-hyphens (`--`)** for CSS custom properties (e.g., `var(—bg)` instead of `var(--bg)`). The browser silently drops these as invalid, causing:
-- Transparent/white backgrounds instead of dark theme
-- Missing colors, borders, glows
-- Invisible toggle switches and other styled elements
+### Smart Quotes and Em-Dashes
+The file has historically had issues with smart/curly quotes (U+2018/U+2019) and em-dash characters (U+2014) breaking CSS custom properties and selectors. If editing, use a proper code editor (VS Code), not a word processor.
 
-The JS `applyTheme()` function sets correct `--` properties via inline styles, but the CSS rules reference the em-dash versions, so the stylesheet declarations never resolve.
-
-**How to verify**: Run in browser console:
+**How to verify CSS vars are working**: Run in browser console:
 ```js
 getComputedStyle(document.body).backgroundColor
 // If "rgba(0, 0, 0, 0)" → CSS vars are broken
 // If a real color → CSS vars are working
 ```
 
-### Font Override Bug
-The rule `* { font-family: inherit !important; }` may override all font-family declarations, causing everything to render in the browser's default font (Times New Roman) instead of Orbitron/Share Tech Mono.
+## Admin Menu (Hidden)
 
-**How to verify**: Run in browser console:
-```js
-document.fonts.forEach(f => console.log(f.family, f.status));
-// If all show "unloaded" → fonts are broken
+### How to Unlock
+1. Go to SETTINGS tab
+2. Click the **CRIMSON** theme button **5 times**
+3. Toast: "⚡ ADMIN MENU UNLOCKED"
+4. ⚡ icon appears in top-right corner
+5. Clicking CRIMSON again when admin is unlocked will **hide** the admin menu and reset the click counter
+
+### Admin Menu Buttons
+- **∞ Infinite Coins** — toggles infinite coins
+- **🆓 Free Buys** — toggles free purchases
+- **+1000 CPS** — adds 100 to PPS[0].owned, toast shows computed `getCPS()` delta
+- **+100 Tap Power** — adds 100 to PPC[0].owned, toast shows computed `getTap()` delta
+- **Force Prestige** / **Force Quantum** — trigger resets
+- **Coin buttons** (+1K to +100M) — add coins directly
+
+### Important: Admin toast values are computed
+The +1000 CPS and +100 Tap Power buttons compute actual deltas using `getCPS()` / `getTap()` before and after the upgrade. The toast shows the real impact (e.g., "+11.74M CPS") not the hardcoded label.
+
+## Common Testing Scenarios
+
+### Fresh State Test
+```javascript
+// In browser console
+localStorage.removeItem('nexus_v5');
+location.reload();
 ```
+Expected: 0 credits, dark mode, Nexus theme, PPS tab active with drawer open.
 
-### Missing Tab Click Handlers
-The drawer tab buttons (PPS, PPC, OFFLINE, QUANTUM, STATS, SETTINGS) may not have click handlers attached. The `switchTab()` function exists but might not be bound to the buttons.
+### Theme Testing in Light Mode
+1. Open SETTINGS
+2. Toggle Dark Mode OFF
+3. Click each theme button — verify distinct background colors change
+4. Toggle Dark Mode ON — verify dark neon theme restores
 
-**Workaround**: Call `switchTab('settings')` directly from the console.
+### Drawer Toggle Testing
+1. On fresh load, PPS tab should be active with content visible
+2. Click PPS again — drawer should close, no tab highlighted
+3. Click any other tab — drawer reopens with that content
+4. Click that same tab — drawer closes again
 
 ## Testing Checklist
-
 1. **Page Load**: Verify background is dark (not white), title is "NEXUS // IDLE"
-2. **Fonts**: Check Orbitron on headers (geometric, wide-spaced) and Share Tech Mono on body text (monospaced). Inspect via DevTools computed font-family.
-3. **Favicon**: Check browser tab for icon.png. Note: the `type` attribute may say `image.png` instead of `image/png` — Chrome still loads it.
-4. **Tab Switching**: Click each drawer tab to verify they switch content. If clicking doesn't work, use `switchTab('tabname')` in console.
-5. **Settings Panel**: Verify Dark Mode toggle, Particles toggle, theme buttons (NEXUS, CRIMSON, VOID, EMERALD, SUNSET, OCEAN)
-6. **Light/Dark Mode**: Toggle dark mode and verify background/text colors change
-7. **Tap Interaction**: Click the center TAP circle and verify credit count increments
-8. **Responsiveness**: Test at 1024x768 (desktop), 768x1024 (tablet), 375x667 (mobile) using DevTools device emulation
+2. **Tab Switching**: Click each drawer tab to verify they switch content and toggle open/close
+3. **Settings Panel**: Verify Dark Mode toggle, Particles toggle, theme buttons
+4. **Light/Dark Mode**: Toggle dark mode and verify background/text colors change
+5. **Light Mode Themes**: Switch between all 6 themes in light mode — each should show distinct colors
+6. **Tap Interaction**: Click anywhere in the tap zone (above, below, or on the circle) and verify credit count increments
+7. **Toggle Visibility**: Verify ON toggles show glow + right knob + "ON" label; OFF shows gray + left knob + "OFF" label
+8. **Admin Menu**: Unlock via CRIMSON x5, verify CPS/Tap buttons show computed deltas
 
-## Game State
-- Game saves to `localStorage` key `nexus_v5`
-- To reset: run `localStorage.removeItem('nexus_v5'); location.reload()` in console
-- Admin menu: Click CRIMSON theme button 5 times in Settings to unlock
+## Known Gotchas
+- **`drawerOpen` initialization**: Must start as `false` so the first `switchTab()` call during init opens (not closes) the drawer.
+- **Rapid CRIMSON clicks**: If you click CRIMSON too fast (e.g., sending multiple clicks in one action), the 5th click unlocks admin and the 6th immediately hides it. Click deliberately with pauses between.
+- **No CI/build**: This is a static HTML file with no build pipeline. Testing is purely manual/browser-based.
 
 ## Devin Secrets Needed
-None — this is a fully static site with no authentication or API keys.
+None — no authentication or API keys required. The game runs entirely client-side.
