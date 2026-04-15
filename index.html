@@ -1197,6 +1197,7 @@ APP LAYOUT
       let cheatInfiniteCoins = false;
       let cheatFreeBuy = false;
       let interactionLocked = false;
+      let adminMenuDocClickHandler = null;
       let activeTab = "pps";
       let autoSaveTimer = null;
       let crimsonClickCount = 0;
@@ -2187,20 +2188,28 @@ APP LAYOUT
         wrap.appendChild(dd);
         document.body.appendChild(wrap);
 
-        // Close on outside click
-        document.addEventListener("click", (e) => {
+        // Close on outside click — store reference for cleanup in destroyAdminMenu
+        if (adminMenuDocClickHandler) {
+          document.removeEventListener("click", adminMenuDocClickHandler);
+        }
+        adminMenuDocClickHandler = (e) => {
           const cheatWrap = document.getElementById("cheat-wrap");
           if (cheatWrap && !cheatWrap.contains(e.target)) {
             dd.classList.remove("open");
             toggle.classList.remove("open");
             interactionLocked = false;
           }
-        });
+        };
+        document.addEventListener("click", adminMenuDocClickHandler);
       }
 
       function destroyAdminMenu() {
         const existing = document.getElementById("cheat-wrap");
         if (existing) existing.remove();
+        if (adminMenuDocClickHandler) {
+          document.removeEventListener("click", adminMenuDocClickHandler);
+          adminMenuDocClickHandler = null;
+        }
       }
 
       // ═══════════════════════════════════════════
