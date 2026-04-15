@@ -1314,7 +1314,7 @@ APP LAYOUT
           if (!Object.prototype.hasOwnProperty.call(source, key)) continue;
           const val = source[key];
           const expectedType = schema[key];
-          if (typeof val === expectedType && isFinite(val)) {
+          if (typeof val === expectedType && Number.isFinite(val)) {
             target[key] = val;
           } else if (expectedType === "boolean" && typeof val === "boolean") {
             target[key] = val;
@@ -2206,6 +2206,7 @@ APP LAYOUT
       function destroyAdminMenu() {
         const existing = document.getElementById("cheat-wrap");
         if (existing) existing.remove();
+        interactionLocked = false;
         if (adminMenuDocClickHandler) {
           document.removeEventListener("click", adminMenuDocClickHandler);
           adminMenuDocClickHandler = null;
