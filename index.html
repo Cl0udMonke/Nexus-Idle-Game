@@ -32,47 +32,47 @@
 THEMES — More vibrant/neon colors
 ═══════════════════════════════════════════ */
       :root {
-        –bg: #020810;
-        –bg2: #040f1e;
-        –c1: #00ffff;
-        –c1dim: rgba(0, 255, 255, 0.2);
-        –c1glow: rgba(0, 255, 255, 0.5);
-        –c2: #00e5ff;
-        –c3: #39ff14;
-        –c4: #ff0080;
-        –c5: #ffee00;
-        –c6: #ff6600;
-        –border: rgba(0, 255, 255, 0.4);
-        –border2: rgba(0, 255, 255, 0.2);
-        –txt: #e8f4ff;
-        –txt2: #8ab4cc;
-        –txt3: #4a7a90;
-        –tap-flash: rgba(0, 255, 255, 0.15);
-        –grid-c: rgba(0, 255, 255, 0.08);
-        –ring1: rgba(0, 255, 255, 0.6);
-        –ring2: rgba(57, 255, 20, 0.5);
+        --bg: #020810;
+        --bg2: #040f1e;
+        --c1: #00ffff;
+        --c1dim: rgba(0, 255, 255, 0.2);
+        --c1glow: rgba(0, 255, 255, 0.5);
+        --c2: #00e5ff;
+        --c3: #39ff14;
+        --c4: #ff0080;
+        --c5: #ffee00;
+        --c6: #ff6600;
+        --border: rgba(0, 255, 255, 0.4);
+        --border2: rgba(0, 255, 255, 0.2);
+        --txt: #e8f4ff;
+        --txt2: #8ab4cc;
+        --txt3: #4a7a90;
+        --tap-flash: rgba(0, 255, 255, 0.15);
+        --grid-c: rgba(0, 255, 255, 0.08);
+        --ring1: rgba(0, 255, 255, 0.6);
+        --ring2: rgba(57, 255, 20, 0.5);
       }
 
       :root.light-mode {
-        –bg: #f0f4f8;
-        –bg2: #ffffff;
-        –c1: #0077ff;
-        –c1dim: rgba(0, 119, 255, 0.15);
-        –c1glow: rgba(0, 119, 255, 0.3);
-        –c2: #0066dd;
-        –c3: #00cc55;
-        –c4: #ff0066;
-        –c5: #ff9900;
-        –c6: #ff5500;
-        –border: rgba(0, 119, 255, 0.35);
-        –border2: rgba(0, 119, 255, 0.18);
-        –txt: #1a2634;
-        –txt2: #3a4a5a;
-        –txt3: #6a7a8a;
-        –tap-flash: rgba(0, 119, 255, 0.12);
-        –grid-c: rgba(0, 119, 255, 0.08);
-        –ring1: rgba(0, 119, 255, 0.45);
-        –ring2: rgba(0, 204, 85, 0.4);
+        --bg: #f0f4f8;
+        --bg2: #ffffff;
+        --c1: #0077ff;
+        --c1dim: rgba(0, 119, 255, 0.15);
+        --c1glow: rgba(0, 119, 255, 0.3);
+        --c2: #0066dd;
+        --c3: #00cc55;
+        --c4: #ff0066;
+        --c5: #ff9900;
+        --c6: #ff5500;
+        --border: rgba(0, 119, 255, 0.35);
+        --border2: rgba(0, 119, 255, 0.18);
+        --txt: #1a2634;
+        --txt2: #3a4a5a;
+        --txt3: #6a7a8a;
+        --tap-flash: rgba(0, 119, 255, 0.12);
+        --grid-c: rgba(0, 119, 255, 0.08);
+        --ring1: rgba(0, 119, 255, 0.45);
+        --ring2: rgba(0, 204, 85, 0.4);
       }
 
       /* ===== GLOBAL ===== */
@@ -85,15 +85,15 @@ THEMES — More vibrant/neon colors
       html {
         height: 100%;
         overflow: hidden;
-        background: var(–bg);
+        background: var(--bg);
         font-size: 16px;
       }
       body {
-        background: var(–bg);
+        background: var(--bg);
         font-family:
           ‘Share Tech Mono’,
           monospace;
-        color: var(–txt);
+        color: var(--txt);
         position: fixed;
         width: 100%;
         height: 100%;
@@ -108,7 +108,7 @@ THEMES — More vibrant/neon colors
         inset: 0;
         z-index: 0;
         background-image:
-          linear-gradient(var(–grid-c) 1px, transparent 1px), linear-gradient(90deg, var(–grid-c) 1px, transparent 1px);
+          linear-gradient(var(--grid-c) 1px, transparent 1px), linear-gradient(90deg, var(--grid-c) 1px, transparent 1px);
         background-size: 40px 40px;
         animation: gridScroll 22s linear infinite;
       }
@@ -132,26 +132,26 @@ THEMES — More vibrant/neon colors
       .corner.tl {
         top: max(0px, env(safe-area-inset-top, 0px));
         left: max(0px, env(safe-area-inset-left, 0px));
-        border-top: 2px solid var(–c1);
-        border-left: 2px solid var(–c1);
+        border-top: 2px solid var(--c1);
+        border-left: 2px solid var(--c1);
       }
       .corner.tr {
         top: max(0px, env(safe-area-inset-top, 0px));
         right: max(0px, env(safe-area-inset-right, 0px));
-        border-top: 2px solid var(–c1);
-        border-right: 2px solid var(–c1);
+        border-top: 2px solid var(--c1);
+        border-right: 2px solid var(--c1);
       }
       .corner.bl {
         bottom: max(0px, env(safe-area-inset-bottom, 0px));
         left: max(0px, env(safe-area-inset-left, 0px));
-        border-bottom: 2px solid var(–c1);
-        border-left: 2px solid var(–c1);
+        border-bottom: 2px solid var(--c1);
+        border-left: 2px solid var(--c1);
       }
       .corner.br {
         bottom: max(0px, env(safe-area-inset-bottom, 0px));
         right: max(0px, env(safe-area-inset-right, 0px));
-        border-bottom: 2px solid var(–c1);
-        border-right: 2px solid var(–c1);
+        border-bottom: 2px solid var(--c1);
+        border-right: 2px solid var(--c1);
       }
 
       /* Canvas overlay */
@@ -184,8 +184,8 @@ APP LAYOUT
         padding-left: max(16px, env(safe-area-inset-left, 0px));
         padding-right: max(16px, env(safe-area-inset-right, 0px));
         padding-bottom: 10px;
-        background: var(–bg2);
-        border-bottom: 1px solid var(–border);
+        background: var(--bg2);
+        border-bottom: 1px solid var(--border);
         flex-shrink: 0;
         transition:
           background 0.3s,
@@ -196,7 +196,7 @@ APP LAYOUT
         font-family: ‘Orbitron’, monospace;
         font-size: 8px;
         letter-spacing: 4px;
-        color: var(–c1);
+        color: var(--c1);
         opacity: 0.5;
         margin-bottom: 3px;
       }
@@ -205,18 +205,18 @@ APP LAYOUT
         font-family: ‘Orbitron’, monospace;
         font-size: clamp(28px, 7vw, 44px);
         font-weight: 900;
-        color: var(–c1);
+        color: var(--c1);
         letter-spacing: 2px;
         line-height: 1;
         text-shadow:
-          0 0 18px var(–c1glow),
-          0 0 30px var(–c1glow);
+          0 0 18px var(--c1glow),
+          0 0 30px var(--c1glow);
       }
 
       #credit-unit {
         font-size: 9px;
         letter-spacing: 3px;
-        color: var(–txt2);
+        color: var(--txt2);
         margin-top: 2px;
       }
 
@@ -229,12 +229,12 @@ APP LAYOUT
       }
 
       .stat-box {
-        border: 1px solid var(–border2);
-        background: var(–c1dim);
+        border: 1px solid var(--border2);
+        background: var(--c1dim);
         padding: 4px 10px;
         border-radius: 4px;
         font-size: 9px;
-        color: var(–txt2);
+        color: var(--txt2);
         position: relative;
         overflow: hidden;
         flex: 0 1 auto;
@@ -251,7 +251,7 @@ APP LAYOUT
         margin-bottom: 1px;
       }
       .stat-box .st-val {
-        color: var(–txt);
+        color: var(--txt);
         font-weight: 700;
         font-size: 10px;
       }
@@ -273,11 +273,11 @@ APP LAYOUT
         width: clamp(180px, 42vw, 280px);
         height: clamp(180px, 42vw, 280px);
         border-radius: 50%;
-        border: 3px solid var(–c1);
-        background: radial-gradient(circle, var(–c1dim), transparent);
+        border: 3px solid var(--c1);
+        background: radial-gradient(circle, var(--c1dim), transparent);
         box-shadow:
-          0 0 40px var(–c1glow),
-          0 0 80px var(–c1glow);
+          0 0 40px var(--c1glow),
+          0 0 80px var(--c1glow);
         cursor: pointer;
         display: flex;
         align-items: center;
@@ -295,14 +295,14 @@ APP LAYOUT
         100% {
           transform: scale(1);
           box-shadow:
-            0 0 40px var(–c1glow),
-            0 0 80px var(–c1glow);
+            0 0 40px var(--c1glow),
+            0 0 80px var(--c1glow);
         }
         50% {
           transform: scale(1.05);
           box-shadow:
-            0 0 60px var(–c1glow),
-            0 0 120px var(–c1glow);
+            0 0 60px var(--c1glow),
+            0 0 120px var(--c1glow);
         }
       }
 
@@ -314,8 +314,8 @@ APP LAYOUT
         font-family: ‘Orbitron’, monospace;
         font-size: clamp(11px, 2.8vw, 15px);
         letter-spacing: 3px;
-        color: var(–c1);
-        text-shadow: 0 0 12px var(–c1glow);
+        color: var(--c1);
+        text-shadow: 0 0 12px var(--c1glow);
         position: relative;
         z-index: 2;
       }
@@ -332,12 +332,12 @@ APP LAYOUT
       }
 
       #tap-core::before {
-        border: 2px solid var(–ring1);
+        border: 2px solid var(--ring1);
         animation-delay: 0s;
       }
 
       #tap-core::after {
-        border: 2px solid var(–ring2);
+        border: 2px solid var(--ring2);
         animation-delay: 2s;
       }
 
@@ -359,7 +359,7 @@ APP LAYOUT
         width: 100%;
         height: 100%;
         border-radius: 50%;
-        background: var(–tap-flash);
+        background: var(--tap-flash);
         opacity: 0;
         pointer-events: none;
         animation: flashFade 0.4s ease-out;
@@ -382,8 +382,8 @@ APP LAYOUT
         bottom: 0;
         left: 0;
         right: 0;
-        background: var(–bg2);
-        border-top: 1px solid var(–border);
+        background: var(--bg2);
+        border-top: 1px solid var(--border);
         z-index: 20;
         display: flex;
         flex-direction: column;
@@ -395,7 +395,7 @@ APP LAYOUT
 
       #drawer-tabs {
         display: flex;
-        border-bottom: 1px solid var(–border2);
+        border-bottom: 1px solid var(--border2);
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
       }
@@ -408,7 +408,7 @@ APP LAYOUT
         letter-spacing: 1px;
         background: transparent;
         border: none;
-        color: var(–txt3);
+        color: var(--txt3);
         cursor: pointer;
         transition:
           color 0.2s,
@@ -416,9 +416,9 @@ APP LAYOUT
       }
 
       .drawer-tab.active {
-        color: var(–c1);
-        background: var(–c1dim);
-        border-bottom: 2px solid var(–c1);
+        color: var(--c1);
+        background: var(--c1dim);
+        border-bottom: 2px solid var(--c1);
       }
 
       .drawer-tab:active {
@@ -440,8 +440,8 @@ APP LAYOUT
       }
 
       .up-card {
-        background: var(–c1dim);
-        border: 1px solid var(–border2);
+        background: var(--c1dim);
+        border: 1px solid var(--border2);
         border-radius: 6px;
         padding: 10px;
         display: flex;
@@ -467,13 +467,13 @@ APP LAYOUT
         width: 40px;
         height: 40px;
         border-radius: 6px;
-        background: var(–c1);
+        background: var(--c1);
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: 20px;
         flex-shrink: 0;
-        box-shadow: 0 0 15px var(–c1glow);
+        box-shadow: 0 0 15px var(--c1glow);
       }
 
       .up-info {
@@ -484,20 +484,20 @@ APP LAYOUT
         font-family: ‘Orbitron’, monospace;
         font-size: 11px;
         letter-spacing: 1px;
-        color: var(–txt);
+        color: var(--txt);
         margin-bottom: 3px;
       }
 
       .up-desc {
         font-size: 8px;
-        color: var(–txt3);
+        color: var(--txt3);
         line-height: 1.3;
         margin-bottom: 4px;
       }
 
       .up-effect {
         font-size: 9px;
-        color: var(–c3);
+        color: var(--c3);
         font-weight: 700;
       }
 
@@ -511,23 +511,23 @@ APP LAYOUT
       .up-cost {
         font-family: ‘Orbitron’, monospace;
         font-size: 10px;
-        color: var(–c5);
+        color: var(--c5);
         font-weight: 700;
       }
 
       .up-owned {
         font-size: 8px;
-        color: var(–txt3);
+        color: var(--txt3);
       }
 
       /* ── PRESTIGE/QUANTUM BUTTONS ─────────── */
       .big-action-btn {
         width: 100%;
         padding: 16px;
-        background: linear-gradient(135deg, var(–c4), var(–c2));
-        border: 2px solid var(–c1);
+        background: linear-gradient(135deg, var(--c4), var(--c2));
+        border: 2px solid var(--c1);
         border-radius: 8px;
-        color: var(–txt);
+        color: var(--txt);
         font-family: ‘Orbitron’, monospace;
         font-size: 13px;
         letter-spacing: 2px;
@@ -536,7 +536,7 @@ APP LAYOUT
         transition:
           transform 0.15s,
           box-shadow 0.2s;
-        box-shadow: 0 0 20px var(–c1glow);
+        box-shadow: 0 0 20px var(--c1glow);
       }
 
       .big-action-btn:active {
@@ -557,17 +557,17 @@ APP LAYOUT
 
       .offline-header {
         font-size: 10px;
-        color: var(–txt2);
+        color: var(--txt2);
         margin-bottom: 8px;
         padding: 8px;
-        background: var(–c1dim);
+        background: var(--c1dim);
         border-radius: 4px;
       }
 
       /* ── QUANTUM UPGRADES ─────────── */
       .quantum-info {
-        background: var(–c1dim);
-        border: 1px solid var(–border);
+        background: var(--c1dim);
+        border: 1px solid var(--border);
         border-radius: 6px;
         padding: 12px;
         margin-bottom: 12px;
@@ -581,10 +581,10 @@ APP LAYOUT
       }
 
       .quantum-info .qi-label {
-        color: var(–txt3);
+        color: var(--txt3);
       }
       .quantum-info .qi-val {
-        color: var(–c1);
+        color: var(--c1);
         font-weight: 700;
       }
 
@@ -603,8 +603,8 @@ APP LAYOUT
       }
 
       .stat-card {
-        background: var(–c1dim);
-        border: 1px solid var(–border2);
+        background: var(--c1dim);
+        border: 1px solid var(--border2);
         border-radius: 6px;
         padding: 10px;
         transition:
@@ -614,7 +614,7 @@ APP LAYOUT
 
       .stat-card .sc-lbl {
         font-size: 8px;
-        color: var(–txt3);
+        color: var(--txt3);
         letter-spacing: 1px;
         margin-bottom: 4px;
       }
@@ -622,7 +622,7 @@ APP LAYOUT
       .stat-card .sc-val {
         font-family: ‘Orbitron’, monospace;
         font-size: 13px;
-        color: var(–c1);
+        color: var(--c1);
         font-weight: 700;
       }
 
@@ -632,19 +632,19 @@ APP LAYOUT
         justify-content: space-between;
         align-items: center;
         padding: 10px;
-        border-bottom: 1px solid var(–border2);
+        border-bottom: 1px solid var(--border2);
       }
 
       .setting-label {
         font-size: 10px;
-        color: var(–txt2);
+        color: var(--txt2);
       }
 
       .toggle-btn {
         width: 48px;
         height: 24px;
-        background: var(–border2);
-        border: 1px solid var(–border);
+        background: var(--border2);
+        border: 1px solid var(--border);
         border-radius: 12px;
         position: relative;
         cursor: pointer;
@@ -658,7 +658,7 @@ APP LAYOUT
         top: 2px;
         width: 18px;
         height: 18px;
-        background: var(–txt3);
+        background: var(--txt3);
         border-radius: 50%;
         transition:
           left 0.2s,
@@ -666,11 +666,11 @@ APP LAYOUT
       }
 
       .toggle-btn.on {
-        background: var(–c1dim);
+        background: var(--c1dim);
       }
       .toggle-btn.on::after {
         left: 26px;
-        background: var(–c1);
+        background: var(--c1);
       }
 
       .theme-grid {
@@ -682,35 +682,35 @@ APP LAYOUT
 
       .theme-quick-btn {
         padding: 10px;
-        background: var(–c1dim);
-        border: 1px solid var(–border2);
+        background: var(--c1dim);
+        border: 1px solid var(--border2);
         border-radius: 6px;
         font-size: 9px;
         letter-spacing: 1px;
-        color: var(–txt2);
+        color: var(--txt2);
         cursor: pointer;
         transition: all 0.2s;
       }
 
       .theme-quick-btn.active {
-        background: var(–c1);
-        color: var(–bg);
-        border-color: var(–c1);
-        box-shadow: 0 0 15px var(–c1glow);
+        background: var(--c1);
+        color: var(--bg);
+        border-color: var(--c1);
+        box-shadow: 0 0 15px var(--c1glow);
       }
 
       .theme-quick-btn:active {
         transform: scale(0.95);
       }
 
-      input[type="“range”"],
-      input[type="“number”"] {
+      input[type="range"],
+      input[type="number"] {
         width: 100%;
         padding: 6px;
-        background: var(–c1dim);
-        border: 1px solid var(–border2);
+        background: var(--c1dim);
+        border: 1px solid var(--border2);
         border-radius: 4px;
-        color: var(–txt);
+        color: var(--txt);
         font-size: 10px;
       }
 
@@ -720,18 +720,18 @@ APP LAYOUT
         top: calc(20px + env(safe-area-inset-top, 0px));
         left: 50%;
         transform: translateX(-50%);
-        background: var(–bg2);
-        border: 1px solid var(–c1);
+        background: var(--bg2);
+        border: 1px solid var(--c1);
         padding: 10px 20px;
         border-radius: 6px;
         font-size: 10px;
         letter-spacing: 1px;
-        color: var(–c1);
+        color: var(--c1);
         z-index: 999;
         opacity: 0;
         pointer-events: none;
         transition: opacity 0.3s;
-        box-shadow: 0 0 20px var(–c1glow);
+        box-shadow: 0 0 20px var(--c1glow);
       }
 
       #toast.show {
@@ -750,8 +750,8 @@ APP LAYOUT
       #cheat-toggle {
         width: 40px;
         height: 40px;
-        background: var(–c4);
-        border: 2px solid var(–c1);
+        background: var(--c4);
+        border: 2px solid var(--c1);
         border-radius: 50%;
         display: flex;
         align-items: center;
@@ -773,8 +773,8 @@ APP LAYOUT
         width: 260px;
         max-height: 0;
         overflow: hidden;
-        background: var(–bg2);
-        border: 2px solid var(–c4);
+        background: var(--bg2);
+        border: 2px solid var(--c4);
         border-radius: 8px;
         transition:
           max-height 0.3s,
@@ -791,10 +791,10 @@ APP LAYOUT
         width: 100%;
         padding: 10px;
         margin-bottom: 6px;
-        background: var(–c1dim);
-        border: 1px solid var(–border);
+        background: var(--c1dim);
+        border: 1px solid var(--border);
         border-radius: 4px;
-        color: var(–txt);
+        color: var(--txt);
         font-size: 9px;
         letter-spacing: 1px;
         cursor: pointer;
@@ -814,10 +814,10 @@ APP LAYOUT
       .ch-input-row input {
         flex: 1;
         padding: 8px;
-        background: var(–c1dim);
-        border: 1px solid var(–border2);
+        background: var(--c1dim);
+        border: 1px solid var(--border2);
         border-radius: 4px;
-        color: var(–txt);
+        color: var(--txt);
         font-size: 9px;
       }
 
@@ -840,7 +840,7 @@ APP LAYOUT
           opacity: 1;
         }
         100% {
-          transform: translate(var(–tx), var(–ty)) scale(0);
+          transform: translate(var(--tx), var(--ty)) scale(0);
           opacity: 0;
         }
       }
@@ -2199,9 +2199,19 @@ PRESTIGE RESET<br>
       loadGame();
       applyTheme(S.theme);
       updateThemeButtons();
+      // Restore light-mode class if dark mode was toggled off in a previous session
+      document.documentElement.classList.toggle("light-mode", !S.darkMode);
       switchTab("pps");
       updateUI();
       setupAutoSave();
+
+      // Attach click handlers to drawer tabs
+      document.getElementById("tab-pps").onclick = () => switchTab("pps");
+      document.getElementById("tab-ppc").onclick = () => switchTab("ppc");
+      document.getElementById("tab-offline").onclick = () => switchTab("offline");
+      document.getElementById("tab-quantum").onclick = () => switchTab("quantum");
+      document.getElementById("tab-stats").onclick = () => switchTab("stats");
+      document.getElementById("tab-settings").onclick = () => switchTab("settings");
 
       if (!localStorage.getItem("nexus_seen_howto")) {
         showToast("TAP the center to earn credits! Open tabs for upgrades.", 6000);
