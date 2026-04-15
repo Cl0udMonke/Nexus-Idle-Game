@@ -1802,7 +1802,7 @@ PRESTIGE RESET<br>
             S.darkMode = !S.darkMode;
             document.documentElement.classList.toggle("light-mode", !S.darkMode);
             togDark.classList.toggle("on", S.darkMode);
-            saveGame();
+            applyTheme(S.theme);
           };
         }
 
@@ -2057,11 +2057,34 @@ PRESTIGE RESET<br>
         },
       };
 
+      const LIGHT_OVERRIDES = {
+        bg: "#f0f4f8",
+        bg2: "#ffffff",
+        c1: "#0077ff",
+        c1dim: "rgba(0,119,255,0.15)",
+        c1glow: "rgba(0,119,255,0.3)",
+        c2: "#0066dd",
+        c3: "#00cc55",
+        c4: "#ff0066",
+        c5: "#ff9900",
+        c6: "#ff5500",
+        border: "rgba(0,119,255,0.35)",
+        border2: "rgba(0,119,255,0.18)",
+        txt: "#1a2634",
+        txt2: "#3a4a5a",
+        txt3: "#6a7a8a",
+        "tap-flash": "rgba(0,119,255,0.12)",
+        "grid-c": "rgba(0,119,255,0.08)",
+        ring1: "rgba(0,119,255,0.45)",
+        ring2: "rgba(0,204,85,0.4)",
+      };
+
       function applyTheme(name) {
         const t = THEMES[name] || THEMES.nexus;
+        const colors = S.darkMode ? t : LIGHT_OVERRIDES;
         const r = document.documentElement.style;
-        Object.keys(t).forEach((k) => r.setProperty("--" + k, t[k]));
-        document.getElementById("theme-meta").content = t.c1;
+        Object.keys(colors).forEach((k) => r.setProperty("--" + k, colors[k]));
+        document.getElementById("theme-meta").content = colors.c1;
         S.theme = name;
         saveGame();
       }
