@@ -1,10 +1,11 @@
 // Add this at the top of service-worker.js (optional but recommended)
-const CACHE_NAME = 'nexus-v5';
+const CACHE_NAME = 'nexus-v6'; // Bumped to purge stale icon.png and old icon entries from existing caches
 const ASSETS = [
   './',
   './index.html',
   './manifest.json',
-  './icon.png'
+  './icon-192x192.png',
+  './icon-512x512.png'
   // Note: service-worker.js is intentionally excluded to allow SW updates to propagate
 ];
 
