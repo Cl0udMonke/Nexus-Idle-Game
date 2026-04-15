@@ -5,8 +5,8 @@ const ASSETS = [
   './index.html',
   './manifest.json',
   './icon-192x192.png',
-  './icon-512x512.png',
-  './service-worker.js'
+  './icon-512x512.png'
+  // Note: service-worker.js is intentionally excluded to allow SW updates to propagate
 ];
 
 // Install: cache all assets
