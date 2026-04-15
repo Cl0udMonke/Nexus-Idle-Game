@@ -1,5 +1,5 @@
 // Add this at the top of service-worker.js (optional but recommended)
-const CACHE_NAME = 'nexus-v4'; // Match your localStorage key version for consistency
+const CACHE_NAME = 'nexus-v5'; // Bumped to purge stale icon.png from existing caches
 const ASSETS = [
   './',
   './index.html',
