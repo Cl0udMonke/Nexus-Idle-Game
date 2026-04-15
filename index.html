@@ -1,0 +1,1357 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0, viewport-fit=cover"
+    />
+    <title>NEXUS // IDLE</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&amp;family=Share+Tech+Mono&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link rel="manifest" href="./manifest.json" />
+    <link rel="icon" type="image/png" href="icon-192x192.png" />
+    <link rel="apple-touch-icon" href="icon-192x192.png" />
+    <meta name="theme-color" content="#00f5ff" id="theme-meta" />
+    <style>
+      /* ═══════════════════════════════════════════
+   FONTS
+   ═══════════════════════════════════════════ */
+      @import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap");
+      * {
+        font-family: inherit !important;
+        user-select: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+      }
+
+      /* ═══════════════════════════════════════════
+THEMES — More vibrant/neon colors
+═══════════════════════════════════════════ */
+      :root {
+        --bg: #020810;
+        --bg2: #040f1e;
+        --c1: #00ffff;
+        --c1dim: rgba(0, 255, 255, 0.2);
+        --c1glow: rgba(0, 255, 255, 0.5);
+        --c2: #00e5ff;
+        --c3: #39ff14;
+        --c4: #ff0080;
+        --c5: #ffee00;
+        --c6: #ff6600;
+        --border: rgba(0, 255, 255, 0.4);
+        --border2: rgba(0, 255, 255, 0.2);
+        --txt: #e8f4ff;
+        --txt2: #8ab4cc;
+        --txt3: #4a7a90;
+        --tap-flash: rgba(0, 255, 255, 0.15);
+        --grid-c: rgba(0, 255, 255, 0.08);
+        --ring1: rgba(0, 255, 255, 0.6);
+        --ring2: rgba(57, 255, 20, 0.5);
+      }
+
+      :root.light-mode {
+        --bg: #f0f4f8;
+        --bg2: #ffffff;
+        --c1: #0077ff;
+        --c1dim: rgba(0, 119, 255, 0.15);
+        --c1glow: rgba(0, 119, 255, 0.3);
+        --c2: #0066dd;
+        --c3: #00cc55;
+        --c4: #ff0066;
+        --c5: #ff9900;
+        --c6: #ff5500;
+        --border: rgba(0, 119, 255, 0.35);
+        --border2: rgba(0, 119, 255, 0.18);
+        --txt: #1a2634;
+        --txt2: #3a4a5a;
+        --txt3: #6a7a8a;
+        --tap-flash: rgba(0, 119, 255, 0.12);
+        --grid-c: rgba(0, 119, 255, 0.08);
+        --ring1: rgba(0, 119, 255, 0.45);
+        --ring2: rgba(0, 204, 85, 0.4);
+      }
+
+      /* ===== GLOBAL ===== */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+      }
+      html {
+        height: 100%;
+        overflow: hidden;
+        background: var(--bg);
+        font-size: 16px;
+      }
+      body {
+        background: var(--bg);
+        font-family: 'Share Tech Mono', monospace;
+        color: var(--txt);
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        transition: background 0.3s, color 0.3s;
+      }
+
+      /* ===== GRID ===== */
+      #grid-bg {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        background-image:
+          linear-gradient(var(--grid-c) 1px, transparent 1px), linear-gradient(90deg, var(--grid-c) 1px, transparent 1px);
+        background-size: 40px 40px;
+        animation: gridScroll 22s linear infinite;
+      }
+
+      @keyframes gridScroll {
+        from { background-position: 0 0; }
+        to { background-position: 0 40px; }
+      }
+
+      /* Corner brackets */
+      .corner {
+        position: fixed;
+        width: 44px;
+        height: 44px;
+        z-index: 3;
+      }
+      .corner.tl {
+        top: max(0px, env(safe-area-inset-top, 0px));
+        left: max(0px, env(safe-area-inset-left, 0px));
+        border-top: 2px solid var(--c1);
+        border-left: 2px solid var(--c1);
+      }
+      .corner.tr {
+        top: max(0px, env(safe-area-inset-top, 0px));
+        right: max(0px, env(safe-area-inset-right, 0px));
+        border-top: 2px solid var(--c1);
+        border-right: 2px solid var(--c1);
+      }
+      .corner.bl {
+        bottom: max(0px, env(safe-area-inset-bottom, 0px));
+        left: max(0px, env(safe-area-inset-left, 0px));
+        border-bottom: 2px solid var(--c1);
+        border-left: 2px solid var(--c1);
+      }
+      .corner.br {
+        bottom: max(0px, env(safe-area-inset-bottom, 0px));
+        right: max(0px, env(safe-area-inset-right, 0px));
+        border-bottom: 2px solid var(--c1);
+        border-right: 2px solid var(--c1);
+      }
+
+      /* Canvas overlay */
+      #particles {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 5;
+      }
+
+      /* ═══════════════════════════════════════════
+APP LAYOUT
+═══════════════════════════════════════════ */
+      #app {
+        position: relative;
+        z-index: 6;
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        height: 100dvh;
+        min-height: 100dvh;
+        overflow: hidden;
+        padding-bottom: max(56px, calc(48px + env(safe-area-inset-bottom, 0px)));
+        box-sizing: border-box;
+      }
+
+      /* ── HEADER ─────────────────────────────── */
+      #header {
+        padding-top: calc(20px + env(safe-area-inset-top, 0px));
+        padding-left: max(16px, env(safe-area-inset-left, 0px));
+        padding-right: max(16px, env(safe-area-inset-right, 0px));
+        padding-bottom: 10px;
+        background: var(--bg2);
+        border-bottom: 1px solid var(--border);
+        flex-shrink: 0;
+        transition: background 0.3s, border-color 0.3s;
+      }
+
+      #sys-label {
+        font-family: 'Orbitron', monospace;
+        font-size: 8px;
+        letter-spacing: 4px;
+        color: var(--c1);
+        opacity: 0.5;
+        margin-bottom: 3px;
+      }
+
+      #credit-count {
+        font-family: 'Orbitron', monospace;
+        font-size: clamp(28px, 7vw, 44px);
+        font-weight: 900;
+        color: var(--c1);
+        letter-spacing: 2px;
+        line-height: 1;
+        text-shadow: 0 0 18px var(--c1glow), 0 0 30px var(--c1glow);
+      }
+
+      #credit-unit {
+        font-size: 9px;
+        letter-spacing: 3px;
+        color: var(--txt2);
+        margin-top: 2px;
+      }
+
+      /* ── STAT BOXES ─────────── */
+      .stats-row {
+        display: flex;
+        gap: 5px;
+        margin-top: 8px;
+        flex-wrap: wrap;
+      }
+
+      .stat-box {
+        border: 1px solid var(--border2);
+        background: var(--c1dim);
+        padding: 4px 10px;
+        border-radius: 4px;
+        font-size: 9px;
+        color: var(--txt2);
+        position: relative;
+        overflow: hidden;
+        flex: 0 1 auto;
+        min-width: 70px;
+        transition: background 0.3s, border-color 0.3s;
+      }
+
+      .stat-box .st-lbl {
+        opacity: 0.6;
+        font-size: 7px;
+        letter-spacing: 1px;
+        margin-bottom: 1px;
+      }
+      .stat-box .st-val {
+        color: var(--txt);
+        font-weight: 700;
+        font-size: 10px;
+      }
+
+      /* ── TAP ZONE ─────────────────────────────── */
+      #tap-zone {
+        flex-grow: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+        min-height: 0;
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+        touch-action: manipulation;
+      }
+
+      /* ── TAP CORE (ENHANCED ANIMATION) ─────── */
+      #tap-core {
+        position: relative;
+        width: clamp(180px, 42vw, 280px);
+        height: clamp(180px, 42vw, 280px);
+        border-radius: 50%;
+        border: 3px solid var(--c1);
+        background: radial-gradient(circle, var(--c1dim), transparent);
+        box-shadow: 0 0 40px var(--c1glow), 0 0 80px var(--c1glow);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.08s, background 0.3s, border-color 0.3s, box-shadow 0.3s;
+        animation: corePulse 3s ease-in-out infinite;
+      }
+
+      @keyframes corePulse {
+        0%, 100% { transform: scale(1); box-shadow: 0 0 40px var(--c1glow), 0 0 80px var(--c1glow); }
+        50% { transform: scale(1.05); box-shadow: 0 0 60px var(--c1glow), 0 0 120px var(--c1glow); }
+      }
+
+      #tap-core:active {
+        transform: scale(0.95) !important;
+      }
+
+      #tap-core-label {
+        font-family: 'Orbitron', monospace;
+        font-size: clamp(11px, 2.8vw, 15px);
+        letter-spacing: 3px;
+        color: var(--c1);
+        text-shadow: 0 0 12px var(--c1glow);
+        position: relative;
+        z-index: 2;
+      }
+
+      /* Outer rings (more prominent) */
+      #tap-core::before, #tap-core::after {
+        content: '';
+        position: absolute;
+        inset: -20px;
+        border-radius: 50%;
+        pointer-events: none;
+        animation: ringPulse 4s ease-in-out infinite;
+      }
+
+      #tap-core::before { border: 2px solid var(--ring1); animation-delay: 0s; }
+      #tap-core::after { border: 2px solid var(--ring2); animation-delay: 2s; }
+
+      @keyframes ringPulse {
+        0%, 100% { transform: scale(1); opacity: 0.6; }
+        50% { transform: scale(1.15); opacity: 0.3; }
+      }
+
+      /* Tap flash */
+      .tap-flash {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        background: var(--tap-flash);
+        opacity: 0;
+        pointer-events: none;
+        animation: flashFade 0.4s ease-out;
+      }
+
+      @keyframes flashFade {
+        0% { opacity: 0.8; transform: scale(1); }
+        100% { opacity: 0; transform: scale(1.3); }
+      }
+
+      /* ── DRAWER ─────────────────────────────── */
+      #drawer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: var(--bg2);
+        border-top: 1px solid var(--border);
+        z-index: 20;
+        display: flex;
+        flex-direction: column;
+        padding-bottom: max(0px, env(safe-area-inset-bottom, 0px));
+        transition: background 0.3s, border-color 0.3s;
+      }
+
+      #drawer-tabs {
+        display: flex;
+        border-bottom: 1px solid var(--border2);
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .drawer-tab {
+        flex: 1;
+        min-width: 54px;
+        padding: 12px 6px;
+        font-size: 9px;
+        letter-spacing: 1px;
+        background: transparent;
+        border: none;
+        color: var(--txt3);
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+        touch-action: manipulation;
+        transition: color 0.2s, background 0.2s;
+      }
+
+      .drawer-tab.active {
+        color: var(--c1);
+        background: var(--c1dim);
+        border-bottom: 2px solid var(--c1);
+      }
+
+      .drawer-tab:active {
+        opacity: 0.7;
+      }
+
+      /* ── BUY CONTROLS (NEW) ─────────────────── */
+      #buy-controls {
+        display: flex;
+        gap: 8px;
+        padding: 8px 12px;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border2);
+        justify-content: center;
+      }
+
+      .buy-btn {
+        padding: 6px 14px;
+        font-size: 10px;
+        font-family: 'Share Tech Mono', monospace;
+        letter-spacing: 1px;
+        background: var(--c1dim);
+        color: var(--txt2);
+        border: 1px solid var(--border2);
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.2s;
+        flex: 1;
+        max-width: 80px;
+      }
+
+      .buy-btn.active {
+        background: var(--c1);
+        color: var(--bg2);
+        border-color: var(--c1);
+        box-shadow: 0 0 10px var(--c1glow);
+        font-weight: bold;
+      }
+
+      .buy-btn:active {
+        transform: scale(0.95);
+      }
+
+      #drawer-content {
+        max-height: 58vh;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        padding: 12px;
+        transition: max-height 0.3s ease, padding 0.3s ease;
+      }
+
+      /* ── UPGRADES ─────────────────────────────── */
+      #up-list { display: flex; flex-direction: column; gap: 8px; }
+
+      .up-card {
+        background: var(--c1dim);
+        border: 1px solid var(--border2);
+        border-radius: 6px;
+        padding: 10px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+        transition: background 0.2s, border-color 0.3s, transform 0.15s;
+      }
+
+      .up-card:active { transform: scale(0.98); }
+      .up-card.locked { opacity: 0.5; cursor: not-allowed; }
+
+      .up-icon {
+        width: 40px; height: 40px; border-radius: 6px;
+        background: var(--c1); display: flex; align-items: center;
+        justify-content: center; font-size: 20px; flex-shrink: 0;
+        box-shadow: 0 0 15px var(--c1glow);
+      }
+
+      .up-info { flex-grow: 1; }
+
+      .up-name {
+        font-family: 'Orbitron', monospace; font-size: 11px;
+        letter-spacing: 1px; color: var(--txt); margin-bottom: 3px;
+      }
+
+      .up-desc { font-size: 8px; color: var(--txt3); line-height: 1.3; margin-bottom: 4px; }
+      .up-effect { font-size: 9px; color: var(--c3); font-weight: 700; }
+      
+      .up-buy { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
+      .up-cost { font-family: 'Orbitron', monospace; font-size: 10px; color: var(--c5); font-weight: 700; }
+      .up-owned { font-size: 8px; color: var(--txt3); }
+
+      /* ── PRESTIGE/QUANTUM BUTTONS ─────────── */
+      .big-action-btn {
+        width: 100%; padding: 16px;
+        background: linear-gradient(135deg, var(--c4), var(--c2));
+        border: 2px solid var(--c1); border-radius: 8px;
+        color: var(--txt); font-family: 'Orbitron', monospace;
+        font-size: 13px; letter-spacing: 2px; cursor: pointer;
+        margin-bottom: 10px; transition: transform 0.15s, box-shadow 0.2s;
+        box-shadow: 0 0 20px var(--c1glow);
+      }
+
+      .big-action-btn:active { transform: scale(0.97); }
+      .big-action-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+      /* ── OFFLINE UPGRADES ─────────── */
+      #offline-list { display: flex; flex-direction: column; gap: 8px; }
+      .offline-header {
+        font-size: 10px; color: var(--txt2); margin-bottom: 8px;
+        padding: 8px; background: var(--c1dim); border-radius: 4px;
+      }
+
+      /* ── QUANTUM UPGRADES ─────────── */
+      .quantum-info {
+        background: var(--c1dim); border: 1px solid var(--border);
+        border-radius: 6px; padding: 12px; margin-bottom: 12px;
+      }
+      .quantum-info .qi-row { display: flex; justify-content: space-between; font-size: 9px; margin-bottom: 6px; }
+      .quantum-info .qi-label { color: var(--txt3); }
+      .quantum-info .qi-val { color: var(--c1); font-weight: 700; }
+      #quantum-list { display: flex; flex-direction: column; gap: 8px; }
+
+      /* ── STATS TAB ─────────── */
+      .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+      .stat-card {
+        background: var(--c1dim); border: 1px solid var(--border2);
+        border-radius: 6px; padding: 10px; transition: background 0.3s, border-color 0.3s;
+      }
+      .stat-card .sc-lbl { font-size: 8px; color: var(--txt3); letter-spacing: 1px; margin-bottom: 4px; }
+      .stat-card .sc-val { font-family: 'Orbitron', monospace; font-size: 13px; color: var(--c1); font-weight: 700; }
+
+      /* ── SETTINGS TAB ─────────── */
+      .setting-row { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid var(--border2); }
+      .setting-label { font-size: 10px; color: var(--txt2); }
+      .toggle-btn {
+        width: 52px; height: 28px; background: rgba(128,128,128,0.25);
+        border: 2px solid rgba(128,128,128,0.4); border-radius: 14px; position: relative;
+        cursor: pointer; transition: background 0.25s, border-color 0.25s, box-shadow 0.25s;
+      }
+      .toggle-btn::before {
+        content: 'OFF'; position: absolute; right: 6px; top: 50%; transform: translateY(-50%);
+        font-size: 7px; font-weight: 700; letter-spacing: 0.5px; color: var(--txt3); transition: opacity 0.2s; z-index: 0;
+      }
+      .toggle-btn::after {
+        content: ''; position: absolute; left: 3px; top: 2px; width: 20px; height: 20px;
+        background: var(--txt3); border-radius: 50%; transition: left 0.2s, background 0.2s, box-shadow 0.2s; z-index: 1;
+      }
+      .toggle-btn.on { background: var(--c1dim); border-color: var(--c1); box-shadow: 0 0 8px var(--c1glow); }
+      .toggle-btn.on::before { content: 'ON'; left: 8px; right: auto; color: var(--c1); }
+      .toggle-btn.on::after { left: 26px; background: var(--c1); box-shadow: 0 0 6px var(--c1glow); }
+
+      .theme-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 10px; }
+      .theme-quick-btn {
+        padding: 10px; background: var(--c1dim); border: 1px solid var(--border2); border-radius: 6px;
+        font-size: 9px; letter-spacing: 1px; color: var(--txt2); cursor: pointer; transition: all 0.2s;
+      }
+      .theme-quick-btn.active { background: var(--c1); color: var(--bg); border-color: var(--c1); box-shadow: 0 0 15px var(--c1glow); }
+      .theme-quick-btn:active { transform: scale(0.95); }
+
+      input[type="range"], input[type="number"] {
+        width: 100%; padding: 6px; background: var(--c1dim); border: 1px solid var(--border2);
+        border-radius: 4px; color: var(--txt); font-size: 10px;
+      }
+
+      /* ── TOAST ─────────── */
+      #toast {
+        position: fixed; top: calc(20px + env(safe-area-inset-top, 0px)); left: 50%; transform: translateX(-50%);
+        background: var(--bg2); border: 1px solid var(--c1); padding: 10px 20px; border-radius: 6px;
+        font-size: 10px; letter-spacing: 1px; color: var(--c1); z-index: 999; opacity: 0; pointer-events: none;
+        transition: opacity 0.3s; box-shadow: 0 0 20px var(--c1glow);
+      }
+      #toast.show { opacity: 1; }
+
+      /* ── ADMIN MENU ─────────── */
+      #cheat-wrap {
+        position: fixed; top: calc(80px + env(safe-area-inset-top, 0px)); right: max(12px, env(safe-area-inset-right, 0px)); z-index: 100; display: none;
+      }
+      #cheat-toggle {
+        width: 40px; height: 40px; background: var(--c4); border: 2px solid var(--c1); border-radius: 50%; display: flex; align-items: center;
+        justify-content: center; font-size: 18px; cursor: pointer; box-shadow: 0 0 20px rgba(255, 0, 110, 0.5); transition: transform 0.2s;
+      }
+      #cheat-toggle:active { transform: scale(0.9); }
+      #cheat-dd {
+        position: absolute; top: 50px; right: 0; width: 260px; max-height: 0; overflow: hidden;
+        background: var(--bg2); border: 2px solid var(--c4); border-radius: 8px; transition: max-height 0.3s, padding 0.3s;
+        box-shadow: 0 0 30px rgba(255, 0, 110, 0.4);
+      }
+      #cheat-dd.open { max-height: 500px; padding: 12px; }
+      .ch-btn {
+        width: 100%; padding: 10px; margin-bottom: 6px; background: var(--c1dim); border: 1px solid var(--border);
+        border-radius: 4px; color: var(--txt); font-size: 9px; letter-spacing: 1px; cursor: pointer; transition: all 0.2s;
+      }
+      .ch-btn:active { transform: scale(0.97); }
+      .ch-input-row { display: flex; gap: 6px; margin-bottom: 6px; }
+      .ch-input-row input { flex: 1; padding: 8px; background: var(--c1dim); border: 1px solid var(--border2); border-radius: 4px; color: var(--txt); font-size: 9px; }
+      .ch-quick-btns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; margin-bottom: 8px; }
+      .ch-quick-btns button { padding: 8px; font-size: 8px; }
+
+      /* ── PARTICLES ─────────── */
+      @keyframes floatUp{to{transform:translateY(-60px);opacity:0;}}
+    </style>
+  </head>
+  <body>
+    <div id="grid-bg"></div>
+    <div class="corner tl"></div>
+    <div class="corner tr"></div>
+    <div class="corner bl"></div>
+    <div class="corner br"></div>
+    <canvas id="particles"></canvas>
+
+    <div id="cheat-wrap">
+      <div id="cheat-toggle">⚡</div>
+      <div id="cheat-dd">
+        <div style="font-size: 9px; color: var(--c4); margin-bottom: 10px; letter-spacing: 2px">ADMIN MENU</div>
+        <button class="ch-btn" id="ch-infinite">∞ Infinite Coins</button>
+        <button class="ch-btn" id="ch-freebuy">🆓 Free Buys</button>
+        <button class="ch-btn" id="ch-cps">+1000 CPS</button>
+        <button class="ch-btn" id="ch-tap">+100 Tap Power</button>
+        <button class="ch-btn" id="ch-prestige">Force Prestige</button>
+        <button class="ch-btn" id="ch-quantum">Force Quantum</button>
+        <div class="ch-input-row">
+          <input type="number" id="ch-coin-input" placeholder="Amount" />
+          <button class="ch-btn" id="ch-coin-add">Add</button>
+        </div>
+        <div class="ch-quick-btns">
+          <button class="ch-btn" id="ch-1k">+1K</button>
+          <button class="ch-btn" id="ch-10k">+10K</button>
+          <button class="ch-btn" id="ch-100k">+100K</button>
+          <button class="ch-btn" id="ch-1m">+1M</button>
+          <button class="ch-btn" id="ch-10m">+10M</button>
+          <button class="ch-btn" id="ch-100m">+100M</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="app">
+      <div id="header">
+        <div id="sys-label">NEXUS</div>
+        <div id="credit-count">0</div>
+        <div id="credit-unit">CREDITS</div>
+        <div class="stats-row">
+          <div class="stat-box">
+            <div class="st-lbl">CPS (TOTAL)</div>
+            <div class="st-val" id="st-cps">0</div>
+          </div>
+          <div class="stat-box">
+            <div class="st-lbl">TAP</div>
+            <div class="st-val" id="st-tap">1</div>
+          </div>
+          <div class="stat-box">
+            <div class="st-lbl">PRESTIGE</div>
+            <div class="st-val" id="st-prestige">0</div>
+          </div>
+          <div class="stat-box">
+            <div class="st-lbl">QUANTUM</div>
+            <div class="st-val" id="st-quantum">0</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="tap-zone">
+        <div id="tap-core">
+          <div id="tap-core-label">TAP</div>
+        </div>
+      </div>
+
+      <div id="drawer">
+        <div id="drawer-tabs">
+          <button class="drawer-tab active" id="tab-pps">PPS</button>
+          <button class="drawer-tab" id="tab-ppc">PPC</button>
+          <button class="drawer-tab" id="tab-offline">OFFLINE</button>
+          <button class="drawer-tab" id="tab-quantum">QUANTUM</button>
+          <button class="drawer-tab" id="tab-stats">STATS</button>
+          <button class="drawer-tab" id="tab-settings">SETTINGS</button>
+        </div>
+        
+        <div id="buy-controls">
+          <button class="buy-btn active" data-amt="1">1x</button>
+          <button class="buy-btn" data-amt="10">10x</button>
+          <button class="buy-btn" data-amt="100">100x</button>
+          <button class="buy-btn" data-amt="max">MAX</button>
+        </div>
+
+        <div id="drawer-content">
+          </div>
+      </div>
+    </div>
+
+    <div id="toast"></div>
+
+    <script>
+      // ═══════════════════════════════════════════
+      //  AUDIO CONTEXT
+      // ═══════════════════════════════════════════
+      let audioCtx = null;
+      function initAudio() {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      function playTapSound() {
+        if (!S.soundFx || !audioCtx) return;
+        try {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.connect(gain); gain.connect(audioCtx.destination);
+          osc.frequency.value = 800;
+          gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+          osc.start(audioCtx.currentTime); osc.stop(audioCtx.currentTime + 0.1);
+        } catch (e) {}
+      }
+      function playUpgradeSound() {
+        if (!S.soundFx || !audioCtx) return;
+        try {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.connect(gain); gain.connect(audioCtx.destination);
+          osc.frequency.value = 1200;
+          gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+          osc.start(audioCtx.currentTime); osc.stop(audioCtx.currentTime + 0.15);
+        } catch (e) {}
+      }
+      function playPrestigeSound() {
+        if (!S.soundFx || !audioCtx) return;
+        try {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.connect(gain); gain.connect(audioCtx.destination);
+          osc.frequency.value = 600;
+          gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+          osc.start(audioCtx.currentTime); osc.stop(audioCtx.currentTime + 0.3);
+        } catch (e) {}
+      }
+
+      // ═══════════════════════════════════════════
+      //  GAME DATA
+      // ═══════════════════════════════════════════
+      const G = {
+        coins: 0, totalClicks: 0, totalEarned: 0, prestige: 0,
+        prestigeCoins: 0, quantum: 0, quantumPoints: 0,
+        lastSave: Date.now(), startTime: Date.now()
+      };
+      const S = {
+        darkMode: true, particles: true, pconf: true, soundFx: true,
+        autoSave: true, saveInterval: 30, theme: "nexus"
+      };
+
+      const PPS = [
+        { id: "gen1", name: "Nano Miner", desc: "Basic credit generator", icon: "⚙️", baseCost: 10, owned: 0, basePPS: 0.1 },
+        { id: "gen2", name: "Data Stream", desc: "Harvests data flows", icon: "📡", baseCost: 100, owned: 0, basePPS: 1 },
+        { id: "gen3", name: "Crypto Farm", desc: "Mines digital currency", icon: "💎", baseCost: 1100, owned: 0, basePPS: 8 },
+        { id: "gen4", name: "AI Core", desc: "Intelligent processing", icon: "🧠", baseCost: 12000, owned: 0, basePPS: 47 },
+        { id: "gen5", name: "Quantum Bank", desc: "Quantum computation", icon: "🏦", baseCost: 130000, owned: 0, basePPS: 260 },
+        { id: "gen6", name: "Black Hole", desc: "Infinite compression", icon: "⚫", baseCost: 1400000, owned: 0, basePPS: 1400 },
+        { id: "gen7", name: "Dimension Rift", desc: "Extracts from other realities", icon: "🌀", baseCost: 20000000, owned: 0, basePPS: 7800 },
+        { id: "gen8", name: "Universe Forge", desc: "Creates new universes", icon: "🌌", baseCost: 330000000, owned: 0, basePPS: 44000 },
+      ];
+
+      const PPC = [
+        { id: "click1", name: "Reinforced Tap", desc: "Stronger clicks", icon: "👆", baseCost: 15, owned: 0, basePPC: 1 },
+        { id: "click2", name: "Multi-Touch", desc: "Double tap power", icon: "✌️", baseCost: 100, owned: 0, basePPC: 5 },
+        { id: "click3", name: "Laser Pointer", desc: "Precision tapping", icon: "🔴", baseCost: 1200, owned: 0, basePPC: 25 },
+        { id: "click4", name: "Tap Amplifier", desc: "Amplified input", icon: "🔊", baseCost: 14000, owned: 0, basePPC: 125 },
+        { id: "click5", name: "Gravity Tap", desc: "Gravitational force", icon: "🌍", baseCost: 170000, owned: 0, basePPC: 625 },
+        { id: "click6", name: "Nuclear Tap", desc: "Atomic energy", icon: "☢️", baseCost: 2100000, owned: 0, basePPC: 3125 },
+      ];
+
+      const OFFLINE = [
+        { id: "off1", name: "Idle Core I", desc: "Earn 25% offline", icon: "🔋", cost: 1000, owned: false, bonus: 0.25 },
+        { id: "off2", name: "Idle Core II", desc: "Earn 50% offline", icon: "🔋", cost: 10000, owned: false, bonus: 0.5, req: "off1" },
+        { id: "off3", name: "Idle Core III", desc: "Earn 75% offline", icon: "🔋", cost: 100000, owned: false, bonus: 0.75, req: "off2" },
+        { id: "off4", name: "Time Bank I", desc: "+1h offline time", icon: "⏰", cost: 5000, owned: false, time: 3600 },
+        { id: "off5", name: "Time Bank II", desc: "+2h offline time", icon: "⏰", cost: 50000, owned: false, time: 7200, req: "off4" },
+        { id: "off6", name: "Time Bank III", desc: "+4h offline time", icon: "⏰", cost: 500000, owned: false, time: 14400, req: "off5" },
+      ];
+
+      const QUANTUM = [
+        { id: "q1", name: "Quantum Boost I", desc: "+10% all production", icon: "⚡", cost: 1, owned: 0, mult: 0.1 },
+        { id: "q2", name: "Quantum Boost II", desc: "+25% all production", icon: "⚡", cost: 5, owned: 0, mult: 0.25 },
+        { id: "q3", name: "Quantum Boost III", desc: "+50% all production", icon: "⚡", cost: 15, owned: 0, mult: 0.5 },
+        { id: "q4", name: "Prestige Power", desc: "+20% prestige gain", icon: "💫", cost: 10, owned: 0, pMult: 0.2 },
+        { id: "q5", name: "Click Surge", desc: "2x tap power", icon: "👆", cost: 8, owned: 0, clickMult: 2 },
+      ];
+
+      // GLOBAL STATE
+      let cheatInfiniteCoins = false, cheatFreeBuy = false, interactionLocked = false;
+      let activeTab = "pps", drawerOpen = false, autoSaveTimer = null;
+      let crimsonClickCount = 0, adminMenuUnlocked = false;
+      
+      // BULK & REAL-TIME VARS
+      let buyAmount = "1"; // "1", "10", "100", "max"
+      let recentTaps = []; 
+
+      // ═══════════════════════════════════════════
+      //  MATH & CALCULATIONS
+      // ═══════════════════════════════════════════
+      function prestigeMult() { return 1 + G.prestige * 0.1; }
+      
+      function quantumMult() {
+        let m = 1; QUANTUM.forEach(q => { if (q.mult) m += q.mult * q.owned; }); return m;
+      }
+      
+      function prestigeBoost() {
+        let b = 1; QUANTUM.forEach(q => { if (q.pMult) b += q.pMult * q.owned; }); return b;
+      }
+      
+      function clickMult() {
+        let m = 1; QUANTUM.forEach(q => { if (q.clickMult && q.owned > 0) m *= Math.pow(q.clickMult, q.owned); }); return m;
+      }
+
+      // Milestone Multiplier (Dynamic Scaling)
+      function getMilestoneMult(count) {
+        let m = 1;
+        if (count >= 25) m *= 2;
+        if (count >= 50) m *= 2;
+        if (count >= 100) m *= 2;
+        if (count >= 250) m *= 2;
+        if (count >= 500) m *= 2;
+        if (count >= 1000) m *= 2;
+        return m;
+      }
+
+      function getPassiveCPS() {
+        let cps = 0;
+        PPS.forEach(u => {
+          const pps = u.basePPS * Math.pow(1.15, u.owned) * getMilestoneMult(u.owned);
+          cps += pps * u.owned;
+        });
+        return cps * prestigeMult() * quantumMult();
+      }
+
+      function getTap() {
+        let tap = 1;
+        PPC.forEach(u => {
+          const ppc = u.basePPC * Math.pow(1.15, u.owned) * getMilestoneMult(u.owned);
+          tap += ppc * u.owned;
+        });
+        return tap * prestigeMult() * quantumMult() * clickMult();
+      }
+
+      // Real-Time Total CPS
+      function getTotalCPS() {
+        const now = performance.now();
+        while(recentTaps.length > 0 && now - recentTaps[0] > 1000) {
+          recentTaps.shift();
+        }
+        return getPassiveCPS() + (recentTaps.length * getTap());
+      }
+
+      function getOfflineRate() {
+        let rate = 0; OFFLINE.forEach(o => { if (o.owned && o.bonus) rate = Math.max(rate, o.bonus); }); return rate;
+      }
+
+      function getOfflineTime() {
+        let base = 1800; OFFLINE.forEach(o => { if (o.owned && o.time) base += o.time; }); return base;
+      }
+
+      function calcBulkCost(base, owned, amount) {
+        if (amount === 0) return 0;
+        return Math.floor(base * Math.pow(1.15, owned) * (Math.pow(1.15, amount) - 1) / 0.15);
+      }
+
+      function calcMaxAffordable(base, owned, coins) {
+        if (coins < Math.floor(base * Math.pow(1.15, owned))) return 0;
+        let n = Math.floor( Math.log( coins * 0.15 / (base * Math.pow(1.15, owned)) + 1 ) / Math.log(1.15) );
+        while (n > 0 && calcBulkCost(base, owned, n) > coins) n--;
+        while (calcBulkCost(base, owned, n+1) <= coins) n++;
+        return n;
+      }
+
+      function prestigeThresh() { return 100000 * Math.pow(10, G.prestige); }
+      function quantumThresh() { return 1e9 * Math.pow(100, G.quantum); }
+      function calcPrestigeGain() {
+        if (G.coins < prestigeThresh()) return 0;
+        return Math.max(1, Math.floor(Math.floor(Math.log10(G.coins / 100000)) * prestigeBoost()));
+      }
+      function calcQuantumGain() {
+        if (G.coins < quantumThresh()) return 0;
+        return Math.max(1, Math.floor(Math.log10(G.coins / 1e9)));
+      }
+
+      // ═══════════════════════════════════════════
+      //  SAVE / LOAD
+      // ═══════════════════════════════════════════
+      function saveGame() {
+        const data = {
+          G, S, PPS: PPS.map(u => u.owned), PPC: PPC.map(u => u.owned),
+          OFFLINE: OFFLINE.map(o => o.owned), QUANTUM: QUANTUM.map(q => q.owned), adminMenuUnlocked,
+        };
+        localStorage.setItem("nexus_v5", JSON.stringify(data));
+      }
+
+      function loadGame() {
+        const raw = localStorage.getItem("nexus_v5");
+        if (!raw) return;
+        try {
+          const data = JSON.parse(raw);
+          Object.assign(G, data.G); Object.assign(S, data.S);
+          if (data.PPS) PPS.forEach((u, i) => (u.owned = data.PPS[i] || 0));
+          if (data.PPC) PPC.forEach((u, i) => (u.owned = data.PPC[i] || 0));
+          if (data.OFFLINE) OFFLINE.forEach((o, i) => (o.owned = data.OFFLINE[i] || false));
+          if (data.QUANTUM) QUANTUM.forEach((q, i) => (q.owned = data.QUANTUM[i] || 0));
+          adminMenuUnlocked = data.adminMenuUnlocked || false;
+          if (adminMenuUnlocked) document.getElementById("cheat-wrap").style.display = "block";
+          processOfflineEarnings();
+        } catch (e) { console.error("Load failed", e); }
+      }
+
+      function processOfflineEarnings() {
+        const now = Date.now();
+        const elapsed = Math.floor((now - G.lastSave) / 1000);
+        if (elapsed < 10) return;
+        const maxOffline = getOfflineTime();
+        const offlineRate = getOfflineRate();
+        const capElapsed = Math.min(elapsed, maxOffline);
+        const cps = getPassiveCPS(); // Passives only for offline
+        const earned = cps * capElapsed * offlineRate;
+        if (earned > 0) { G.coins += earned; G.totalEarned += earned; showOfflineToast(earned, capElapsed, elapsed > maxOffline); }
+        G.lastSave = now;
+      }
+
+      function setupAutoSave() {
+        if (autoSaveTimer) clearInterval(autoSaveTimer);
+        if (S.autoSave) {
+          autoSaveTimer = setInterval(() => { G.lastSave = Date.now(); saveGame(); }, S.saveInterval * 1000);
+        }
+      }
+
+      // ═══════════════════════════════════════════
+      //  UI UPDATE
+      // ═══════════════════════════════════════════
+      function fmt(n) {
+        if (n < 1000) return Math.floor(n).toString();
+        if (n < 1e6) return (n / 1e3).toFixed(1) + "K";
+        if (n < 1e9) return (n / 1e6).toFixed(2) + "M";
+        if (n < 1e12) return (n / 1e9).toFixed(2) + "B";
+        if (n < 1e15) return (n / 1e12).toFixed(2) + "T";
+        return (n / 1e15).toFixed(2) + "Q";
+      }
+
+      function fmtTime(ms) {
+        const s = Math.floor(ms / 1000), m = Math.floor(s / 60), h = Math.floor(m / 60);
+        if (h > 0) return h + "h " + (m % 60) + "m";
+        if (m > 0) return m + "m " + (s % 60) + "s";
+        return s + "s";
+      }
+
+      function updateUI() {
+        document.getElementById("credit-count").textContent = fmt(G.coins);
+        document.getElementById("st-cps").textContent = fmt(getTotalCPS());
+        document.getElementById("st-tap").textContent = fmt(getTap());
+        document.getElementById("st-prestige").textContent = G.prestige;
+        document.getElementById("st-quantum").textContent = G.quantum;
+      }
+
+      // ═══════════════════════════════════════════
+      //  TAP HANDLER
+      // ═══════════════════════════════════════════
+      const tapZone = document.getElementById("tap-zone");
+      const tapCore = document.getElementById("tap-core");
+      tapZone.addEventListener("click", (e) => {
+        if (interactionLocked) return;
+        initAudio();
+        const amt = getTap();
+        G.coins += amt;
+        G.totalClicks++;
+        G.totalEarned += amt;
+        recentTaps.push(performance.now());
+        
+        playTapSound();
+        if (S.pconf) {
+          const flash = document.createElement("div"); flash.className = "tap-flash"; tapCore.appendChild(flash);
+          setTimeout(() => flash.remove(), 400);
+          const txt = document.createElement("div"); txt.textContent = "+" + fmt(amt);
+          txt.style.cssText = `position:absolute;left:${e.clientX}px;top:${e.clientY}px;color:var(--c3);font-size:14px;pointer-events:none;z-index:999;animation:floatUp 1s ease-out forwards;`;
+          document.body.appendChild(txt);
+          setTimeout(() => txt.remove(), 1000);
+        }
+        if (S.particles) spawnParticles(e.clientX, e.clientY);
+      });
+
+      // ═══════════════════════════════════════════
+      //  PARTICLES
+      // ═══════════════════════════════════════════
+      const canvas = document.getElementById("particles");
+      const ctx = canvas.getContext("2d");
+      canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+      window.addEventListener("resize", () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
+      const particles = [];
+      function spawnParticles(x, y) {
+        for (let i = 0; i < 3; i++) particles.push({ x, y, vx: (Math.random() - 0.5) * 3, vy: (Math.random() - 0.5) * 3 - 1, life: 1, size: Math.random() * 3 + 2 });
+      }
+      function updateParticles() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        for (let i = particles.length - 1; i >= 0; i--) {
+          const p = particles[i]; p.x += p.vx; p.y += p.vy; p.vy += 0.1; p.life -= 0.02;
+          if (p.life <= 0) { particles.splice(i, 1); continue; }
+          ctx.globalAlpha = p.life; ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue("--c1"); ctx.fillRect(p.x, p.y, p.size, p.size);
+        }
+        ctx.globalAlpha = 1;
+        requestAnimationFrame(updateParticles);
+      }
+      if (S.particles) updateParticles();
+
+      // ═══════════════════════════════════════════
+      //  SMOOTH GAME LOOP (RequestAnimationFrame)
+      // ═══════════════════════════════════════════
+      let lastFrameTime = performance.now();
+      function gameLoop(time) {
+        const delta = time - lastFrameTime;
+        lastFrameTime = time;
+        const clampedDelta = Math.min(delta, 1000); // Prevent huge offline jumps if tab slept
+
+        if (cheatInfiniteCoins) {
+          G.coins = 1e99;
+        } else {
+          const passive = getPassiveCPS();
+          const earned = (passive * clampedDelta) / 1000;
+          G.coins += earned;
+          G.totalEarned += earned;
+        }
+        updateUI();
+        requestAnimationFrame(gameLoop);
+      }
+      requestAnimationFrame(gameLoop);
+
+      // ═══════════════════════════════════════════
+      //  TABS & UI RENDERERS
+      // ═══════════════════════════════════════════
+      // Buy mode toggle setup
+      document.querySelectorAll(".buy-btn").forEach(btn => {
+        btn.onclick = () => {
+          document.querySelectorAll(".buy-btn").forEach(b => b.classList.remove("active"));
+          btn.classList.add("active");
+          buyAmount = btn.dataset.amt;
+          if (activeTab === "pps") renderPPS();
+          if (activeTab === "ppc") renderPPC();
+        };
+      });
+
+      function switchTab(tab) {
+        const contentEl = document.getElementById("drawer-content");
+        const buyControls = document.getElementById("buy-controls");
+
+        if (activeTab === tab && drawerOpen) {
+          drawerOpen = false;
+          document.querySelectorAll(".drawer-tab").forEach(t => t.classList.remove("active"));
+          contentEl.style.display = "none";
+          buyControls.style.display = "none";
+          return;
+        }
+        drawerOpen = true; activeTab = tab; contentEl.style.display = "";
+        document.querySelectorAll(".drawer-tab").forEach(t => t.classList.remove("active"));
+        document.getElementById("tab-" + tab).classList.add("active");
+
+        if (tab === "pps" || tab === "ppc") buyControls.style.display = "flex";
+        else buyControls.style.display = "none";
+
+        if (tab === "pps") renderPPS();
+        else if (tab === "ppc") renderPPC();
+        else if (tab === "offline") renderOffline();
+        else if (tab === "quantum") renderQuantum();
+        else if (tab === "stats") renderStats();
+        else if (tab === "settings") renderSettings();
+      }
+
+      function getPPSForLevel(u, level) {
+        return u.basePPS * Math.pow(1.15, level) * getMilestoneMult(level);
+      }
+
+      function renderPPS() {
+        const content = document.getElementById("drawer-content");
+        content.innerHTML = '<div id="up-list"></div>';
+        const list = document.getElementById("up-list");
+        
+        PPS.forEach(u => {
+          const baseCost = u.baseCost;
+          let amt = buyAmount === "max" ? calcMaxAffordable(baseCost, u.owned, G.coins) : parseInt(buyAmount);
+          if (amt === 0 && buyAmount === "max") amt = 1; // Fallback to show cost of 1
+          
+          const cost = calcBulkCost(baseCost, u.owned, amt);
+          const canBuy = G.coins >= cost || cheatFreeBuy;
+
+          const currentTotal = getPPSForLevel(u, u.owned) * u.owned;
+          const nextTotal = getPPSForLevel(u, u.owned + amt) * (u.owned + amt);
+          const increase = nextTotal - currentTotal;
+
+          const card = document.createElement("div");
+          card.className = "up-card" + (canBuy ? "" : " locked");
+          card.innerHTML = `
+            <div class="up-icon">${u.icon}</div>
+            <div class="up-info">
+              <div class="up-name">${u.name}</div>
+              <div class="up-desc">${u.desc}</div>
+              <div class="up-effect">+${fmt(increase)}/s</div>
+            </div>
+            <div class="up-buy">
+              <div class="up-cost">${fmt(cost)}</div>
+              <div class="up-owned">Owned: ${u.owned} ${amt > 1 ? `<span style="color:var(--c3)">+${amt}</span>` : ""}</div>
+            </div>`;
+          
+          if (canBuy) {
+            card.onclick = () => {
+              if (G.coins >= cost || cheatFreeBuy) {
+                if (!cheatFreeBuy) G.coins -= cost;
+                u.owned += amt;
+                renderPPS(); playUpgradeSound(); saveGame();
+              }
+            };
+          }
+          list.appendChild(card);
+        });
+      }
+
+      function getPPCForLevel(u, level) {
+        return u.basePPC * Math.pow(1.15, level) * getMilestoneMult(level);
+      }
+
+      function renderPPC() {
+        const content = document.getElementById("drawer-content");
+        content.innerHTML = '<div id="up-list"></div>';
+        const list = document.getElementById("up-list");
+        
+        PPC.forEach(u => {
+          const baseCost = u.baseCost;
+          let amt = buyAmount === "max" ? calcMaxAffordable(baseCost, u.owned, G.coins) : parseInt(buyAmount);
+          if (amt === 0 && buyAmount === "max") amt = 1;
+          
+          const cost = calcBulkCost(baseCost, u.owned, amt);
+          const canBuy = G.coins >= cost || cheatFreeBuy;
+
+          const currentTotal = getPPCForLevel(u, u.owned) * u.owned;
+          const nextTotal = getPPCForLevel(u, u.owned + amt) * (u.owned + amt);
+          const increase = nextTotal - currentTotal;
+
+          const card = document.createElement("div");
+          card.className = "up-card" + (canBuy ? "" : " locked");
+          card.innerHTML = `
+            <div class="up-icon">${u.icon}</div>
+            <div class="up-info">
+              <div class="up-name">${u.name}</div>
+              <div class="up-desc">${u.desc}</div>
+              <div class="up-effect">+${fmt(increase)} per tap</div>
+            </div>
+            <div class="up-buy">
+              <div class="up-cost">${fmt(cost)}</div>
+              <div class="up-owned">Owned: ${u.owned} ${amt > 1 ? `<span style="color:var(--c3)">+${amt}</span>` : ""}</div>
+            </div>`;
+          
+          if (canBuy) {
+            card.onclick = () => {
+              if (G.coins >= cost || cheatFreeBuy) {
+                if (!cheatFreeBuy) G.coins -= cost;
+                u.owned += amt;
+                renderPPC(); playUpgradeSound(); saveGame();
+              }
+            };
+          }
+          list.appendChild(card);
+        });
+      }
+
+      function renderOffline() {
+        const content = document.getElementById("drawer-content");
+        const maxTimeStr = fmtTime(getOfflineTime() * 1000);
+        content.innerHTML = `
+          <div class="offline-header">Max Offline Time: ${maxTimeStr}<br>Current Offline Rate: ${(getOfflineRate() * 100).toFixed(0)}%</div>
+          <div id="offline-list"></div>`;
+        const list = document.getElementById("offline-list");
+        OFFLINE.forEach(o => {
+          const canBuy = (G.coins >= o.cost || cheatFreeBuy) && !o.owned && (!o.req || OFFLINE.find(x => x.id === o.req).owned);
+          const card = document.createElement("div");
+          card.className = "up-card" + (o.owned ? " locked" : "") + (canBuy ? "" : " locked");
+          card.innerHTML = `
+            <div class="up-icon">${o.icon}</div>
+            <div class="up-info"><div class="up-name">${o.name}</div><div class="up-desc">${o.desc}</div></div>
+            <div class="up-buy"><div class="up-cost">${o.owned ? "OWNED" : fmt(o.cost)}</div></div>`;
+          if (canBuy && !o.owned) {
+            card.onclick = () => {
+              if (G.coins >= o.cost || cheatFreeBuy) {
+                if (!cheatFreeBuy) G.coins -= o.cost;
+                o.owned = true; renderOffline(); playUpgradeSound(); saveGame();
+              }
+            };
+          }
+          list.appendChild(card);
+        });
+      }
+
+      function renderQuantum() {
+        const content = document.getElementById("drawer-content");
+        const qGain = calcQuantumGain(), qThresh = quantumThresh(), canQ = G.coins >= qThresh;
+        content.innerHTML = `
+          <button class="big-action-btn" id="quantum-btn" ${canQ ? "" : "disabled"}>
+          QUANTUM RESET<br><span style="font-size:10px;">Gain ${qGain} Quantum Points | Need ${fmt(qThresh)}</span></button>
+          <div class="quantum-info">
+            <div class="qi-row"><span class="qi-label">Quantum Points:</span><span class="qi-val">${G.quantumPoints}</span></div>
+            <div class="qi-row"><span class="qi-label">Total Resets:</span><span class="qi-val">${G.quantum}</span></div>
+          </div><div id="quantum-list"></div>`;
+        document.getElementById("quantum-btn").onclick = doQuantumReset;
+        const list = document.getElementById("quantum-list");
+        QUANTUM.forEach(q => {
+          const canBuy = G.quantumPoints >= q.cost || cheatFreeBuy;
+          const card = document.createElement("div");
+          card.className = "up-card" + (canBuy ? "" : " locked");
+          card.innerHTML = `
+            <div class="up-icon">${q.icon}</div>
+            <div class="up-info"><div class="up-name">${q.name}</div><div class="up-desc">${q.desc}</div></div>
+            <div class="up-buy"><div class="up-cost">${q.cost} QP</div><div class="up-owned">Owned: ${q.owned}</div></div>`;
+          if (canBuy) {
+            card.onclick = () => {
+              if (G.quantumPoints >= q.cost || cheatFreeBuy) {
+                if (!cheatFreeBuy) G.quantumPoints -= q.cost;
+                q.owned++; renderQuantum(); playUpgradeSound(); saveGame();
+              }
+            };
+          }
+          list.appendChild(card);
+        });
+      }
+
+      function renderStats() {
+        const content = document.getElementById("drawer-content");
+        content.innerHTML = `
+          <div class="stat-grid">
+            <div class="stat-card"><div class="sc-lbl">TOTAL EARNED</div><div class="sc-val">${fmt(G.totalEarned)}</div></div>
+            <div class="stat-card"><div class="sc-lbl">TOTAL CLICKS</div><div class="sc-val">${fmt(G.totalClicks)}</div></div>
+            <div class="stat-card"><div class="sc-lbl">PASSIVE CPS</div><div class="sc-val">${fmt(getPassiveCPS())}</div></div>
+            <div class="stat-card"><div class="sc-lbl">TOTAL CPS</div><div class="sc-val">${fmt(getTotalCPS())}</div></div>
+            <div class="stat-card"><div class="sc-lbl">TAP POWER</div><div class="sc-val">${fmt(getTap())}</div></div>
+            <div class="stat-card"><div class="sc-lbl">RUNTIME</div><div class="sc-val">${fmtTime(Date.now() - G.startTime)}</div></div>
+            <div class="stat-card"><div class="sc-lbl">PRESTIGE</div><div class="sc-val">${G.prestige}</div></div>
+            <div class="stat-card"><div class="sc-lbl">QUANTUM</div><div class="sc-val">${G.quantum}</div></div>
+          </div>
+          <button class="big-action-btn" id="prestige-btn" ${G.coins >= prestigeThresh() ? "" : "disabled"}>
+          PRESTIGE RESET<br><span style="font-size:10px;">Gain ${calcPrestigeGain()} Prestige | Need ${fmt(prestigeThresh())}</span></button>`;
+        document.getElementById("prestige-btn").onclick = doPrestige;
+      }
+
+      function renderSettings() {
+        const content = document.getElementById("drawer-content");
+        content.innerHTML = `
+          <div class="setting-row"><div class="setting-label">Dark Mode</div><div class="toggle-btn ${S.darkMode ? "on" : ""}" id="tog-dark"></div></div>
+          <div class="setting-row"><div class="setting-label">Particles</div><div class="toggle-btn ${S.particles ? "on" : ""}" id="tog-part"></div></div>
+          <div class="setting-row"><div class="setting-label">Tap Feedback</div><div class="toggle-btn ${S.pconf ? "on" : ""}" id="tog-pconf"></div></div>
+          <div class="setting-row"><div class="setting-label">Sound Effects</div><div class="toggle-btn ${S.soundFx ? "on" : ""}" id="tog-sound"></div></div>
+          <div class="setting-row"><div class="setting-label">Auto-Save</div><div class="toggle-btn ${S.autoSave ? "on" : ""}" id="tog-autosave"></div></div>
+          <div class="setting-row"><div class="setting-label">Save Interval (s)</div><input type="number" id="save-interval-input" min="5" max="300" value="${S.saveInterval}"></div>
+          <div style="margin-top:16px;padding:12px;background:var(--c1dim);border-radius:6px;">
+            <div style="font-size:9px;color:var(--txt2);margin-bottom:8px;letter-spacing:1px;">THEME</div>
+            <div class="theme-grid">
+              <button class="theme-quick-btn" data-theme="nexus">NEXUS</button><button class="theme-quick-btn" data-theme="crimson">CRIMSON</button>
+              <button class="theme-quick-btn" data-theme="void">VOID</button><button class="theme-quick-btn" data-theme="emerald">EMERALD</button>
+              <button class="theme-quick-btn" data-theme="sunset">SUNSET</button><button class="theme-quick-btn" data-theme="ocean">OCEAN</button>
+            </div>
+          </div>
+          <div style="margin-top:16px;"><button class="big-action-btn" id="wipe-data-btn">WIPE ALL DATA</button></div>`;
+        applySettingsListeners();
+      }
+
+      function applySettingsListeners() {
+        const togDark = document.getElementById("tog-dark"), togPart = document.getElementById("tog-part");
+        const togPconf = document.getElementById("tog-pconf"), togSound = document.getElementById("tog-sound");
+        const togAuto = document.getElementById("tog-autosave"), saveInt = document.getElementById("save-interval-input");
+        const wipeBtn = document.getElementById("wipe-data-btn");
+
+        if (togDark) togDark.onclick = () => { S.darkMode = !S.darkMode; document.documentElement.classList.toggle("light-mode", !S.darkMode); togDark.classList.toggle("on", S.darkMode); applyTheme(S.theme); };
+        if (togPart) togPart.onclick = () => { S.particles = !S.particles; togPart.classList.toggle("on", S.particles); saveGame(); };
+        if (togPconf) togPconf.onclick = () => { S.pconf = !S.pconf; togPconf.classList.toggle("on", S.pconf); saveGame(); };
+        if (togSound) togSound.onclick = () => { S.soundFx = !S.soundFx; togSound.classList.toggle("on", S.soundFx); saveGame(); showToast(`Sound FX: ${S.soundFx ? "ON" : "OFF"}`); };
+        if (togAuto) togAuto.onclick = () => { S.autoSave = !S.autoSave; togAuto.classList.toggle("on", S.autoSave); saveGame(); showToast(`Auto-Save: ${S.autoSave ? "ON" : "OFF"}`); setupAutoSave(); };
+        if (saveInt) saveInt.addEventListener("change", (e) => { const val = parseInt(e.target.value); if (val >= 5 && val <= 300) { S.saveInterval = val; saveGame(); setupAutoSave(); showToast(`Save interval: ${val}s`); } });
+        if (wipeBtn) wipeBtn.onclick = () => { if (confirm("⚠️ WIPE ALL DATA? This cannot be undone!")) { localStorage.removeItem("nexus_v5"); location.reload(); } };
+
+        document.querySelectorAll(".theme-quick-btn").forEach(btn => {
+          btn.onclick = () => {
+            const theme = btn.dataset.theme; applyTheme(theme); updateThemeButtons();
+            if (theme === "crimson") {
+              crimsonClickCount++;
+              if (crimsonClickCount >= 5 && !adminMenuUnlocked) { adminMenuUnlocked = true; document.getElementById("cheat-wrap").style.display = "block"; showToast("⚡ ADMIN MENU UNLOCKED", 3000); saveGame(); }
+              else if (adminMenuUnlocked) { adminMenuUnlocked = false; document.getElementById("cheat-wrap").style.display = "none"; crimsonClickCount = 0; showToast("Admin menu hidden", 2000); saveGame(); }
+            }
+          };
+        });
+        updateThemeButtons();
+      }
+
+      // ═══════════════════════════════════════════
+      //  PRESTIGE / QUANTUM
+      // ═══════════════════════════════════════════
+      function doPrestige() {
+        if (G.coins < prestigeThresh()) return;
+        const gain = calcPrestigeGain();
+        G.prestige += gain; G.prestigeCoins += gain; G.coins = 0; G.totalClicks = 0;
+        PPS.forEach(u => u.owned = 0); PPC.forEach(u => u.owned = 0);
+        switchTab("pps"); playPrestigeSound(); saveGame(); showToast(`PRESTIGE +${gain}`, 3000);
+      }
+      function doQuantumReset() {
+        if (G.coins < quantumThresh()) return;
+        const gain = calcQuantumGain();
+        G.quantum++; G.quantumPoints += gain; G.coins = 0; G.totalClicks = 0; G.prestige = 0; G.prestigeCoins = 0;
+        PPS.forEach(u => u.owned = 0); PPC.forEach(u => u.owned = 0); OFFLINE.forEach(o => o.owned = false);
+        switchTab("quantum"); playPrestigeSound(); saveGame(); showToast(`QUANTUM RESET +${gain} QP`, 3000);
+      }
+
+      // ═══════════════════════════════════════════
+      //  THEMES
+      // ═══════════════════════════════════════════
+      const THEMES = {
+        nexus: { bg: "#020810", bg2: "#040f1e", c1: "#00ffff", c1dim: "rgba(0,255,255,0.2)", c1glow: "rgba(0,255,255,0.5)", c2: "#00e5ff", c3: "#39ff14", c4: "#ff0080", c5: "#ffee00", c6: "#ff6600", border: "rgba(0,255,255,0.4)", border2: "rgba(0,255,255,0.2)", txt: "#e8f4ff", txt2: "#8ab4cc", txt3: "#4a7a90", "tap-flash": "rgba(0,255,255,0.15)", "grid-c": "rgba(0,255,255,0.08)", ring1: "rgba(0,255,255,0.6)", ring2: "rgba(57,255,20,0.5)" },
+        crimson: { bg: "#0f0202", bg2: "#1a0404", c1: "#ff0055", c1dim: "rgba(255,0,85,0.2)", c1glow: "rgba(255,0,85,0.5)", c2: "#dd0044", c3: "#ff5588", c4: "#ffdd00", c5: "#00ffdd", c6: "#ff9900", border: "rgba(255,0,85,0.4)", border2: "rgba(255,0,85,0.2)", txt: "#ffe8ee", txt2: "#cc8899", txt3: "#994455", "tap-flash": "rgba(255,0,85,0.15)", "grid-c": "rgba(255,0,85,0.08)", ring1: "rgba(255,0,85,0.6)", ring2: "rgba(255,85,136,0.5)" },
+        void: { bg: "#000000", bg2: "#0f0f0f", c1: "#aa33ff", c1dim: "rgba(170,51,255,0.2)", c1glow: "rgba(170,51,255,0.5)", c2: "#8800dd", c3: "#00ffbb", c4: "#ff0077", c5: "#ffdd00", c6: "#ff7700", border: "rgba(170,51,255,0.4)", border2: "rgba(170,51,255,0.2)", txt: "#eeddff", txt2: "#9988cc", txt3: "#664488", "tap-flash": "rgba(170,51,255,0.15)", "grid-c": "rgba(170,51,255,0.08)", ring1: "rgba(170,51,255,0.6)", ring2: "rgba(0,255,187,0.5)" },
+        emerald: { bg: "#001f0f", bg2: "#003319", c1: "#00ff99", c1dim: "rgba(0,255,153,0.2)", c1glow: "rgba(0,255,153,0.5)", c2: "#00dd88", c3: "#99ffbb", c4: "#ff0077", c5: "#ffee00", c6: "#ff9900", border: "rgba(0,255,153,0.4)", border2: "rgba(0,255,153,0.2)", txt: "#e8fff4", txt2: "#88ccaa", txt3: "#447755", "tap-flash": "rgba(0,255,153,0.15)", "grid-c": "rgba(0,255,153,0.08)", ring1: "rgba(0,255,153,0.6)", ring2: "rgba(153,255,187,0.5)" },
+        sunset: { bg: "#1f0f00", bg2: "#331800", c1: "#ff7700", c1dim: "rgba(255,119,0,0.2)", c1glow: "rgba(255,119,0,0.5)", c2: "#dd6600", c3: "#ffdd00", c4: "#ff0077", c5: "#00ffdd", c6: "#ffaa33", border: "rgba(255,119,0,0.4)", border2: "rgba(255,119,0,0.2)", txt: "#fff4e8", txt2: "#ccaa88", txt3: "#997744", "tap-flash": "rgba(255,119,0,0.15)", "grid-c": "rgba(255,119,0,0.08)", ring1: "rgba(255,119,0,0.6)", ring2: "rgba(255,221,0,0.5)" },
+        ocean: { bg: "#00203f", bg2: "#002a55", c1: "#00aaff", c1dim: "rgba(0,170,255,0.2)", c1glow: "rgba(0,170,255,0.5)", c2: "#0088dd", c3: "#00ffdd", c4: "#ff3377", c5: "#ffbb00", c6: "#ff7733", border: "rgba(0,170,255,0.4)", border2: "rgba(0,170,255,0.2)", txt: "#e6f4ff", txt2: "#99ccff", txt3: "#5588aa", "tap-flash": "rgba(0,170,255,0.15)", "grid-c": "rgba(0,170,255,0.08)", ring1: "rgba(0,170,255,0.6)", ring2: "rgba(0,255,221,0.5)" },
+      };
+      const THEMES_LIGHT = {
+        nexus: { bg: "#f0f4f8", bg2: "#ffffff", c1: "#0077ff", c1dim: "rgba(0,119,255,0.15)", c1glow: "rgba(0,119,255,0.3)", c2: "#0066dd", c3: "#00cc55", c4: "#ff0066", c5: "#ff9900", c6: "#ff5500", border: "rgba(0,119,255,0.35)", border2: "rgba(0,119,255,0.18)", txt: "#1a2634", txt2: "#3a4a5a", txt3: "#6a7a8a", "tap-flash": "rgba(0,119,255,0.12)", "grid-c": "rgba(0,119,255,0.08)", ring1: "rgba(0,119,255,0.45)", ring2: "rgba(0,204,85,0.4)" },
+        crimson: { bg: "#fff0f3", bg2: "#ffffff", c1: "#cc0044", c1dim: "rgba(204,0,68,0.12)", c1glow: "rgba(204,0,68,0.25)", c2: "#aa0033", c3: "#cc4477", c4: "#cc9900", c5: "#00aa99", c6: "#cc6600", border: "rgba(204,0,68,0.3)", border2: "rgba(204,0,68,0.15)", txt: "#2a1018", txt2: "#5a2030", txt3: "#8a4050", "tap-flash": "rgba(204,0,68,0.1)", "grid-c": "rgba(204,0,68,0.06)", ring1: "rgba(204,0,68,0.4)", ring2: "rgba(204,68,119,0.35)" },
+        void: { bg: "#f4f0ff", bg2: "#ffffff", c1: "#7722cc", c1dim: "rgba(119,34,204,0.12)", c1glow: "rgba(119,34,204,0.25)", c2: "#6600aa", c3: "#00aa88", c4: "#cc0055", c5: "#ccaa00", c6: "#cc5500", border: "rgba(119,34,204,0.3)", border2: "rgba(119,34,204,0.15)", txt: "#1a1028", txt2: "#3a2850", txt3: "#5a4870", "tap-flash": "rgba(119,34,204,0.1)", "grid-c": "rgba(119,34,204,0.06)", ring1: "rgba(119,34,204,0.4)", ring2: "rgba(0,170,136,0.35)" },
+        emerald: { bg: "#f0fff6", bg2: "#ffffff", c1: "#00884d", c1dim: "rgba(0,136,77,0.12)", c1glow: "rgba(0,136,77,0.25)", c2: "#007744", c3: "#44aa66", c4: "#cc0055", c5: "#ccaa00", c6: "#cc6600", border: "rgba(0,136,77,0.3)", border2: "rgba(0,136,77,0.15)", txt: "#0a2818", txt2: "#1a4830", txt3: "#3a6850", "tap-flash": "rgba(0,136,77,0.1)", "grid-c": "rgba(0,136,77,0.06)", ring1: "rgba(0,136,77,0.4)", ring2: "rgba(68,170,102,0.35)" },
+        sunset: { bg: "#fff8f0", bg2: "#ffffff", c1: "#cc5500", c1dim: "rgba(204,85,0,0.12)", c1glow: "rgba(204,85,0,0.25)", c2: "#aa4400", c3: "#ccaa00", c4: "#cc0055", c5: "#00aa99", c6: "#cc7722", border: "rgba(204,85,0,0.3)", border2: "rgba(204,85,0,0.15)", txt: "#281a0a", txt2: "#4a3018", txt3: "#6a5030", "tap-flash": "rgba(204,85,0,0.1)", "grid-c": "rgba(204,85,0,0.06)", ring1: "rgba(204,85,0,0.4)", ring2: "rgba(204,170,0,0.35)" },
+        ocean: { bg: "#f0f8ff", bg2: "#ffffff", c1: "#0066aa", c1dim: "rgba(0,102,170,0.12)", c1glow: "rgba(0,102,170,0.25)", c2: "#005588", c3: "#0099aa", c4: "#cc2255", c5: "#cc8800", c6: "#cc5522", border: "rgba(0,102,170,0.3)", border2: "rgba(0,102,170,0.15)", txt: "#0a1a28", txt2: "#183040", txt3: "#385060", "tap-flash": "rgba(0,102,170,0.1)", "grid-c": "rgba(0,102,170,0.06)", ring1: "rgba(0,102,170,0.4)", ring2: "rgba(0,153,170,0.35)" }
+      };
+
+      function applyTheme(name) {
+        const colors = S.darkMode ? (THEMES[name] || THEMES.nexus) : (THEMES_LIGHT[name] || THEMES_LIGHT.nexus);
+        const r = document.documentElement.style;
+        Object.keys(colors).forEach(k => r.setProperty("--" + k, colors[k]));
+        document.getElementById("theme-meta").content = colors.c1;
+        S.theme = name; saveGame();
+      }
+      function updateThemeButtons() { document.querySelectorAll(".theme-quick-btn").forEach(btn => btn.classList.toggle("active", btn.dataset.theme === S.theme)); }
+
+      // ═══════════════════════════════════════════
+      //  ADMIN MENU
+      // ═══════════════════════════════════════════
+      const cheatToggle = document.getElementById("cheat-toggle"), cheatDD = document.getElementById("cheat-dd");
+      cheatToggle.addEventListener("click", e => { e.stopPropagation(); const isOpen = cheatDD.classList.toggle("open"); cheatToggle.classList.toggle("open", isOpen); interactionLocked = isOpen; });
+      document.addEventListener("click", e => { if (!document.getElementById("cheat-wrap").contains(e.target)) { cheatDD.classList.remove("open"); cheatToggle.classList.remove("open"); interactionLocked = false; } });
+      cheatDD.addEventListener("click", e => e.stopPropagation());
+
+      document.getElementById("ch-infinite").onclick = () => { cheatInfiniteCoins = !cheatInfiniteCoins; showToast(`∞ Coins: ${cheatInfiniteCoins ? "ON" : "OFF"}`); };
+      document.getElementById("ch-freebuy").onclick = () => { cheatFreeBuy = !cheatFreeBuy; showToast(`Free Buys: ${cheatFreeBuy ? "ON" : "OFF"}`); };
+      document.getElementById("ch-cps").onclick = () => { PPS[0].owned += 100; updateUI(); if (activeTab === "pps") renderPPS(); showToast("+100 Nano Miners"); };
+      document.getElementById("ch-tap").onclick = () => { PPC[0].owned += 100; updateUI(); if (activeTab === "ppc") renderPPC(); showToast("+100 Reinforced Taps"); };
+      document.getElementById("ch-prestige").onclick = () => { doPrestige(); showToast("Prestige forced"); };
+      document.getElementById("ch-quantum").onclick = () => { if (G.coins >= quantumThresh()) { doQuantumReset(); showToast("Quantum forced"); } else showToast("Need " + fmt(quantumThresh())); };
+      document.getElementById("ch-coin-add").onclick = () => { const v = parseFloat(document.getElementById("ch-coin-input").value); if (v > 0) { G.coins += v; showToast(`+${fmt(v)}`); } };
+      document.getElementById("ch-1k").onclick = () => { G.coins += 1000; showToast("+1K"); };
+      document.getElementById("ch-10k").onclick = () => { G.coins += 10000; showToast("+10K"); };
+      document.getElementById("ch-100k").onclick = () => { G.coins += 100000; showToast("+100K"); };
+      document.getElementById("ch-1m").onclick = () => { G.coins += 1000000; showToast("+1M"); };
+      document.getElementById("ch-10m").onclick = () => { G.coins += 10000000; showToast("+10M"); };
+      document.getElementById("ch-100m").onclick = () => { G.coins += 100000000; showToast("+100M"); };
+
+      // ═══════════════════════════════════════════
+      //  TOAST
+      // ═══════════════════════════════════════════
+      function showToast(msg, dur = 2000) { const t = document.getElementById("toast"); t.textContent = msg; t.classList.add("show"); setTimeout(() => t.classList.remove("show"), dur); }
+      function showOfflineToast(amt, sec, capped) { let msg = `OFFLINE EARNINGS: +${fmt(amt)} (${fmtTime(sec * 1000)})`; if (capped) msg += " [CAPPED]"; showToast(msg, 5000); }
+
+      // ═══════════════════════════════════════════
+      //  INIT
+      // ═══════════════════════════════════════════
+      loadGame(); applyTheme(S.theme); updateThemeButtons();
+      document.documentElement.classList.toggle("light-mode", !S.darkMode);
+      switchTab("pps"); updateUI(); setupAutoSave();
+
+      document.getElementById("tab-pps").onclick = () => switchTab("pps");
+      document.getElementById("tab-ppc").onclick = () => switchTab("ppc");
+      document.getElementById("tab-offline").onclick = () => switchTab("offline");
+      document.getElementById("tab-quantum").onclick = () => switchTab("quantum");
+      document.getElementById("tab-stats").onclick = () => switchTab("stats");
+      document.getElementById("tab-settings").onclick = () => switchTab("settings");
+
+      if (!localStorage.getItem("nexus_seen_howto")) { showToast("TAP the center to earn credits! Open tabs for upgrades.", 6000); localStorage.setItem("nexus_seen_howto", "1"); }
+
+      setInterval(() => {
+        if (activeTab === "pps") renderPPS();
+        else if (activeTab === "ppc") renderPPC();
+        else if (activeTab === "offline") renderOffline();
+        else if (activeTab === "quantum") renderQuantum();
+      }, 400);
+    </script>
+  </body>
+</html>
