@@ -91,7 +91,7 @@ THEMES — More vibrant/neon colors
       body {
         background: var(--bg);
         font-family:
-          ‘Share Tech Mono’,
+          'Share Tech Mono',
           monospace;
         color: var(--txt);
         position: fixed;
@@ -193,7 +193,7 @@ APP LAYOUT
       }
 
       #sys-label {
-        font-family: ‘Orbitron’, monospace;
+        font-family: 'Orbitron', monospace;
         font-size: 8px;
         letter-spacing: 4px;
         color: var(--c1);
@@ -202,7 +202,7 @@ APP LAYOUT
       }
 
       #credit-count {
-        font-family: ‘Orbitron’, monospace;
+        font-family: 'Orbitron', monospace;
         font-size: clamp(28px, 7vw, 44px);
         font-weight: 900;
         color: var(--c1);
@@ -265,6 +265,9 @@ APP LAYOUT
         position: relative;
         overflow: hidden;
         min-height: 0;
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+        touch-action: manipulation;
       }
 
       /* ── TAP CORE (ENHANCED ANIMATION) ─────── */
@@ -311,7 +314,7 @@ APP LAYOUT
       }
 
       #tap-core-label {
-        font-family: ‘Orbitron’, monospace;
+        font-family: 'Orbitron', monospace;
         font-size: clamp(11px, 2.8vw, 15px);
         letter-spacing: 3px;
         color: var(--c1);
@@ -323,7 +326,7 @@ APP LAYOUT
       /* Outer rings (more prominent) */
       #tap-core::before,
       #tap-core::after {
-        content: ’’;
+        content: '';
         position: absolute;
         inset: -20px;
         border-radius: 50%;
@@ -402,14 +405,16 @@ APP LAYOUT
 
       .drawer-tab {
         flex: 1;
-        min-width: 60px;
-        padding: 10px 6px;
+        min-width: 54px;
+        padding: 12px 6px;
         font-size: 9px;
         letter-spacing: 1px;
         background: transparent;
         border: none;
         color: var(--txt3);
         cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+        touch-action: manipulation;
         transition:
           color 0.2s,
           background 0.2s;
@@ -430,6 +435,7 @@ APP LAYOUT
         overflow-y: auto;
         -webkit-overflow-scrolling: touch;
         padding: 12px;
+        transition: max-height 0.3s ease, padding 0.3s ease;
       }
 
       /* ── UPGRADES ─────────────────────────────── */
@@ -481,7 +487,7 @@ APP LAYOUT
       }
 
       .up-name {
-        font-family: ‘Orbitron’, monospace;
+        font-family: 'Orbitron', monospace;
         font-size: 11px;
         letter-spacing: 1px;
         color: var(--txt);
@@ -509,7 +515,7 @@ APP LAYOUT
       }
 
       .up-cost {
-        font-family: ‘Orbitron’, monospace;
+        font-family: 'Orbitron', monospace;
         font-size: 10px;
         color: var(--c5);
         font-weight: 700;
@@ -528,7 +534,7 @@ APP LAYOUT
         border: 2px solid var(--c1);
         border-radius: 8px;
         color: var(--txt);
-        font-family: ‘Orbitron’, monospace;
+        font-family: 'Orbitron', monospace;
         font-size: 13px;
         letter-spacing: 2px;
         cursor: pointer;
@@ -620,7 +626,7 @@ APP LAYOUT
       }
 
       .stat-card .sc-val {
-        font-family: ‘Orbitron’, monospace;
+        font-family: 'Orbitron', monospace;
         font-size: 13px;
         color: var(--c1);
         font-weight: 700;
@@ -641,36 +647,61 @@ APP LAYOUT
       }
 
       .toggle-btn {
-        width: 48px;
-        height: 24px;
-        background: var(--border2);
-        border: 1px solid var(--border);
-        border-radius: 12px;
+        width: 52px;
+        height: 28px;
+        background: rgba(128,128,128,0.25);
+        border: 2px solid rgba(128,128,128,0.4);
+        border-radius: 14px;
         position: relative;
         cursor: pointer;
-        transition: background 0.2s;
+        transition: background 0.25s, border-color 0.25s, box-shadow 0.25s;
+      }
+
+      .toggle-btn::before {
+        content: 'OFF';
+        position: absolute;
+        right: 6px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 7px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        color: var(--txt3);
+        transition: opacity 0.2s;
+        z-index: 0;
       }
 
       .toggle-btn::after {
-        content: ’’;
+        content: '';
         position: absolute;
-        left: 2px;
+        left: 3px;
         top: 2px;
-        width: 18px;
-        height: 18px;
+        width: 20px;
+        height: 20px;
         background: var(--txt3);
         border-radius: 50%;
         transition:
           left 0.2s,
-          background 0.2s;
+          background 0.2s,
+          box-shadow 0.2s;
+        z-index: 1;
       }
 
       .toggle-btn.on {
         background: var(--c1dim);
+        border-color: var(--c1);
+        box-shadow: 0 0 8px var(--c1glow);
+      }
+      .toggle-btn.on::before {
+        content: 'ON';
+        left: 8px;
+        right: auto;
+        color: var(--c1);
       }
       .toggle-btn.on::after {
         left: 26px;
         background: var(--c1);
+        box-shadow: 0 0 6px var(--c1glow);
       }
 
       .theme-grid {
@@ -1223,6 +1254,7 @@ APP LAYOUT
       let cheatFreeBuy = false;
       let interactionLocked = false;
       let activeTab = "pps";
+      let drawerOpen = true;
       let autoSaveTimer = null;
       let crimsonClickCount = 0;
       let adminMenuUnlocked = false;
@@ -1411,8 +1443,9 @@ APP LAYOUT
       // ═══════════════════════════════════════════
       //  TAP HANDLER
       // ═══════════════════════════════════════════
+      const tapZone = document.getElementById("tap-zone");
       const tapCore = document.getElementById("tap-core");
-      tapCore.addEventListener("click", (e) => {
+      tapZone.addEventListener("click", (e) => {
         if (interactionLocked) return;
         initAudio();
         const amt = getTap();
@@ -1507,10 +1540,18 @@ APP LAYOUT
       //  TABS
       // ═══════════════════════════════════════════
       function switchTab(tab) {
+        const contentEl = document.getElementById("drawer-content");
+        if (activeTab === tab && drawerOpen) {
+          drawerOpen = false;
+          document.querySelectorAll(".drawer-tab").forEach((t) => t.classList.remove("active"));
+          contentEl.style.display = "none";
+          return;
+        }
+        drawerOpen = true;
         activeTab = tab;
+        contentEl.style.display = "";
         document.querySelectorAll(".drawer-tab").forEach((t) => t.classList.remove("active"));
         document.getElementById("tab-" + tab).classList.add("active");
-        const content = document.getElementById("drawer-content");
         if (tab === "pps") renderPPS();
         else if (tab === "ppc") renderPPC();
         else if (tab === "offline") renderOffline();
@@ -2057,16 +2098,70 @@ PRESTIGE RESET<br>
         },
       };
 
-      function applyTheme(name) {
-        const t = THEMES[name] || THEMES.nexus;
-        const r = document.documentElement.style;
-        if (S.darkMode) {
-          Object.keys(t).forEach((k) => r.setProperty("--" + k, t[k]));
-        } else {
-          // Remove inline styles so CSS :root.light-mode class takes effect
-          Object.keys(t).forEach((k) => r.removeProperty("--" + k));
+      const THEMES_LIGHT = {
+        nexus: {
+          bg: "#f0f4f8", bg2: "#ffffff",
+          c1: "#0077ff", c1dim: "rgba(0,119,255,0.15)", c1glow: "rgba(0,119,255,0.3)",
+          c2: "#0066dd", c3: "#00cc55", c4: "#ff0066", c5: "#ff9900", c6: "#ff5500",
+          border: "rgba(0,119,255,0.35)", border2: "rgba(0,119,255,0.18)",
+          txt: "#1a2634", txt2: "#3a4a5a", txt3: "#6a7a8a",
+          "tap-flash": "rgba(0,119,255,0.12)", "grid-c": "rgba(0,119,255,0.08)",
+          ring1: "rgba(0,119,255,0.45)", ring2: "rgba(0,204,85,0.4)"
+        },
+        crimson: {
+          bg: "#fff0f3", bg2: "#ffffff",
+          c1: "#cc0044", c1dim: "rgba(204,0,68,0.12)", c1glow: "rgba(204,0,68,0.25)",
+          c2: "#aa0033", c3: "#cc4477", c4: "#cc9900", c5: "#00aa99", c6: "#cc6600",
+          border: "rgba(204,0,68,0.3)", border2: "rgba(204,0,68,0.15)",
+          txt: "#2a1018", txt2: "#5a2030", txt3: "#8a4050",
+          "tap-flash": "rgba(204,0,68,0.1)", "grid-c": "rgba(204,0,68,0.06)",
+          ring1: "rgba(204,0,68,0.4)", ring2: "rgba(204,68,119,0.35)"
+        },
+        void: {
+          bg: "#f4f0ff", bg2: "#ffffff",
+          c1: "#7722cc", c1dim: "rgba(119,34,204,0.12)", c1glow: "rgba(119,34,204,0.25)",
+          c2: "#6600aa", c3: "#00aa88", c4: "#cc0055", c5: "#ccaa00", c6: "#cc5500",
+          border: "rgba(119,34,204,0.3)", border2: "rgba(119,34,204,0.15)",
+          txt: "#1a1028", txt2: "#3a2850", txt3: "#5a4870",
+          "tap-flash": "rgba(119,34,204,0.1)", "grid-c": "rgba(119,34,204,0.06)",
+          ring1: "rgba(119,34,204,0.4)", ring2: "rgba(0,170,136,0.35)"
+        },
+        emerald: {
+          bg: "#f0fff6", bg2: "#ffffff",
+          c1: "#00884d", c1dim: "rgba(0,136,77,0.12)", c1glow: "rgba(0,136,77,0.25)",
+          c2: "#007744", c3: "#44aa66", c4: "#cc0055", c5: "#ccaa00", c6: "#cc6600",
+          border: "rgba(0,136,77,0.3)", border2: "rgba(0,136,77,0.15)",
+          txt: "#0a2818", txt2: "#1a4830", txt3: "#3a6850",
+          "tap-flash": "rgba(0,136,77,0.1)", "grid-c": "rgba(0,136,77,0.06)",
+          ring1: "rgba(0,136,77,0.4)", ring2: "rgba(68,170,102,0.35)"
+        },
+        sunset: {
+          bg: "#fff8f0", bg2: "#ffffff",
+          c1: "#cc5500", c1dim: "rgba(204,85,0,0.12)", c1glow: "rgba(204,85,0,0.25)",
+          c2: "#aa4400", c3: "#ccaa00", c4: "#cc0055", c5: "#00aa99", c6: "#cc7722",
+          border: "rgba(204,85,0,0.3)", border2: "rgba(204,85,0,0.15)",
+          txt: "#281a0a", txt2: "#4a3018", txt3: "#6a5030",
+          "tap-flash": "rgba(204,85,0,0.1)", "grid-c": "rgba(204,85,0,0.06)",
+          ring1: "rgba(204,85,0,0.4)", ring2: "rgba(204,170,0,0.35)"
+        },
+        ocean: {
+          bg: "#f0f8ff", bg2: "#ffffff",
+          c1: "#0066aa", c1dim: "rgba(0,102,170,0.12)", c1glow: "rgba(0,102,170,0.25)",
+          c2: "#005588", c3: "#0099aa", c4: "#cc2255", c5: "#cc8800", c6: "#cc5522",
+          border: "rgba(0,102,170,0.3)", border2: "rgba(0,102,170,0.15)",
+          txt: "#0a1a28", txt2: "#183040", txt3: "#385060",
+          "tap-flash": "rgba(0,102,170,0.1)", "grid-c": "rgba(0,102,170,0.06)",
+          ring1: "rgba(0,102,170,0.4)", ring2: "rgba(0,153,170,0.35)"
         }
-        document.getElementById("theme-meta").content = getComputedStyle(document.documentElement).getPropertyValue("--c1").trim();
+      };
+
+      function applyTheme(name) {
+        const colors = S.darkMode
+          ? (THEMES[name] || THEMES.nexus)
+          : (THEMES_LIGHT[name] || THEMES_LIGHT.nexus);
+        const r = document.documentElement.style;
+        Object.keys(colors).forEach((k) => r.setProperty("--" + k, colors[k]));
+        document.getElementById("theme-meta").content = colors.c1;
         S.theme = name;
         saveGame();
       }
@@ -2109,18 +2204,22 @@ PRESTIGE RESET<br>
         showToast(`Free Buys: ${cheatFreeBuy ? "ON" : "OFF"}`);
       };
       document.getElementById("ch-cps").onclick = () => {
+        const before = getCPS();
         PPS[0].owned += 100;
+        const after = getCPS();
         saveGame();
         updateUI();
         if (activeTab === "pps") renderPPS();
-        showToast("+1000 CPS");
+        showToast("+" + fmt(after - before) + " CPS");
       };
       document.getElementById("ch-tap").onclick = () => {
+        const before = getTap();
         PPC[0].owned += 100;
+        const after = getTap();
         saveGame();
         updateUI();
         if (activeTab === "ppc") renderPPC();
-        showToast("+100 Tap");
+        showToast("+" + fmt(after - before) + " Tap");
       };
       document.getElementById("ch-prestige").onclick = () => {
         doPrestige();
