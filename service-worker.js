@@ -1,11 +1,11 @@
 // Add this at the top of service-worker.js (optional but recommended)
-const CACHE_NAME = 'nexus-v4'; // Match your localStorage key version for consistency
+const CACHE_NAME = 'nexus-v5';
 const ASSETS = [
   './',
   './index.html',
   './manifest.json',
-  './icon.png',
-  './service-worker.js'
+  './icon.png'
+  // Note: service-worker.js is intentionally excluded to allow SW updates to propagate
 ];
 
 // Install: cache all assets
