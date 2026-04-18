@@ -80,18 +80,24 @@ THEMES — More vibrant/neon colors
     --ring2: rgba(0, 204, 85, 0.4);
   }
   
-  :root.light-mode #header,
-  :root.light-mode #drawer,
+  :root.light-mode #header {
+    background: rgba(255, 255, 255, 0.8);
+  }
+  
+  :root.light-mode #drawer {
+    background: rgba(255, 255, 255, 0.8);
+  }
+  
   :root.light-mode .stat-box {
     background: rgba(255, 255, 255, 0.7);
   }
   
   :root.light-mode #cheat-toggle {
-    background: rgba(255, 0, 102, 0.2);
+    background: rgba(255, 0, 102, 0.3);
   }
   
   :root.light-mode #cheat-dd {
-    background: rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.85);
   }
 
   /* ===== GLOBAL ===== */
@@ -133,74 +139,33 @@ THEMES — More vibrant/neon colors
     to { background-position: 0 40px; }
   }
 
-  /* Corner brackets */
-  .corner {
-    position: fixed;
-    width: 44px;
-    height: 44px;
-    z-index: 3;
+  /* ===== GLOBAL ===== */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
   }
-  .corner.tl {
-    top: max(16px, calc(8px + env(safe-area-inset-top, 8px)));
-    left: max(16px, calc(8px + env(safe-area-inset-left, 8px)));
-    border-top: 2px solid var(--c1);
-    border-left: 2px solid var(--c1);
-  }
-  .corner.tr {
-    top: max(16px, calc(8px + env(safe-area-inset-top, 8px)));
-    right: max(16px, calc(8px + env(safe-area-inset-right, 8px)));
-    border-top: 2px solid var(--c1);
-    border-right: 2px solid var(--c1);
-  }
-  .corner.bl {
-    bottom: max(16px, calc(8px + env(safe-area-inset-bottom, 8px)));
-    left: max(16px, calc(8px + env(safe-area-inset-left, 8px)));
-    border-bottom: 2px solid var(--c1);
-    border-left: 2px solid var(--c1);
-  }
-  .corner.br {
-    bottom: max(16px, calc(8px + env(safe-area-inset-bottom, 8px)));
-    right: max(16px, calc(8px + env(safe-area-inset-right, 8px)));
-    border-bottom: 2px solid var(--c1);
-    border-right: 2px solid var(--c1);
+  #app {
+    position: relative;
+    z-index: 6;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    height: 100dvh;
+    min-height: 100dvh;
+    overflow: hidden;
+    padding-bottom: max(8px, env(safe-area-inset-bottom, 8px));
+    box-sizing: border-box;
   }
 
-  /* Canvas overlay */
-  #particles {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 5;
-  }
-
-  /* ═══════════════════════════════════════════
-```
-
-APP LAYOUT
-═══════════════════════════════════════════ */
-#app {
-position: relative;
-z-index: 6;
-display: flex;
-flex-direction: column;
-height: 100vh;
-height: 100dvh;
-min-height: 100dvh;
-overflow: hidden;
-padding-bottom: max(8px, env(safe-area-inset-bottom, 8px));
-box-sizing: border-box;
-}
-
-```
   /* ── HEADER ─────────────────────────────── */
   #header {
-    padding-top: max(20px, calc(20px + env(safe-area-inset-top, 0px)));
-    padding-left: max(16px, calc(16px + env(safe-area-inset-left, 0px)));
-    padding-right: max(16px, calc(16px + env(safe-area-inset-right, 0px)));
-    padding-bottom: 10px;
-    background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    padding-top: max(24px, calc(24px + env(safe-area-inset-top, 0px)));
+    padding-left: max(24px, calc(16px + env(safe-area-inset-left, 0px)));
+    padding-right: max(24px, calc(16px + env(safe-area-inset-right, 0px)));
+    padding-bottom: 14px;
+    background: rgba(0, 0, 0, 0.6);
     border-bottom: 1px solid var(--border);
     flex-shrink: 0;
     transition: background 0.3s, border-color 0.3s;
@@ -243,9 +208,7 @@ box-sizing: border-box;
 
   .stat-box {
     border: 1px solid var(--border);
-    background: rgba(0, 0, 0, 0.4);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    background: rgba(0, 0, 0, 0.5);
     padding: 4px 10px;
     border-radius: 4px;
     font-size: 9px;
@@ -361,9 +324,7 @@ box-sizing: border-box;
     bottom: 0;
     left: 0;
     right: 0;
-    background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    background: rgba(0, 0, 0, 0.6);
     border-top: 1px solid var(--border);
     z-index: 20;
     display: flex;
@@ -598,47 +559,43 @@ box-sizing: border-box;
   /* ── ADMIN MENU ─────────── */
   #cheat-wrap {
     position: fixed; 
-    top: max(80px, calc(80px + env(safe-area-inset-top, 0px))); 
-    right: max(12px, calc(12px + env(safe-area-inset-right, 0px))); 
+    top: max(90px, calc(90px + env(safe-area-inset-top, 0px))); 
+    right: max(24px, calc(16px + env(safe-area-inset-right, 0px))); 
     z-index: 100; 
     display: none;
   }
   #cheat-toggle {
-    width: 40px; height: 40px; 
-    background: rgba(255, 0, 128, 0.3);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    width: 44px; height: 44px; 
+    background: rgba(255, 0, 128, 0.4);
     border: 2px solid var(--c1); 
     border-radius: 50%; 
     display: flex; 
     align-items: center;
     justify-content: center; 
-    font-size: 18px; 
+    font-size: 20px; 
     cursor: pointer; 
     box-shadow: 0 0 20px rgba(255, 0, 110, 0.5), 0 2px 10px rgba(0, 0, 0, 0.3); 
     transition: transform 0.2s;
   }
   #cheat-toggle:active { transform: scale(0.9); }
   #cheat-dd {
-    position: absolute; top: 50px; right: 0; width: 320px; max-height: 0; overflow: hidden;
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    position: absolute; top: 54px; right: 0; width: 340px; max-height: 0; overflow: hidden;
+    background: rgba(0, 0, 0, 0.7);
     border: 2px solid var(--c4); 
     border-radius: 8px; 
     transition: max-height 0.3s, padding 0.3s;
     box-shadow: 0 0 30px rgba(255, 0, 110, 0.4), 0 4px 20px rgba(0, 0, 0, 0.5);
   }
-  #cheat-dd.open { max-height: 700px; padding: 12px; overflow-y: auto; }
+  #cheat-dd.open { max-height: 700px; padding: 14px; overflow-y: auto; }
   .ch-btn {
     width: 100%; padding: 10px; margin-bottom: 6px; background: var(--c1dim); border: 1px solid var(--border);
     border-radius: 4px; color: var(--txt); font-size: 9px; letter-spacing: 1px; cursor: pointer; transition: all 0.2s;
   }
   .ch-btn:active { transform: scale(0.97); }
   .ch-input-row { display: flex; gap: 6px; margin-bottom: 6px; }
-  .ch-input-row input { flex: 1; padding: 8px; background: var(--c1dim); border: 1px solid var(--border2); border-radius: 4px; color: var(--txt); font-size: 9px; }
-  .ch-quick-btns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; margin-bottom: 8px; }
-  .ch-quick-btns button { padding: 8px; font-size: 8px; }
+  .ch-input-row input { flex: 1; padding: 10px; background: var(--c1dim); border: 1px solid var(--border2); border-radius: 4px; color: var(--txt); font-size: 11px; min-height: 38px; }
+  .ch-quick-btns { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-bottom: 8px; }
+  .ch-quick-btns button { padding: 10px; font-size: 9px; min-height: 38px; }
 
   /* ── PARTICLES ─────────── */
   @keyframes floatUp{to{transform:translateY(-60px);opacity:0;}}
@@ -648,10 +605,6 @@ box-sizing: border-box;
   </head>
   <body>
     <div id="grid-bg"></div>
-    <div class="corner tl"></div>
-    <div class="corner tr"></div>
-    <div class="corner bl"></div>
-    <div class="corner br"></div>
     <canvas id="particles"></canvas>
 
 ```
@@ -1575,9 +1528,9 @@ box-sizing: border-box;
       if (a.owned) {
         let extraControl = '';
         if (a.id === 'auto3') {
-          extraControl = `<div style="margin-top:8px;font-size:9px;color:var(--txt2);">Min Prestige: <input type="number" class="prestige-min-input" value="${a.minGain}" min="1" style="width:60px;padding:4px;margin-left:4px;background:var(--c1dim);border:1px solid var(--border2);border-radius:4px;color:var(--txt);font-size:9px;-webkit-user-select:text;user-select:text;" /></div>`;
+          extraControl = `<div style="margin-top:8px;font-size:10px;color:var(--txt2);">Min Prestige: <input type="number" class="prestige-min-input" value="${a.minGain}" min="1" style="width:80px;padding:8px;margin-left:4px;background:var(--c1dim);border:1px solid var(--border2);border-radius:4px;color:var(--txt);font-size:12px;-webkit-user-select:text;user-select:text;min-height:36px;" /></div>`;
         } else if (a.id === 'auto4') {
-          extraControl = `<div style="margin-top:8px;font-size:9px;color:var(--txt2);">Min Quantum: <input type="number" class="quantum-min-input" value="${a.minGain}" min="1" style="width:60px;padding:4px;margin-left:4px;background:var(--c1dim);border:1px solid var(--border2);border-radius:4px;color:var(--txt);font-size:9px;-webkit-user-select:text;user-select:text;" /></div>`;
+          extraControl = `<div style="margin-top:8px;font-size:10px;color:var(--txt2);">Min Quantum: <input type="number" class="quantum-min-input" value="${a.minGain}" min="1" style="width:80px;padding:8px;margin-left:4px;background:var(--c1dim);border:1px solid var(--border2);border-radius:4px;color:var(--txt);font-size:12px;-webkit-user-select:text;user-select:text;min-height:36px;" /></div>`;
         }
         
         card.innerHTML = `
@@ -1611,13 +1564,6 @@ box-sizing: border-box;
           }
         };
       } else if (a.owned) {
-        // Prevent card click from affecting inputs
-        card.onclick = (e) => {
-          if (e.target.tagName !== 'INPUT') {
-            // Only toggle if not clicking on input
-          }
-        };
-        
         const toggle = card.querySelector('.toggle-btn');
         if (toggle) {
           toggle.onclick = (e) => {
@@ -1637,9 +1583,13 @@ box-sizing: border-box;
         const quantumInput = card.querySelector('.quantum-min-input');
         
         if (prestigeInput) {
-          prestigeInput.onclick = (e) => e.stopPropagation();
-          prestigeInput.ontouchstart = (e) => e.stopPropagation();
-          prestigeInput.onfocus = (e) => e.stopPropagation();
+          // Prevent all propagation to keep keyboard open
+          prestigeInput.addEventListener('click', (e) => e.stopPropagation(), true);
+          prestigeInput.addEventListener('touchstart', (e) => e.stopPropagation(), true);
+          prestigeInput.addEventListener('touchend', (e) => e.stopPropagation(), true);
+          prestigeInput.addEventListener('focus', (e) => e.stopPropagation(), true);
+          prestigeInput.addEventListener('mousedown', (e) => e.stopPropagation(), true);
+          
           prestigeInput.addEventListener('input', (e) => {
             e.stopPropagation();
             const val = parseInt(e.target.value);
@@ -1657,9 +1607,13 @@ box-sizing: border-box;
         }
         
         if (quantumInput) {
-          quantumInput.onclick = (e) => e.stopPropagation();
-          quantumInput.ontouchstart = (e) => e.stopPropagation();
-          quantumInput.onfocus = (e) => e.stopPropagation();
+          // Prevent all propagation to keep keyboard open
+          quantumInput.addEventListener('click', (e) => e.stopPropagation(), true);
+          quantumInput.addEventListener('touchstart', (e) => e.stopPropagation(), true);
+          quantumInput.addEventListener('touchend', (e) => e.stopPropagation(), true);
+          quantumInput.addEventListener('focus', (e) => e.stopPropagation(), true);
+          quantumInput.addEventListener('mousedown', (e) => e.stopPropagation(), true);
+          
           quantumInput.addEventListener('input', (e) => {
             e.stopPropagation();
             const val = parseInt(e.target.value);
